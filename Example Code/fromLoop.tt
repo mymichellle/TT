@@ -1,0 +1,24 @@
+// Program to demonstrate the every from to loop
+
+Timeframe tf;
+tf.Days = 1;
+
+Every Date d From 2013.5.1 To 2013.5.5 By tf {
+	PRINT d;
+}
+
+Timeframe tf2;
+tf2.Months = 1;
+
+Every Date d From 2013.5.1 To 2013.12.1 By tf2 {
+	PRINT d;
+}
+
+
+Timeframe tf3;
+tf3.Months = 1;
+tf3.Days = 1;
+
+Every Date d From 2013.5.29 To 2013.12.1 By tf3 {
+	PRINT d
+}

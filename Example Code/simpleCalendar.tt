@@ -1,0 +1,14 @@
+// Program to create a Calendar with two events
+
+Calendar myCalendar;
+
+Task t1 = "Group Meeting";
+t1.StartTime = 2013.3.23.1.00.PM;
+t1.EndTime = 2013.3.23.3.00.PM;
+t1.Location = "CS Lounge";
+
+Task t2 = "Dinner With Friends";
+t2.StartTime = 2013.3.23.8.00.PM;
+
+myCalendar.AddTask(t1);
+myCalendar.AddTask(t2);
