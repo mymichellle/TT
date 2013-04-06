@@ -1,0 +1,16 @@
+// Program to demonstrate Timeframe manipulations
+
+Timeframe tf1;
+tf1.Months = 1;
+tf1.Days = 2;
+
+Timeframe tf2 = ${2wks + 3hrs}
+
+Timeframe tf3 = tf2 + tf1;
+
+// Do we have a Print function either for debug or just output? 
+PRINT tf3;
+
+// This is a test to handle negative Timeframe?
+Timeframe tf4 = tf1 - tf2;
+PRINT tf4;
