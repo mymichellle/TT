@@ -1,0 +1,9 @@
+gunit HelloWorld;
+
+
+//------------------- print
+print:
+
+"print(\"hello\");" OK
+
+"print(\"hello\")" FAIL
