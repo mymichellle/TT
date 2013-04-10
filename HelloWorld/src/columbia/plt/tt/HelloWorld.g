@@ -18,7 +18,10 @@ print : 'print' '('  STRING  ')' ';'
 //%%%%%%%%%%%%%%%%
 // Constants by Zheng 
 //%%%%%%%%%%%%%%%%%
-
+da :
+	YEAR && MONTH ||DAY
+	;
+	
 dateConstant
  	: YEAR | YEAR '.' MONTH | YEAR '.' MONTH '.' DAY 
  	  |YEAR '.' MONTH '.' DAY '.' HOUR
@@ -26,7 +29,7 @@ dateConstant
  	;
  	  
 timeFrame
-	: ( NUMBER |'('additiveExpression ')')((' ')*)
+	: primaryExpression ((' ')*)
 	  ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
 	;
 	  
