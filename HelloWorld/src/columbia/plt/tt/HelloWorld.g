@@ -41,10 +41,12 @@ timeEntityConstant
 
 //end of constants
 
-// Arithmetic Expressions .. Jason
-
+//program : logicalExpression
+//        | stringExpression
+//        ;
+        
 logicalExpression
-    : booleanAndExpression (OR booleanAndExpression)*
+	: booleanAndExpression (OR booleanAndExpression)*
     ;
 
 booleanAndExpression
@@ -68,29 +70,39 @@ multiplicativeExpression
     ;
 
 unaryExpression 
-    : NOT primaryExpression
+	: NOT? primaryExpression
     ;
 
 primaryExpression 
-    : '(' logicalExpression ')'
-    | NUMBER
-    | STRING
+	: '(' logicalExpression ')'
+	| NUMBER
     ;
 
-OR    	  : '||';
-AND   	  : '&&';
-EQUALS	  : '==';
-NOTEQUALS : '!=';
-LT    	  : '<';
-LTEQ  	  : '<=';
-GT    	  : '>';
-GTEQ  	  : '>=';
-PLUS  	  : '+';
-MINUS 	  : '-';
-MULT  	  : '*';
-DIV   	  : '/';
-MOD   	  : 'mod';
-NOT   	  : 'not';
+stringExpression
+	: STRING ((PLUS) STRING)*
+	;
+	
+OR    		: '||';
+AND   		: '&&';
+EQUALS		: '==';
+NOTEQUALS	: '!=';
+LT    		: '<';
+LTEQ  		: '<=';
+GT    		: '>';
+GTEQ  		: '>=';
+PLUS  		: '+';
+MINUS 		: '-';
+MULT  		: '*';
+DIV   		: '/';
+MOD   		: 'mod';
+NOT   		: 'not';
+
+//NUMBER : '0'..'9'+;
+//IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
+//STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9')+'"';
+//WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
+
+// End of Arithmetic Expression
 
 
 //%%%%%%%%%%%%%%%%
@@ -132,6 +144,5 @@ IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
 
 WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 
-// End of Arithmetic Expression
 
 
