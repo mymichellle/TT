@@ -10,6 +10,25 @@ options {
 	package columbia.plt.tt;
 }
 
+// Statement - Michelle
+statement 
+	: expr+
+	;
+expr 
+	: print
+/*	| ifThenStatement
+	| ifThenElseStatement
+	| everyFromToByStatement
+	| everyInStatement
+	| everyInFromToStatement
+	| everyInOnStatement
+	| untilStatement
+	| breakStatement
+	| continueStatement
+	| exitStatement
+	| functionInvocationStatement*/
+	;
+// end of statement
 print : 'print' '('  STRING  ')' ';' 
 				{System.out.println($STRING.text);} ; 
 
