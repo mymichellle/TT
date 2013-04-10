@@ -1,0 +1,16 @@
+Calendar c1 = downloadCalendar(“John”,”John”,”John’s Daily Calendar”);
+Calendar c2 = downloadCalendar(“Jane”,”Jane”,”Jane’s Daily Calendar”);
+Calendar mc;
+ 
+every Date date from 2013.04.01.10.00 to 2013.04.01.15.00 by 1 hour {
+ 
+ if( not( c1 conflict c2  from  date to date + 1 hour))  {
+ 
+ 	Task meeting;
+ 	meeting.name = "Meeting";
+ 	meeting.start = date;
+ 	meeting.start = date + 1 hour;
+ 
+     addTask(mc,meeting);
+ 
+}

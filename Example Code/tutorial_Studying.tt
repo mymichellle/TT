@@ -1,0 +1,7 @@
+Calendar c1 = downloadCalendar(“John”,”John”,”Study Calendar”);
+ 
+Timeframe  totalTimeSpent;
+every Task t in c1 on (t.name == “Compilers”){
+  	totalTimeSpent = totalTimeSpent + t.end - t.start;
+}
+print(“Hey you spent “ + totalTimeSpent + “ on Compilers” );
