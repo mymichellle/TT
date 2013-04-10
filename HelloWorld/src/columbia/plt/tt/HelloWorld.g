@@ -12,12 +12,12 @@ options {
 
 // Statement - Michelle
 statement 
-	: expr+
+	: statement_type+
 	;
-expr 
+statement_type 
 	: print
-/*	| ifThenStatement
-	| ifThenElseStatement
+	| ifThenStatement
+/*	| ifThenElseStatement
 	| everyFromToByStatement
 	| everyInStatement
 	| everyInFromToStatement
@@ -28,6 +28,25 @@ expr
 	| exitStatement
 	| functionInvocationStatement*/
 	;
+	
+ifThenStatement
+	: 'if' '(' expression ')' '{' statement '}'
+	;
+	
+expression
+	: logicalExpression
+	/*| booleanAndExpression 
+	| booleanAndExpression
+    | equalityExpression
+    | relationalExpression
+    | additiveExpression 
+    | multiplicativeExpression
+    | unaryExpression 
+	| primaryExpression
+	| stringExpression */
+	;
+
+
 // end of statement
 print : 'print' '('  STRING  ')' ';' 
 				{System.out.println($STRING.text);} ; 
@@ -130,7 +149,7 @@ WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 //%%%%%%%%%%%%%%%%%
 
 
- YEAR    :  ('0'.. '9')('0'.. '9')('0'.. '9')('0'.. '9') ;
+ //YEAR    :  ('0'.. '9')('0'.. '9')('0'.. '9')('0'.. '9') ;
 fragment MONTH   :  ('0'('0'.. '9')) | ('1'('0'.. '2'));
 fragment DAY     :  ('0'('1'.. '9')) | (('1'..'2')('0'.. '9')) | ('3'('0'.. '1')) ;
          //  0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
@@ -144,7 +163,7 @@ TIMEENTITYWEEK : 'Weekend'|'Weekday' ;
 
 BOOL    : 'true' | 'false' ;
 
-STRING: '"' NONCONTROL_CHAR* '"';
+STRING_CONSTANT: '"' NONCONTROL_CHAR* '"';
 fragment NONCONTROL_CHAR: LETTER | DIGIT | SYMBOL | SPACE;
 fragment LETTER: LOWER | UPPER;
 fragment LOWER: 'a'..'z';
