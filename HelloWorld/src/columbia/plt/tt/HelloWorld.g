@@ -10,6 +10,44 @@ options {
 	package columbia.plt.tt;
 }
 
+// Statement - Michelle
+statement 
+	: statement_type+
+	;
+statement_type 
+	: print
+	| ifThenStatement
+/*	| ifThenElseStatement
+	| everyFromToByStatement
+	| everyInStatement
+	| everyInFromToStatement
+	| everyInOnStatement
+	| untilStatement
+	| breakStatement
+	| continueStatement
+	| exitStatement
+	| functionInvocationStatement*/
+	;
+	
+ifThenStatement
+	: 'if' '(' expression ')' '{' statement '}'
+	;
+	
+expression
+	: logicalExpression
+	/*| booleanAndExpression 
+	| booleanAndExpression
+    | equalityExpression
+    | relationalExpression
+    | additiveExpression 
+    | multiplicativeExpression
+    | unaryExpression 
+	| primaryExpression
+	| stringExpression */
+	;
+
+
+// end of statement
 print : 'print' '('  STRING  ')' ';' 
 				{System.out.println($STRING.text);} ; 
 
@@ -45,9 +83,12 @@ timeEntityConstant
 //end of constants
 
 // Arithmetic Expressions .. Jason
-
+//program : logicalExpression
+//        | stringExpression
+//        ;
+        
 logicalExpression
-    : booleanAndExpression (OR booleanAndExpression)*
+	: booleanAndExpression (OR booleanAndExpression)*
     ;
 
 booleanAndExpression
@@ -71,29 +112,39 @@ multiplicativeExpression
     ;
 
 unaryExpression 
-    : NOT primaryExpression
+	: NOT? primaryExpression
     ;
 
 primaryExpression 
-    : '(' logicalExpression ')'
-    | NUMBER
-    | STRING
+	: '(' logicalExpression ')'
+	| NUMBER
     ;
 
-OR    	  : '||';
-AND   	  : '&&';
-EQUALS	  : '==';
-NOTEQUALS : '!=';
-LT    	  : '<';
-LTEQ  	  : '<=';
-GT    	  : '>';
-GTEQ  	  : '>=';
-PLUS  	  : '+';
-MINUS 	  : '-';
-MULT  	  : '*';
-DIV   	  : '/';
-MOD   	  : 'mod';
-NOT   	  : 'not';
+stringExpression
+	: STRING ((PLUS) STRING)*
+	;
+	
+OR    		: '||';
+AND   		: '&&';
+EQUALS		: '==';
+NOTEQUALS	: '!=';
+LT    		: '<';
+LTEQ  		: '<=';
+GT    		: '>';
+GTEQ  		: '>=';
+PLUS  		: '+';
+MINUS 		: '-';
+MULT  		: '*';
+DIV   		: '/';
+MOD   		: 'mod';
+NOT   		: 'not';
+
+NUMBER : '0'..'9'+;
+//IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
+STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9')+'"';
+WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
+
+// End of Arithmetic Expression
 
 
 //%%%%%%%%%%%%%%%%
@@ -101,7 +152,7 @@ NOT   	  : 'not';
 //%%%%%%%%%%%%%%%%%
 
 
- YEAR    :  ('0'.. '9')('0'.. '9')('0'.. '9')('0'.. '9') ;
+ //YEAR    :  ('0'.. '9')('0'.. '9')('0'.. '9')('0'.. '9') ;
 fragment MONTH   :  ('0'('0'.. '9')) | ('1'('0'.. '2'));
 fragment DAY     :  ('0'('1'.. '9')) | (('1'..'2')('0'.. '9')) | ('3'('0'.. '1')) ;
          //  0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
@@ -115,7 +166,7 @@ TIMEENTITYWEEK : 'Weekend'|'Weekday' ;
 
 BOOL    : 'true' | 'false' ;
 
-STRING: '"' NONCONTROL_CHAR* '"';
+STRING_CONSTANT: '"' NONCONTROL_CHAR* '"';
 fragment NONCONTROL_CHAR: LETTER | DIGIT | SYMBOL | SPACE;
 fragment LETTER: LOWER | UPPER;
 fragment LOWER: 'a'..'z';
@@ -130,11 +181,5 @@ fragment SYMBOL: '!' | '#'..'/' | ':'..'@' | '['..'`' | '{'..'~';
 
 // End by Zheng
 
-NUMBER : '0'..'9'+;
-IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-
-WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
-
-// End of Arithmetic Expression
 
 

@@ -1,0 +1,78 @@
+Calendar calendar = downloadCalendar(“Athresh”, “Athresh”, “Study Plan”);
+Timeframe study = 2 hours;
+Timeframe revise = 1 hour;
+Timeframe meeting = 1 hour;
+ 
+Task studyTask;
+studyTask.name = “Study”;
+ 
+Date start = 2013.04.01.10.00;
+Date end = 2013.04.01.15.00;
+ 
+every Date date from start to end by 1 hour {
+ 
+studyTask.start = date;
+studyTask.end = date + study;
+ 
+if( studyTask.end > end){
+   	print(“Hey you are exceeding the calendar end time!”);
+   	exit;
+}
+ 
+if (not(studyTask conflict calendar)){
+   	addTask(calendar,studyTask);
+   	break;
+}  	
+   	
+}
+ 
+ 
+Task reviseTask;
+reviseTask.name = “Revise”;
+Number taskAdded= 0;
+ 
+every Date date  from calendar.start to calendar.end by revise {
+ 
+reviseTask.start = date;
+reviseTask.end = date + revise;
+ 
+if(not (reviseTask conflict calendar) && (reviseTask.start!=studyTask.end)){
+addTask(calendar, reviseTask);
+taskAdded = 1;
+break;
+}
+ 
+}
+ 
+if(!taskAdded){
+   	print(“Cannot add reviseTask anywhere in the Calendar”);
+}
+ 
+ 
+Task  meetingTask;
+meetingTask.name =  “Meeting”;
+taskAdded= 0;
+every Date date from start to end by meeting {
+ 
+ 
+meetingTask.start = date;
+meetingTask.end = date + study;
+ 
+if( meetingTask.end > end){
+   	print(“Hey you are exceeding the calendar end time!”);
+   	exit;
+}
+ 
+if (not (meetingTask conflict calendar)){
+   	addTask(calendar,meetingTask);
+   	taskAdded= 1;
+   	break;
+}  	
+   	
+}
+ 
+if(!taskAdded){
+   	print(“Cannot add meetingTask anywhere in the Calendar”);
+}
+ 
+uploadCalendar(“Athresh”, “Athresh”, “Study Plan”,calendar);
