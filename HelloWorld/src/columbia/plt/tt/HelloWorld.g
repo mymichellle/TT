@@ -41,6 +41,7 @@ timeEntityConstant
 
 //end of constants
 
+// Arithmetic Expressions .. Jason
 //program : logicalExpression
 //        | stringExpression
 //        ;
@@ -97,10 +98,10 @@ DIV   		: '/';
 MOD   		: 'mod';
 NOT   		: 'not';
 
-//NUMBER : '0'..'9'+;
+NUMBER : '0'..'9'+;
 //IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-//STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9')+'"';
-//WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
+STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9')+'"';
+WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 
 // End of Arithmetic Expression
 
@@ -138,11 +139,6 @@ fragment SYMBOL: '!' | '#'..'/' | ':'..'@' | '['..'`' | '{'..'~';
 // they can't be written to the hidden channel!
 
 // End by Zheng
-
-NUMBER : '0'..'9'+;
-IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-
-WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 
 
 
