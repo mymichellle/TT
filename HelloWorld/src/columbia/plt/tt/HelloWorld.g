@@ -14,9 +14,11 @@ options {
 statement 
 	: statement_type+
 	;
+
 statement_type 
 	: print
 	| ifThenStatement
+	| logicalExpression
 /*	| ifThenElseStatement
 	| everyFromToByStatement
 	| everyInStatement
@@ -30,9 +32,13 @@ statement_type
 	;
 	
 ifThenStatement
-	: 'if' '(' expression ')' '{' statement '}'
+	: 'if' '(' expression ')' '{' expression '}'
 	;
-	
+/*	
+ifThenElseStatement
+	: ifThenStatement 'else' '{' statement '}'
+	;
+	*/
 expression
 	: logicalExpression
 	/*| booleanAndExpression 
@@ -48,7 +54,7 @@ expression
 
 
 // end of statement
-print : 'print' '('  STRING  ')' ';' 
+print : 'print' '(' STRING  ')' ';' 
 				{System.out.println($STRING.text);} ; 
 
 //STRING : 'a'..'z' + ;
@@ -137,7 +143,7 @@ MOD   		: 'mod';
 NOT   		: 'not';
 
 NUMBER : '0'..'9'+;
-//IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
+IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
 STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9')+'"';
 WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 
@@ -149,19 +155,19 @@ WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 //%%%%%%%%%%%%%%%%%
 
 
- //YEAR    :  ('0'.. '9')('0'.. '9')('0'.. '9')('0'.. '9') ;
+fragment YEAR    :  ('0'.. '9')('0'.. '9')('0'.. '9')('0'.. '9') ;
 fragment MONTH   :  ('0'('0'.. '9')) | ('1'('0'.. '2'));
 fragment DAY     :  ('0'('1'.. '9')) | (('1'..'2')('0'.. '9')) | ('3'('0'.. '1')) ;
-         //  0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
+//           0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
 fragment HOUR    :  ('0'.. '1')('0'.. '9') | '2'('0'.. '3') ;    //[0 -1] [0 - 9]| 2 [0 - 3]
 fragment MINUTE  :  ('0'.. '5')('0'.. '9') ;
 
-TIMEENTITYDAY:  'Monday'|'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday' ;
-TIMEENTITYMONTH: 'January'|'February'|'March'|'April'|'May'|'June'|'July'|'August'
+fragment TIMEENTITYDAY:  'Monday'|'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday' ;
+fragment TIMEENTITYMONTH: 'January'|'February'|'March'|'April'|'May'|'June'|'July'|'August'
 	             |'September'|'October'|'November'|'December'  ;
-TIMEENTITYWEEK : 'Weekend'|'Weekday' ;	   
+fragment TIMEENTITYWEEK : 'Weekend'|'Weekday' ;	   
 
-BOOL    : 'true' | 'false' ;
+fragment BOOL    : 'true' | 'false' ;
 
 STRING_CONSTANT: '"' NONCONTROL_CHAR* '"';
 fragment NONCONTROL_CHAR: LETTER | DIGIT | SYMBOL | SPACE;
