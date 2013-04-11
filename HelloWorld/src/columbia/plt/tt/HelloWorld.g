@@ -18,7 +18,6 @@ statement
 statement_type 
 	: print
 	| ifThenStatement
-	| logicalExpression
 /*	| ifThenElseStatement
 	| everyFromToByStatement
 	| everyInStatement
@@ -32,55 +31,41 @@ statement_type
 	;
 	
 ifThenStatement
-	: 'if' '(' expression ')' '{' expression '}'
+	: 'if' '(' expression ')' '{' statement_type '}'
 	;
-/*	
-ifThenElseStatement
-	: ifThenStatement 'else' '{' statement '}'
-	;
-	*/
+
 expression
 	: logicalExpression
-	/*| booleanAndExpression 
-	| booleanAndExpression
-    | equalityExpression
-    | relationalExpression
-    | additiveExpression 
-    | multiplicativeExpression
-    | unaryExpression 
-	| primaryExpression
-	| stringExpression */
 	;
 
-
 // end of statement
+
 print : 'print' '(' STRING  ')' ';' 
 				{System.out.println($STRING.text);} ; 
-
-//STRING : 'a'..'z' + ;
 
 //%%%%%%%%%%%%%%%%
 // Constants by Zheng 
 //%%%%%%%%%%%%%%%%%
-da :
+/*da :
 	YEAR && MONTH ||DAY
 	;
+	*/
 	
 dateConstant
  	: YEAR | YEAR '.' MONTH | YEAR '.' MONTH '.' DAY 
  	  |YEAR '.' MONTH '.' DAY '.' HOUR
  	  |YEAR '.' MONTH '.' DAY '.' HOUR '.' MINUTE  
  	;
- 	  
-timeFrame
-	: primaryExpression ((' ')*)
-	  ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
-	;
-	  
-timeFrameConstant
-	: timeFrame ('+' timeFrame)* 
-	;
-
+// 	  
+//timeFrame
+//	: primaryExpression ((' ')*)
+//	  ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
+//	;
+//	  
+//timeFrameConstant
+//	: timeFrame ('+' timeFrame)* 
+//	;
+//
 timeEntityConstant
 	: TIMEENTITYDAY | TIMEENTITYWEEK | TIMEENTITYMONTH
 	;
@@ -147,7 +132,7 @@ NOT   		: 'not';
 
 NUMBER : '0'..'9'+;
 IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9')+'"';
+STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9'|' ')+'"';
 WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 
 // End of Arithmetic Expression
