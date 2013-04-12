@@ -180,6 +180,12 @@ WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
 
 // End of Arithmetic Expression
 
+// Comments 
+COMMENT
+  : '//' (~('\n'|'\r'))*
+    { $channel = HIDDEN; }
+  ;
+
 
 //%%%%%%%%%%%%%%%%
 // created by Zheng 
