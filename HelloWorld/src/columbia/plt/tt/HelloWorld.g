@@ -26,6 +26,7 @@ statement_type
 	| breakStatement
 	| continueStatement
 	| exitStatement
+	| readStatement
 //	| functionInvocationStatement
 	;
 
@@ -79,6 +80,10 @@ continueStatement
 	
 exitStatement
 	: 'exit' ';'
+	;
+	
+readStatement
+	: 'Read' '(' STRING ')' ';'
 	;
 	
 // end of statement
