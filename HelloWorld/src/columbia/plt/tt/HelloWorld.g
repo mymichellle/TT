@@ -18,26 +18,69 @@ statement
 statement_type 
 	: print
 	| ifThenStatement
-/*	| ifThenElseStatement
 	| everyFromToByStatement
 	| everyInStatement
-	| everyInFromToStatement
-	| everyInOnStatement
+/*	| everyInFromToStatement
+	| everyInOnStatement*/
 	| untilStatement
 	| breakStatement
 	| continueStatement
 	| exitStatement
-	| functionInvocationStatement*/
-	;
-	
-ifThenStatement
-	: 'if' '(' expression ')' '{' statement_type '}'
+//	| functionInvocationStatement
 	;
 
 expression
 	: logicalExpression
 	;
 
+ifThenStatement
+	: 'if' '(' expression ')' '{' statement_type* '}' elseStatement
+	;
+
+elseStatement
+	: 'else' '{' statement_type* '}'
+	|
+	;
+
+everyFromToByStatement
+	: 'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}'
+	;
+	
+everyInStatement
+	: 'every' 'Task' IDENT 'in' IDENT 'from' dateOrIdent 'to' dateOrIdent loopOptions '{' statement_type* '}'
+	;
+	
+loopOptions
+	: 'on' expression
+	|
+	;
+	
+dateOrIdent
+	: IDENT
+//	| date	
+	; 
+	
+timeframeOrIdent
+	: IDENT
+//	| timeframe
+	;
+	
+untilStatement
+	: 'until' dateOrIdent ';'
+	;
+	
+breakStatement
+	: 'break' ';'
+	;
+	
+continueStatement
+	: 'continue' ';'
+	;
+	
+exitStatement
+	: 'exit' ';'
+	;
+	
 // end of statement
 
 print : 'print' '(' STRING  ')' ';' 
