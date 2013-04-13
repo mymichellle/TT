@@ -29,7 +29,7 @@ public class Calendar extends ArrayList<Task> {
   public void setEnd(Date end) { this.end = end; }
   
   
-  public void Sort() {
+  public void sort() {
   	Collections.sort(this);
   }
   
