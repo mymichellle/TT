@@ -17,7 +17,7 @@ public class CalendarTester {
   	}
   	
   	// Sort by Task's start
-  	c.Sort();
+  	c.sort();
   	
   	// Print out Tasks after sort
   	for (int i = 0; i < c.size(); i++) {
