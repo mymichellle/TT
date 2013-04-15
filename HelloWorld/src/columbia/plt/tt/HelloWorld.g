@@ -10,13 +10,80 @@ options {
 	package columbia.plt.tt;
 }
 
-// Statement - Michelle
+// Variable declaration and definition
+//@Author : Athresh
+
+declarationStatement
+	: type WS* IDENT WS* ';'
+	;
+
+type
+	: 'String'
+	| 'Number'
+	| 'Date'
+	| 'Task'
+	| 'TimeFrame'
+	|	'Calendar'
+	;
+	
+definitionStatement
+	: dateDefnStmt
+	|	calendarDefnStmt
+	| timeFrameDefnStmt
+	|	taskDefnStmt
+	| stringDefnStmt
+	| numberDefnStmt
+	|	fieldDefnStmt
+	;
+	
+
+dateDefnStmt
+	: 'Date' WS* IDENT WS* ASSIGN WS* dateConstant WS* ';'
+	|	IDENT ASSIGN WS* dateConstant WS* ';'
+	;
+	
+timeFrameDefnStmt
+	: 'Timeframe' WS* IDENT WS* ASSIGN WS* timeFrameConstant WS* ';'
+	| IDENT WS* ASSIGN  WS* timeFrameConstant WS* ';'
+	;
+
+taskDefnStmt
+	: 'Task' WS* IDENT ASSIGN WS* STRING WS* ';'
+	;
+
+fieldDefnStmt
+	: IDENT '.''name' WS* ASSIGN STRING WS* ';'
+	| IDENT '.' 'start' WS* ASSIGN dateConstant WS* ';'
+	| IDENT '.' 'end'	WS*	ASSIGN dateConstant WS* ';'
+	| IDENT '.' 'location' WS* ASSIGN STRING WS* ';'
+	| IDENT '.' 'description' WS* ASSIGN STRING WS* ';'
+	;
+	
+stringDefnStmt
+	: 'String' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
+	| IDENT WS* ASSIGN WS* STRING ';'
+	;
+
+numberDefnStmt
+	: 'Number' WS* IDENT WS* ASSIGN WS* NUMBER WS* ';'
+	| IDENT WS* ASSIGN WS* NUMBER ';'
+	;
+
+calendarDefnStmt
+	: 'Calendar' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
+	;
+	
+
+//Statement
+//@Author : Michelle
 statement 
 	: statement_type+
 	;
 
 statement_type 
 	: print
+	| declarationStatement
+	|	definitionStatement
 	| ifThenStatement
 	| everyFromToByStatement
 	| everyInStatement
@@ -86,42 +153,41 @@ readStatement
 	: 'Read' '(' STRING ')' ';'
 	;
 	
-// end of statement
 
-print : 'print' '(' STRING  ')' ';' 
-				{System.out.println($STRING.text);} ; 
+print : 'print' '(' STRING  ')' ';' 			{System.out.println($STRING.text);} ; 
 
-//%%%%%%%%%%%%%%%%
-// Constants by Zheng 
-//%%%%%%%%%%%%%%%%%
-/*da :
-	YEAR && MONTH ||DAY
-	;
-	*/
-	
+
+
+//Constants
+//@Author : Zheng
+
 dateConstant
- 	: YEAR | YEAR '.' MONTH | YEAR '.' MONTH '.' DAY 
- 	  |YEAR '.' MONTH '.' DAY '.' HOUR
- 	  |YEAR '.' MONTH '.' DAY '.' HOUR '.' MINUTE  
+ 	: YEAR 
+ 	| YEAR '.' MONTH 
+ 	| YEAR '.' MONTH '.' DAY 
+ 	|	YEAR '.' MONTH '.' DAY '.' HOUR
+ 	|	YEAR '.' MONTH '.' DAY '.' HOUR '.' MINUTE  
  	;
-// 	  
-//timeFrame
-//	: primaryExpression ((' ')*)
-//	  ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
-//	;
-//	  
-//timeFrameConstant
-//	: timeFrame ('+' timeFrame)* 
-//	;
-//
+	  
+timeFrame
+	: primaryExpression WS
+	  ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
+	;
+	  
+timeFrameConstant
+	: timeFrame ('+' timeFrame)* 
+	;
+
 timeEntityConstant
 	: TIMEENTITYDAY | TIMEENTITYWEEK | TIMEENTITYMONTH
 	;
 	
 
-//end of constants
+
 
 // Arithmetic Expressions .. Jason
+// @Author : Jason
+
 //program : logicalExpression
 //        | stringExpression
 //        ;
@@ -163,6 +229,10 @@ stringExpression
 	: STRING ((PLUS) STRING)*
 	;
 	
+	
+
+//Lexer Rules
+ASSIGN 		: '=';
 OR    		: '||';
 AND   		: '&&';
 EQUALS		: '==';
@@ -178,23 +248,14 @@ DIV   		: '/';
 MOD   		: 'mod';
 NOT   		: 'not';
 
-NUMBER : '0'..'9'+;
-IDENT : ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-STRING : '"'('a'..'z'|'A'..'Z'|'0'..'9'|' ')+'"';
-WS : (' '|'\t'|'\n'|'\r'|'\f')+ {$channel = HIDDEN;};
-
-// End of Arithmetic Expression
-
-// Comments 
-COMMENT
-  : '//' (~('\n'|'\r'))*
-    { $channel = HIDDEN; }
-  ;
 
 
-//%%%%%%%%%%%%%%%%
-// created by Zheng 
-//%%%%%%%%%%%%%%%%%
+NUMBER 	: 	DIGIT +;
+IDENT 	: 	('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
+STRING 	: 	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|' ')+ QUOTE;
+QUOTE 	: 	'\"' ;
+WS 			: 	(' '|'\t'|'\n'|'\r'|'\f')+ 	{$channel = HIDDEN;};
+COMMENT : 	'//' (~('\n'|'\r'))*		{ $channel = HIDDEN; };
 
 
 fragment YEAR    :  ('0'.. '9')('0'.. '9')('0'.. '9')('0'.. '9') ;
@@ -225,6 +286,7 @@ fragment SYMBOL: '!' | '#'..'/' | ':'..'@' | '['..'`' | '{'..'~';
 // they can't be written to the hidden channel!
 
 // End by Zheng
+
 
 
 
