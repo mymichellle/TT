@@ -24,6 +24,7 @@ type
 	| 'Task'
 	| 'TimeFrame'
 	|	'Calendar'
+	|'Time'
 	;
 	
 definitionStatement
@@ -94,11 +95,12 @@ statement_type
 	| continueStatement
 	| exitStatement
 	| readStatement
-//	| functionInvocationStatement
+	| functionInvocationStatement
 	;
 
 expression
 	: logicalExpression
+	| functionInvocation
 	;
 
 ifThenStatement
@@ -153,8 +155,24 @@ readStatement
 	: 'Read' '(' STRING ')' ';'
 	;
 	
+functionInvocationStatement
+	: functionInvocation ';'
+	;
+	
+functionInvocation
+	: IDENT argumentList
+	;
+	
+argumentList
+	: '(' expressionList? ')'
+	;
+	
+expressionList
+	: expression (','expression)*
+	;
+	
 
-print : 'print' '(' STRING  ')' ';' 			{System.out.println($STRING.text);} ; 
+print : 'print' '(' STRING  ')' ';' {System.out.println($STRING.text);} ; 
 
 
 
@@ -221,8 +239,9 @@ unaryExpression
     ;
 
 primaryExpression 
-	: '(' logicalExpression ')'
+	: '(' expression ')'
 	| NUMBER
+	| IDENT
     ;
 
 stringExpression
