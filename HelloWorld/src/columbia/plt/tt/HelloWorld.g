@@ -188,7 +188,7 @@ dateConstant
  	;
 	  
 timeFrame
-	: primaryExpression WS
+	: primaryExpression
 	  ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
 	;
 	  
