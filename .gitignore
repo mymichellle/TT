@@ -6,3 +6,10 @@
 #####################
 .DS_Store
 .DS_Store?
+
+# Manually ignore #
+##################
+TTInterpreter/gen/
+TTInterpreter/bin/
+TTInterpreter/src/columbia/plt/tt/TTGrammar.tokens
+!.gitignore

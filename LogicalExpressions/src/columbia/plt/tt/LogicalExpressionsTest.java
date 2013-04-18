@@ -19,7 +19,7 @@ public class LogicalExpressionsTest {
 	public static void main(String[] args) throws RecognitionException {
 		
 		CharStream stream = new ANTLRStringStream(
-				"x = false; y = true ; true  && (x || y) &&  false");
+				"x = true; y = true ; true  && (x || y) &&  true");
 		LogicalExpressionsLexer lexer = new LogicalExpressionsLexer(stream);
 		TokenStream tokenStream = new CommonTokenStream(lexer);
 		LogicalExpressionsParser parser = new LogicalExpressionsParser(tokenStream);

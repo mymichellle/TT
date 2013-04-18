@@ -1,4 +1,4 @@
-grammar HelloWorld;
+grammar TTGrammar;
 
 options {
   language = Java;
