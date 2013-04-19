@@ -2,6 +2,8 @@ grammar TTGrammar;
 
 options {
   language = Java;
+  output=AST;
+  ASTLabelType=CommonTree;
 }
 @header{
 	package columbia.plt.tt;
@@ -14,7 +16,7 @@ options {
 //@Author : Athresh
 
 declarationStatement
-	: type WS* IDENT WS* ';'
+	: type^ WS* IDENT WS* ';'
 	;
 
 type
