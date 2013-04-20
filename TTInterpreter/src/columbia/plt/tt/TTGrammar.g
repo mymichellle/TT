@@ -92,7 +92,6 @@ statement_type
 	| everyInStatement
 /*	| everyInFromToStatement
 	| everyInOnStatement*/
-	| untilStatement
 	| breakStatement
 	| continueStatement
 	| exitStatement
@@ -137,10 +136,6 @@ timeframeOrIdent
 	| TIMEFRAME
 	;
 	
-untilStatement
-	: 'until' dateOrIdent ';'
-	;
-	
 breakStatement
 	: 'break' ';'
 	;
@@ -154,7 +149,7 @@ exitStatement
 	;
 	
 readStatement
-	: 'Read' '(' STRING ')' ';'
+	: 'read' '(' STRING ')' ';'
 	;
 	
 functionInvocationStatement
