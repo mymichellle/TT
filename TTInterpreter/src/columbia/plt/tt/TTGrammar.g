@@ -116,11 +116,15 @@ elseStatement
 everyFromToByStatement
 	: 'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}'
 	;
-	
+  
 everyInStatement
-	: 'every' 'Task' IDENT 'in' IDENT 'from' dateOrIdent 'to' dateOrIdent loopOptions '{' statement_type* '}'
-	;
-	
+  : 'every' 'Task' IDENT 'in' IDENT constraintOptions  '{' statement_type* '}'
+  ;
+  
+constraintOptions
+  : 'from' dateOrIdent 'to' dateOrIdent loopOptions
+  | loopOptions
+  ;
 loopOptions
 	: 'on' expression
 	|
