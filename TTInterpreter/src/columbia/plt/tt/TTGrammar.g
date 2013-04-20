@@ -46,8 +46,8 @@ dateDefnStmt
 	;
 	
 timeFrameDefnStmt
-	: 'Timeframe' WS* IDENT WS* ASSIGN WS* TIME_FRAME_CONSTANT WS* ';'
-	| IDENT WS* ASSIGN  WS* TIME_FRAME_CONSTANT WS* ';'
+	: 'Timeframe' WS* IDENT WS* ASSIGN WS* timeFrameConstant WS* ';'
+	| IDENT WS* ASSIGN  WS* timeFrameConstant WS* ';'
 	;
 
 taskDefnStmt
@@ -137,7 +137,7 @@ dateOrIdent
 	
 timeframeOrIdent
 	: IDENT
-	| TIMEFRAME
+	| timeFrameConstant
 	;
 	
 breakStatement
@@ -177,10 +177,14 @@ print : 'print' '(' STRING  ')' ';' {System.out.println($STRING.text);} ;
 
 
 
+timeFrame
+  : primaryExpression
+    ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
+  ;
 
-	
-
-
+timeFrameConstant
+  : timeFrame ('+' timeFrame)*
+ ;
 
 // Arithmetic Expressions .. Jason
 // @Author : Jason
@@ -304,11 +308,11 @@ fragment TIME_ENTITY_CONSTANT
 	 |'Weekend'|'Weekday'
 	;
 
-TIME_FRAME_CONSTANT
-	:(NUMBER WS* TIMEFRAME WS* SYMPOL_PLUS  )* WS* NUMBER WS* TIMEFRAME
+/*TIME_FRAME_CONSTANT
+	:(NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS  )* WS* NUMBER WS* TIMEFRAME_TYPE
 		 
 	;	
-   
+  */ 
 // End by Zheng
 
 
