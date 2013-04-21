@@ -18,7 +18,7 @@ translationUnit
 	
 
 importedLibraries
-	: 'import' IDENT ';' //TODO: IDENT should be replaced by a valid library
+	: 'import' STRING_CONSTANT ';'
 	;
 	
 programBody
