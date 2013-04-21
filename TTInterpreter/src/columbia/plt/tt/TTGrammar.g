@@ -51,20 +51,20 @@ timeFrameDefnStmt
 	;
 
 taskDefnStmt
-	: 'Task' WS* IDENT ASSIGN WS* STRING WS* ';'
+	: 'Task' WS* IDENT ASSIGN WS* STRING_CONSTANT WS* ';'
 	;
 
 fieldDefnStmt
-	: IDENT '.''name' WS* ASSIGN STRING WS* ';'
+	: IDENT '.''name' WS* ASSIGN STRING_CONSTANT WS* ';'
 	| IDENT '.' 'start' WS* ASSIGN DATE_CONSTANT WS* ';'
 	| IDENT '.' 'end'	WS*	ASSIGN DATE_CONSTANT WS* ';'
-	| IDENT '.' 'location' WS* ASSIGN STRING WS* ';'
-	| IDENT '.' 'description' WS* ASSIGN STRING WS* ';'
+	| IDENT '.' 'location' WS* ASSIGN STRING_CONSTANT WS* ';'
+	| IDENT '.' 'description' WS* ASSIGN STRING_CONSTANT WS* ';'
 	;
 	
 stringDefnStmt
-	: 'String' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
-	| IDENT WS* ASSIGN WS* STRING ';'
+	: 'String' WS* IDENT WS* ASSIGN WS* STRING_CONSTANT WS* ';'
+	| IDENT WS* ASSIGN WS* STRING_CONSTANT ';'
 	;
 
 numberDefnStmt
@@ -73,7 +73,7 @@ numberDefnStmt
 	;
 
 calendarDefnStmt
-	: 'Calendar' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
+	: 'Calendar' WS* IDENT WS* ASSIGN WS* STRING_CONSTANT WS* ';'
 	;
 	
 
@@ -151,7 +151,7 @@ exitStatement
 	;
 	
 readStatement
-	: 'read' '(' STRING ')' ';'
+	: 'read' '(' STRING_CONSTANT ')' ';'
 	;
 	
 functionInvocationStatement
@@ -171,7 +171,7 @@ expressionList
 	;
 	
 
-print : 'print' '(' STRING  ')' ';' {System.out.println($STRING.text);} ; 
+print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING.text);} ; 
 
 
 
@@ -226,7 +226,7 @@ primaryExpression
     ;
 
 stringExpression
-	: STRING ((PLUS) STRING)*
+	: STRING_CONSTANT ((PLUS) STRING_CONSTANT)*
 	;
 	
 	
@@ -258,7 +258,7 @@ fragment SYMPOL_PLUS  : '+';
 
 
 IDENT 	: 	('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-STRING 	: 	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|' ')+ QUOTE;
+//STRING 	: 	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|' '|SYMBOL|SPACE)+ QUOTE;
 QUOTE 	: 	'\"' ;
 WS 			: 	(' '|'\t'|'\n'|'\r'|'\f')+ 	{$channel = HIDDEN;};
 COMMENT : 	'//' (~('\n'|'\r'))*		{ $channel = HIDDEN; };
@@ -285,7 +285,7 @@ NUMBER: DIGIT+;
 
 fragment BOOL    : 'true' | 'false' ;
 
-STRING_CONSTANT: '"' NONCONTROL_CHAR* '"';
+STRING_CONSTANT: '"' NONCONTROL_CHAR+ '"';
 fragment NONCONTROL_CHAR: LETTER | DIGIT | SYMBOL | SPACE;
 fragment LETTER: LOWER | UPPER;
 fragment LOWER: 'a'..'z';
