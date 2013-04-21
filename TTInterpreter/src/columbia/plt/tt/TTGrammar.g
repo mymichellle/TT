@@ -12,6 +12,35 @@ options {
 	package columbia.plt.tt;
 }
 
+translationUnit
+	: importedLibraries* WS* programBody
+	;
+	
+importedLibraries
+	: 'import' WS* IDENT ';'
+	;
+	
+programBody
+	: methodsAndFieldsDeclarations*
+	;
+
+methodsAndFieldsDeclarations
+	: declarationStatement
+	| methodDeclarations
+	;
+	
+methodDeclarations
+	: methodSignature methodBody
+	;
+	
+methodSignature
+	: type? IDENT '(' ')'
+	;
+
+methodBody
+	:'{' statement_type* '}'
+	;
+
 // Variable declaration and definition
 //@Author : Athresh
 
@@ -25,7 +54,7 @@ type
 	| 'Date'
 	| 'Task'
 	| 'TimeFrame'
-	|	'Calendar'
+	| 'Calendar'
 	| 'Time'
 	;
 	
@@ -86,7 +115,7 @@ statement
 statement_type 
 	: print
 	| declarationStatement
-	|	definitionStatement
+	| definitionStatement
 	| ifThenStatement
 	| everyFromToByStatement
 	| everyInStatement
@@ -95,6 +124,7 @@ statement_type
 	| exitStatement
 	| readStatement
 	| functionInvocationStatement
+	| returnStatement
 	;
 
 expression
@@ -149,7 +179,11 @@ continueStatement
 exitStatement
 	: 'exit' ';'
 	;
-	
+
+returnStatement
+	: 'return' expression? ';'
+	;
+
 readStatement
 	: 'read' '(' STRING_CONSTANT ')' ';'
 	;
