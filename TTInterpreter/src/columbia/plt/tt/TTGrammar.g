@@ -173,7 +173,7 @@ expressionList
 	;
 	
 
-print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING.text);} ; 
+print : 'print' '(' STRING_CONSTANT ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
 
 
 
