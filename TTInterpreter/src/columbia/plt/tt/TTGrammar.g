@@ -90,8 +90,6 @@ statement_type
 	| ifThenStatement
 	| everyFromToByStatement
 	| everyInStatement
-/*	| everyInFromToStatement
-	| everyInOnStatement*/
 	| breakStatement
 	| continueStatement
 	| exitStatement
@@ -114,7 +112,7 @@ elseStatement
 	;
 
 everyFromToByStatement
-	: 'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}'
+	: 'every'! 'Date'! IDENT^ 'from'! dateOrIdent 'to'! dateOrIdent 'by'! timeframeOrIdent '{'! statement_type* '}'!
 	;
   
 everyInStatement
@@ -132,7 +130,7 @@ loopOptions
 	
 dateOrIdent
 	: IDENT
-//	| date	
+	| DATE_CONSTANT	
 	; 
 	
 timeframeOrIdent
