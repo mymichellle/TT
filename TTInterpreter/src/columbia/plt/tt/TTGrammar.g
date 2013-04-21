@@ -13,11 +13,12 @@ options {
 }
 
 translationUnit
-	: importedLibraries* WS* programBody
+	: importedLibraries* programBody
 	;
 	
+
 importedLibraries
-	: 'import' WS* IDENT ';'
+	: 'import' IDENT ';' //TODO: IDENT should be replaced by a valid library
 	;
 	
 programBody
@@ -34,9 +35,20 @@ methodDeclarations
 	;
 	
 methodSignature
-	: type? IDENT '(' ')'
+	: type? IDENT methodParameters
+	;
+	
+methodParameters
+	: '(' methodParametersList? ')'
 	;
 
+methodParametersList
+	: IDENT
+	;
+
+typeDeclaration
+	: type IDENT
+	;
 methodBody
 	:'{' statement_type* '}'
 	;
