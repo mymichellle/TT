@@ -25,8 +25,8 @@ type
 	| 'Date'
 	| 'Task'
 	| 'TimeFrame'
-	|	'Calendar'
-	|'Time'
+	| 'Calendar'
+	| 'Time'
 	;
 	
 definitionStatement
@@ -46,8 +46,8 @@ dateDefnStmt
 	;
 	
 timeFrameDefnStmt
-	: 'Timeframe' WS* IDENT WS* ASSIGN WS* timeFrameConstant WS* ';'
-	| IDENT WS* ASSIGN  WS* timeFrameConstant WS* ';'
+	: 'Timeframe' WS* IDENT WS* ASSIGN WS* TIME_FRAME_CONSTANT WS* ';'
+	| IDENT WS* ASSIGN  WS* TIME_FRAME_CONSTANT WS* ';'
 	;
 
 taskDefnStmt
@@ -58,13 +58,13 @@ fieldDefnStmt
 	: IDENT '.''name' WS* ASSIGN STRING WS* ';'
 	| IDENT '.' 'start' WS* ASSIGN DATE_CONSTANT WS* ';'
 	| IDENT '.' 'end'	WS*	ASSIGN DATE_CONSTANT WS* ';'
-	| IDENT '.' 'location' WS* ASSIGN STRING WS* ';'
-	| IDENT '.' 'description' WS* ASSIGN STRING WS* ';'
+	| IDENT '.' 'location' WS* ASSIGN STRING_CONSTANT WS* ';'
+	| IDENT '.' 'description' WS* ASSIGN STRING_CONSTANT WS* ';'
 	;
 	
 stringDefnStmt
-	: 'String' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
-	| IDENT WS* ASSIGN WS* STRING ';'
+	: 'String' WS* IDENT WS* ASSIGN WS* STRING_CONSTANT WS* ';'
+	| IDENT WS* ASSIGN WS* STRING_CONSTANT ';'
 	;
 
 numberDefnStmt
@@ -73,7 +73,7 @@ numberDefnStmt
 	;
 
 calendarDefnStmt
-	: 'Calendar' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
+	: 'Calendar' WS* IDENT WS* ASSIGN WS* STRING_CONSTANT WS* ';'
 	;
 	
 
@@ -132,12 +132,12 @@ loopOptions
 	
 dateOrIdent
 	: IDENT
-//	| date	
+//	| date	        //WHAT IS THIS ?????
 	; 
 	
 timeframeOrIdent
 	: IDENT
-	| timeFrameConstant
+	| TIME_FRAME_CONSTANT
 	;
 	
 breakStatement
@@ -153,7 +153,7 @@ exitStatement
 	;
 	
 readStatement
-	: 'read' '(' STRING ')' ';'
+	: 'read' '(' STRING_CONSTANT ')' ';'
 	;
 	
 functionInvocationStatement
@@ -173,18 +173,11 @@ expressionList
 	;
 	
 
-print : 'print' '(' STRING  ')' ';' {System.out.println($STRING.text);} ; 
+print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING.text);} ; 
 
 
 
-timeFrame
-  : primaryExpression
-    ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
-  ;
 
-timeFrameConstant
-  : timeFrame ('+' timeFrame)*
- ;
 
 // Arithmetic Expressions .. Jason
 // @Author : Jason
@@ -228,7 +221,7 @@ primaryExpression
     ;
 
 stringExpression
-	: STRING ((PLUS) STRING)*
+	: STRING_CONSTANT ((PLUS) STRING_CONSTANT)*
 	;
 	
 	
@@ -265,6 +258,7 @@ QUOTE 	: 	'\"' ;
 WS 			: 	(' '|'\t'|'\n'|'\r'|'\f')+ 	{$channel = HIDDEN;};
 COMMENT : 	'//' (~('\n'|'\r'))*		{ $channel = HIDDEN; };
 
+
 DATE_CONSTANT:	YEAR DOT MONTH DOT DAY DOT HOUR DOT MINUTE 
  			  |	YEAR DOT MONTH DOT DAY DOT HOUR  
  			  | YEAR DOT MONTH DOT DAY 
@@ -275,17 +269,18 @@ DATE_CONSTANT:	YEAR DOT MONTH DOT DAY DOT HOUR DOT MINUTE
 fragment YEAR : DIGIT DIGIT DIGIT DIGIT; 
 fragment MONTH   :  ('0'('0'.. '9')) | ('1'('0'.. '2'));
 fragment DAY     :  ('0'('1'.. '9')) | (('1'..'2')('0'.. '9')) | ('3'('0'.. '1')) ;
-//           0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
+                 //     0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
 fragment HOUR    :  ('0'.. '1')('0'.. '9') | '2'('0'.. '3') ;    //[0 -1] [0 - 9]| 2 [0 - 3]
 fragment MINUTE  :  ('0'.. '5')('0'.. '9') ;
 
-fragment TIMEFRAME: 'year'|'years'|'month'|'months'|'weeks'|'week'|'day'|'days'|'hour'|'hours'|'minute'|'minutes'
-				;
+
 
 NUMBER: DIGIT+;
 
 
 fragment BOOL    : 'true' | 'false' ;
+
+
 
 STRING_CONSTANT: '"' NONCONTROL_CHAR* '"';
 fragment NONCONTROL_CHAR: LETTER | DIGIT | SYMBOL | SPACE;
@@ -308,11 +303,13 @@ fragment TIME_ENTITY_CONSTANT
 	 |'Weekend'|'Weekday'
 	;
 
-/*TIME_FRAME_CONSTANT
-	:(NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS  )* WS* NUMBER WS* TIMEFRAME_TYPE
-		 
+TIME_FRAME_CONSTANT
+	:(NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS  )* WS* NUMBER WS* TIMEFRAME_TYPE	 
 	;	
-  */ 
+
+fragment TIMEFRAME_TYPE: 'year'|'years'|'month'|'months'|'weeks'|'week'|'day'|'days'|'hour'|'hours'|'minute'|'minutes'
+				       ;  
+				       
 // End by Zheng
 
 
