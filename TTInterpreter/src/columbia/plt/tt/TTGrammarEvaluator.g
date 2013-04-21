@@ -15,6 +15,52 @@ options {
 }
 
 
+translationUnit
+	: importedLibraries* programBody
+	;
+
+importedLibraries
+	: 'import' STRING_CONSTANT ';'
+	;
+
+programBody
+	: methodsAndFieldsDeclarations*
+	;
+
+methodsAndFieldsDeclarations
+	: declarationStatement
+	| main
+	| methodDeclarations
+	;
+
+main
+	: 'BEGIN' statement_type* 'END'
+	;
+
+methodDeclarations
+	: methodSignature methodBody
+	;
+
+methodSignature
+	: type? IDENT methodParameters
+	;
+
+methodParameters
+	: '(' methodParametersList? ')'
+	;
+
+methodParametersList
+	: typeDeclaration (','typeDeclaration)*
+	;
+
+typeDeclaration
+	: type IDENT
+	;
+
+methodBody
+	:'{' statement_type* '}'
+	;
+
 // Variable declaration and definition
 //@Author : Athresh
 
