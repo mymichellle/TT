@@ -32,12 +32,8 @@ methodsAndFieldsDeclarations
 	| methodDeclarations
 	;
 
-//main
-//	: 'main()' methodBody
-//	;
-
 main
-	: 'BEGIN' statement_type* 'END'
+	: 'main()' methodBody
 	;
 
 methodDeclarations
