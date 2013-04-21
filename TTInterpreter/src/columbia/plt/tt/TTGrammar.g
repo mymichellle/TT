@@ -27,6 +27,7 @@ programBody
 
 methodsAndFieldsDeclarations
 	: declarationStatement
+	| definitionStatement 
 	| main
 	| methodDeclarations
 	;

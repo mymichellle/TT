@@ -29,6 +29,7 @@ programBody
 
 methodsAndFieldsDeclarations
 	: declarationStatement
+	| definitionStatement 
 	| main
 	| methodDeclarations
 	;
@@ -39,6 +40,9 @@ main
 
 methodDeclarations
 	: methodSignature methodBody
+	{
+		{System.out.println("found a decl");} ;
+	}
 	;
 
 methodSignature
