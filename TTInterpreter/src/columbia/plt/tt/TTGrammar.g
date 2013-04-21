@@ -26,7 +26,7 @@ type
 	| 'Task'
 	| 'TimeFrame'
 	|	'Calendar'
-	|'Time'
+	| 'Time'
 	;
 	
 definitionStatement
