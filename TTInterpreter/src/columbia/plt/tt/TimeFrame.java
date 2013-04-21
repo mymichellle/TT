@@ -25,6 +25,37 @@ public class TimeFrame {
   	this.minutes = minutes;
   }
   
+  public TimeFrame(String timeFrameConst) {
+    this.years = 0;
+    this.months = 0;
+    this.days = 0;
+    this.hours = 0;
+    this.minutes = 0;  	
+    String[] timeFrameParts = timeFrameConst.split("\\+");
+                  	
+    for (int i = 0; i < timeFrameParts.length; i++) {
+      int index = timeFrameParts[i].toLowerCase().indexOf("years");
+      if (index >= 0)
+        this.years += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
+                                        		
+      index = timeFrameParts[i].toLowerCase().indexOf("months");
+      if (index >= 0)
+        this.months += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
+                                                                		
+      index = timeFrameParts[i].toLowerCase().indexOf("days");
+      if (index >= 0)
+        this.days += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
+                                                                                      		
+      index = timeFrameParts[i].toLowerCase().indexOf("hours");
+      if (index >= 0)
+        this.hours += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
+                                                                                                            		
+      index = timeFrameParts[i].toLowerCase().indexOf("minutes");
+      if (index >= 0)
+        this.minutes += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
+    }
+  }
+  
   public TimeFrame(Date start, Date end) {
   	initialize(start, end);
   }
@@ -64,6 +95,6 @@ public class TimeFrame {
   
   @Override
   public String toString() {
-  	return "Years: " + Integer.toString(years) + ", Months: " + Integer.toString(months) + ", Days: " + Integer.toString(days) + ", Hours: " + Integer.toString(hours) + ". Minutes: " + Integer.toString(minutes);
+  	return "Years: " + Integer.toString(years) + ", Months: " + Integer.toString(months) + ", Days: " + Integer.toString(days) + ", Hours: " + Integer.toString(hours) + ", Minutes: " + Integer.toString(minutes);
   }
 }
