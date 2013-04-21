@@ -27,9 +27,18 @@ programBody
 
 methodsAndFieldsDeclarations
 	: declarationStatement
+	| main
 	| methodDeclarations
 	;
-	
+
+//main
+//	: 'main()' methodBody
+//	;
+
+main
+	: 'BEGIN' statement_type* 'END'
+	;
+
 methodDeclarations
 	: methodSignature methodBody
 	;
@@ -43,12 +52,13 @@ methodParameters
 	;
 
 methodParametersList
-	: IDENT
+	: typeDeclaration (','typeDeclaration)*
 	;
 
 typeDeclaration
 	: type IDENT
 	;
+
 methodBody
 	:'{' statement_type* '}'
 	;
