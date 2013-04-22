@@ -46,8 +46,8 @@ dateDefnStmt
 	;
 	
 timeFrameDefnStmt
-	: 'Timeframe' WS* IDENT WS* ASSIGN WS* TIME_FRAME_CONSTANT WS* ';'
-	| IDENT WS* ASSIGN  WS* TIME_FRAME_CONSTANT WS* ';'
+	: 'Timeframe' WS* IDENT WS* ASSIGN WS* timeFrameConstant WS* ';'
+	| IDENT WS* ASSIGN  WS* timeFrameConstant WS* ';'
 	;
 
 taskDefnStmt
@@ -137,7 +137,7 @@ dateOrIdent
 	
 timeframeOrIdent
 	: IDENT
-	| TIME_FRAME_CONSTANT
+	| timeFrameConstant
 	;
 	
 breakStatement
@@ -176,6 +176,9 @@ expressionList
 print : 'print' '(' STRING_CONSTANT ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
 
 
+timeFrameConstant
+	: (NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS )* WS* NUMBER WS* TIMEFRAME_TYPE	 
+	;	
 
 
 
@@ -303,9 +306,7 @@ fragment TIME_ENTITY_CONSTANT
 	 |'Weekend'|'Weekday'
 	;
 
-TIME_FRAME_CONSTANT
-	:(NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS  )* WS* NUMBER WS* TIMEFRAME_TYPE	 
-	;	
+
 
 fragment TIMEFRAME_TYPE: 'year'|'years'|'month'|'months'|'weeks'|'week'|'day'|'days'|'hour'|'hours'|'minute'|'minutes'
 				       ;  
