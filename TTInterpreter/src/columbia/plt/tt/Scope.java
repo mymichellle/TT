@@ -18,4 +18,9 @@ public class Scope extends HashMap<String, Symbol> {
       this.put(name, new Symbol(type, value));
     }
     
+    public Object getSymbol(String name)
+    {
+    	return this.getSymbol(name);
+    }
+    
 }

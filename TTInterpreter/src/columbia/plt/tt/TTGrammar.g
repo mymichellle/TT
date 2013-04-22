@@ -12,6 +12,54 @@ options {
 	package columbia.plt.tt;
 }
 
+translationUnit
+	: importedLibraries* programBody
+	;
+	
+
+importedLibraries
+	: 'import' STRING_CONSTANT ';'
+	;
+	
+programBody
+	: methodsAndFieldsDeclarations*
+	;
+
+methodsAndFieldsDeclarations
+	: declarationStatement
+	| definitionStatement 
+	| main
+	| methodDeclarations
+	;
+
+main
+	: 'main()' methodBody
+	;
+
+methodDeclarations
+	: methodSignature methodBody
+	;
+	
+methodSignature
+	: type? IDENT methodParameters
+	;
+	
+methodParameters
+	: '(' methodParametersList? ')'
+	;
+
+methodParametersList
+	: typeDeclaration (','typeDeclaration)*
+	;
+
+typeDeclaration
+	: type IDENT
+	;
+
+methodBody
+	:'{' statement_type* '}'
+	;
+
 // Variable declaration and definition
 //@Author : Athresh
 
@@ -51,11 +99,11 @@ timeFrameDefnStmt
 	;
 
 taskDefnStmt
-	: 'Task' WS* IDENT ASSIGN WS* STRING WS* ';'
+	: 'Task' WS* IDENT ASSIGN WS* STRING_CONSTANT WS* ';'
 	;
 
 fieldDefnStmt
-	: IDENT '.''name' WS* ASSIGN STRING WS* ';'
+	: IDENT '.''name' WS* ASSIGN STRING_CONSTANT WS* ';'
 	| IDENT '.' 'start' WS* ASSIGN DATE_CONSTANT WS* ';'
 	| IDENT '.' 'end'	WS*	ASSIGN DATE_CONSTANT WS* ';'
 	| IDENT '.' 'location' WS* ASSIGN STRING_CONSTANT WS* ';'
@@ -86,17 +134,16 @@ statement
 statement_type 
 	: print
 	| declarationStatement
-	|	definitionStatement
+	| definitionStatement
 	| ifThenStatement
 	| everyFromToByStatement
 	| everyInStatement
-/*	| everyInFromToStatement
-	| everyInOnStatement*/
 	| breakStatement
 	| continueStatement
 	| exitStatement
 	| readStatement
 	| functionInvocationStatement
+	| returnStatement
 	;
 
 expression
@@ -114,7 +161,7 @@ elseStatement
 	;
 
 everyFromToByStatement
-	: 'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}'
+	: 'every'! 'Date'! IDENT^ 'from'! dateOrIdent 'to'! dateOrIdent 'by'! timeframeOrIdent '{'! statement_type* '}'!
 	;
   
 everyInStatement
@@ -132,7 +179,7 @@ loopOptions
 	
 dateOrIdent
 	: IDENT
-//	| date	        //WHAT IS THIS ?????
+	| DATE_CONSTANT	
 	; 
 	
 timeframeOrIdent
@@ -151,7 +198,11 @@ continueStatement
 exitStatement
 	: 'exit' ';'
 	;
-	
+
+returnStatement
+	: 'return' expression? ';'
+	;
+
 readStatement
 	: 'read' '(' STRING_CONSTANT ')' ';'
 	;
@@ -173,14 +224,21 @@ expressionList
 	;
 	
 
-print : 'print' '(' STRING_CONSTANT ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
+print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
 
 
 timeFrameConstant
 	: (NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS )* WS* NUMBER WS* TIMEFRAME_TYPE	 
 	;	
 
+timeFrame
+  : primaryExpression
+    ('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
+  ;
 
+timeFrameConstant
+  : timeFrame ('+' timeFrame)*
+ ;
 
 // Arithmetic Expressions .. Jason
 // @Author : Jason
@@ -256,11 +314,10 @@ fragment SYMPOL_PLUS  : '+';
 
 
 IDENT 	: 	('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-STRING 	: 	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|' ')+ QUOTE;
+//STRING 	: 	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|' '|SYMBOL|SPACE)+ QUOTE;
 QUOTE 	: 	'\"' ;
 WS 			: 	(' '|'\t'|'\n'|'\r'|'\f')+ 	{$channel = HIDDEN;};
 COMMENT : 	'//' (~('\n'|'\r'))*		{ $channel = HIDDEN; };
-
 
 DATE_CONSTANT:	YEAR DOT MONTH DOT DAY DOT HOUR DOT MINUTE 
  			  |	YEAR DOT MONTH DOT DAY DOT HOUR  
@@ -272,20 +329,19 @@ DATE_CONSTANT:	YEAR DOT MONTH DOT DAY DOT HOUR DOT MINUTE
 fragment YEAR : DIGIT DIGIT DIGIT DIGIT; 
 fragment MONTH   :  ('0'('0'.. '9')) | ('1'('0'.. '2'));
 fragment DAY     :  ('0'('1'.. '9')) | (('1'..'2')('0'.. '9')) | ('3'('0'.. '1')) ;
-                 //     0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
+//           0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
 fragment HOUR    :  ('0'.. '1')('0'.. '9') | '2'('0'.. '3') ;    //[0 -1] [0 - 9]| 2 [0 - 3]
 fragment MINUTE  :  ('0'.. '5')('0'.. '9') ;
 
-
+fragment TIMEFRAME: 'year'|'years'|'month'|'months'|'weeks'|'week'|'day'|'days'|'hour'|'hours'|'minute'|'minutes'
+				;
 
 NUMBER: DIGIT+;
 
 
 fragment BOOL    : 'true' | 'false' ;
 
-
-
-STRING_CONSTANT: '"' NONCONTROL_CHAR* '"';
+STRING_CONSTANT: '"' NONCONTROL_CHAR+ '"';
 fragment NONCONTROL_CHAR: LETTER | DIGIT | SYMBOL | SPACE;
 fragment LETTER: LOWER | UPPER;
 fragment LOWER: 'a'..'z';
@@ -306,11 +362,19 @@ fragment TIME_ENTITY_CONSTANT
 	 |'Weekend'|'Weekday'
 	;
 
+<<<<<<< HEAD
 
 
 fragment TIMEFRAME_TYPE: 'year'|'years'|'month'|'months'|'weeks'|'week'|'day'|'days'|'hour'|'hours'|'minute'|'minutes'
 				       ;  
 				       
+=======
+/*TIME_FRAME_CONSTANT
+	:(NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS  )* WS* NUMBER WS* TIMEFRAME_TYPE
+		 
+	;	
+  */ 
+>>>>>>> 9130c4444a502f74431cc17b1eeedcd7a6d5d3b7
 // End by Zheng
 
 

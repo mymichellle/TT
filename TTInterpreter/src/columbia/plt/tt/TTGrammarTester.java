@@ -10,11 +10,13 @@ import columbia.plt.tt.TTGrammarEvaluator;
 import columbia.plt.tt.TTGrammarLexer;
 import columbia.plt.tt.TTGrammarParser;
 import columbia.plt.tt.TTGrammarParser.declarationStatement_return;
+import columbia.plt.tt.TTGrammarParser.everyFromToByStatement_return;
 
 public class TTGrammarTester {
 
   public static void main(String[] args) throws RecognitionException {		
-  	CharStream stream = new ANTLRStringStream(	"Calendar x;");
+  	//CharStream stream = new ANTLRStringStream(	"Calendar x;");
+	  CharStream stream = new ANTLRStringStream( "Calendar x; every Date d from 2013.01.01 to 2013.01.03 by tf { }");
   	TTGrammarLexer lexer = new TTGrammarLexer(stream);
   	TokenStream tokenStream = new CommonTokenStream(lexer);
   	TTGrammarParser parser = new TTGrammarParser(tokenStream);
@@ -22,8 +24,12 @@ public class TTGrammarTester {
   	declarationStatement_return declaration = parser.declarationStatement();
   	System.out.println(declaration.tree.toStringTree());
   	
-  	TTGrammarEvaluator evaluator = new TTGrammarEvaluator(new CommonTreeNodeStream(declaration.tree));
-  	evaluator.declarationStatement();
+  	everyFromToByStatement_return every = parser.everyFromToByStatement();
+  	System.out.println(every.tree.toStringTree());
+  	
+  	TTGrammarEvaluator evaluator = new TTGrammarEvaluator(new CommonTreeNodeStream(every.tree));//declaration.tree));
+  	//evaluator.declarationStatement();
+  	evaluator.everyFromToByStatement();
   }
 
 }
