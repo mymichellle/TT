@@ -8,10 +8,14 @@ options {
 
 @header {
   package columbia.plt.tt;
-  import columbia.plt.tt.datatype.*;
-  import columbia.plt.tt.interpreter.*;
-  
- 
+  import columbia.plt.tt.datatype.Calendar;
+  import columbia.plt.tt.datatype.Date;
+  import columbia.plt.tt.datatype.Task;
+  import columbia.plt.tt.datatype.TimeFrame;
+	import columbia.plt.tt.interpreter.*;
+	import columbia.plt.tt.evaluator.implementations.*;
+	import org.antlr.runtime.BitSet;
+  import java.util.*;
 }
 
 @members {
@@ -19,130 +23,86 @@ options {
 }
 
 
-translationUnit
-	: importedLibraries* programBody
-	;
-
-importedLibraries
-	: 'import' STRING_CONSTANT ';'
-	;
-
-programBody
-	: methodsAndFieldsDeclarations*
-	;
-
-methodsAndFieldsDeclarations
-	: declarationStatement
-	| definitionStatement 
-	| main
-	| methodDeclarations
-	;
-
-main
-	: 'main()' methodBody
-	;
-
-methodDeclarations
-	: methodSignature methodBody
-	{
-		{System.out.println("found a decl");} ;
-	}
-	;
-
-methodSignature
-	: type? IDENT methodParameters
-	;
-
-methodParameters
-	: '(' methodParametersList? ')'
-	;
-
-methodParametersList
-	: typeDeclaration (','typeDeclaration)*
-	;
-
-typeDeclaration
-	: type IDENT
-	;
-
-methodBody
-	:'{' statement_type* '}'
-	;
-
 // Variable declaration and definition
 //@Author : Athresh
 
 declarationStatement
-  : ^(e=type WS* IDENT WS* ';') {			
+  : ^(e=type IDENT) {			
+  	
+  		
+  		//we can try switch here if all of you are using java 7
+  		if( e == "String"){
+  			int scopeID = symbolTable.addScope();
+  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "String", null);				
+
+  		}
+  		if( e == "Number"){
+  			int scopeID = symbolTable.addScope();
+  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Number", null);				
+ 
+  		}
+  		if( e == "Bool"){
+  			int scopeID = symbolTable.addScope();
+  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Bool", null);				
+ 
+  		}
+  		
+  		if( e == "Date"){
+  			int scopeID = symbolTable.addScope();
+  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Date", null);					
+  		
+  		}
+  		if( e == "TimeFrame"){
+  			int scopeID = symbolTable.addScope();
+  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "TimeFrame", null);				
+
+  		}
   		if (e == "Calendar") {				
   			int scopeID = symbolTable.addScope();
-  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Calendar", new Calendar("myCalendar"));				
-  			Calendar c = (Calendar)symbolTable.getScope(scopeID).get($IDENT.text).getValue();
-  			System.out.println(c.getName());				
+  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Calendar", null);				
+  			
+  		}
+  		if( e == "Task"){
+  			int scopeID = symbolTable.addScope();
+  			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Task", null);				
   		}
   	}
   ;
 
+definitionStatement
+	: ^(t=type as=assignmentStmt) {
+	
+		if(t == "String"){
+			// code to check if as is string
+		}
+	
+	}
+	
+	;
+
+assignmentStmt returns [Evaluator result]
+	:	^(ASSIGN IDENT e=expression)
+	| ^(ASSIGN memberAccessExpression e=expression)
+	;
+
 type returns [String result]
   : 'String' {result = "String";}
   | 'Number' {result = "Number";}
+  | 'Bool' {result = "Bool";}
   | 'Date' {result = "Date";}
   | 'Task' {result = "Task";}
   | 'TimeFrame' {result = "TimeFrame";}
   | 'Calendar' {result = "Calendar";}
-  | 'Time' {result = "Time";}
   ;
   
-definitionStatement
-  : dateDefnStmt
-  | calendarDefnStmt
-  | timeFrameDefnStmt
-  | taskDefnStmt
-  | stringDefnStmt
-  | numberDefnStmt
-  | fieldDefnStmt
-  ;
-  
-
-dateDefnStmt
-  : 'Date' WS* IDENT WS* ASSIGN WS* DATE_CONSTANT WS* ';'
-  |	IDENT ASSIGN WS* DATE_CONSTANT WS* ';'
-  ;
-  
-timeFrameDefnStmt
-  : 'Timeframe' WS* IDENT WS* ASSIGN WS* TIME_FRAME_CONSTANT WS* ';'
-  | IDENT WS* ASSIGN  WS* TIME_FRAME_CONSTANT WS* ';'
-  ;
-
-taskDefnStmt
-  : 'Task' WS* IDENT ASSIGN WS* STRING WS* ';'
-  ;
-
-fieldDefnStmt
-  : IDENT '.''name' WS* ASSIGN STRING WS* ';'
-  | IDENT '.' 'start' WS* ASSIGN DATE_CONSTANT WS* ';'
-  | IDENT '.' 'end'	WS*	ASSIGN DATE_CONSTANT WS* ';'
-  | IDENT '.' 'location' WS* ASSIGN STRING WS* ';'
-  | IDENT '.' 'description' WS* ASSIGN STRING WS* ';'
-  ;
-  
-stringDefnStmt
-  : 'String' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
-  | IDENT WS* ASSIGN WS* STRING ';'
-  ;
-
-numberDefnStmt
-  : 'Number' WS* IDENT WS* ASSIGN WS* NUMBER WS* ';'
-  | IDENT WS* ASSIGN WS* NUMBER ';'
-  ;
-
-calendarDefnStmt
-  : 'Calendar' WS* IDENT WS* ASSIGN WS* STRING WS* ';'
-  ;
-  
-
+memberAccessExpression
+	:	^(DOT IDENT IDENT )
+	;
+	
 //Statement
 //@Author : Michelle
+
+
 statement 
   : statement_type+
   ;
@@ -154,19 +114,12 @@ statement_type
   | ifThenStatement
   | everyFromToByStatement
   | everyInStatement
-/*  | everyInFromToStatement
-  | everyInOnStatement*/
   | untilStatement
   | breakStatement
   | continueStatement
   | exitStatement
   | readStatement
   | functionInvocationStatement
-  ;
-
-expression
-  : logicalExpression
-  | functionInvocation
   ;
 
 ifThenStatement
@@ -265,61 +218,52 @@ expressionList
   ;
   
 
-print : 'print' '(' STRING  ')' ';' {System.out.println($STRING.text);} ; 
+print : 'print' '(' STRING_CONSTANT  ')' ';' 		{System.out.println($STRING_CONSTANT.text);} ; 
 
 
+//// Arithmetic Expressions .. Jason
+//// @Author : Jason
 
-
+         
   
+expression returns [Evaluator result]
+	:^(PLUS s1=STRING s2=STRING)						{ result = s1.concat(s2);}
+	|^(OR op1 = expression op2=expression) 	{	result = op1 || op2;}
+	|^(AND op1= expression op2=expression)	{ result = op1 && op2;}
+	|^(o = (EQUALS | NOTEQUALS) 
+	op1=expression op2=expression)  				{ if (o == "==")
+		 																					result = (op1 == op2);
+		 																				else (o == "!=")
+		 																					result = (op1 != op2);	}
+	|	^(o = (LT | LTEQ | GT | GTEQ) 
+		op1=expression op2=expression) 				{	if (o == "<")
+																							result = op1 < op2;
+																					else if ( o == ">")
+																						result = op1 > op2;
+																					else if( o == ">=")
+																						result = (op1 >=op2);
+																					else if (o == "<=")
+																						result = (op1 <=op2);}
+	| ^(o = (PLUS| MINUS) 
+	op1=expression op2=expression)					{ if (o == '+')
+		 																						result = op1 + op2;
+		 																				else if( o == '-')
+		 																						result = op1 - op2;
+		 		
+		 																			}																					
+	| ^(o = (MULT | DIV | MOD) 
+	op1=expression op2=expression)					{ if( o == '*')
+																								result = op1 * op2;
+																						else if( o == '/')
+																								result = op1 / op2;
+																					 }	
+
+	|	 ^(o=(NOT?) e= expression)						{ if (o == '!') result = !e;}																			 
 
 
 
-// Arithmetic Expressions .. Jason
-// @Author : Jason
-
-//program : logicalExpression
-//        | stringExpression
-//        ;
-        
-logicalExpression
-  : booleanAndExpression (OR booleanAndExpression)*
-    ;
-
-booleanAndExpression
-    : equalityExpression (AND equalityExpression)*
-    ;
-
-equalityExpression
-    : relationalExpression ((EQUALS | NOTEQUALS) relationalExpression)*
-    ;
-
-relationalExpression
-    : additiveExpression ((LT | LTEQ | GT | GTEQ) additiveExpression)*
-    ;
-
-additiveExpression
-    : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
-    ;
-
-multiplicativeExpression
-    : unaryExpression ((MULT | DIV | MOD) unaryExpression)*
-    ;
-
-unaryExpression 
-  : NOT? primaryExpression
-    ;
-
-primaryExpression 
-  : '(' expression ')'
-  | NUMBER
-  | IDENT
-    ;
-
-stringExpression
-  : STRING ((PLUS) STRING)*
-  ;
-  
-
-
-
+	| IDENT 																{symbolTable.get($IDENT.text);}
+	
+	| CONSTANT															{ result = $CONSTANT.text;}
+	;
 

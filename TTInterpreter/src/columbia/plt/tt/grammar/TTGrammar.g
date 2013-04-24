@@ -3,69 +3,29 @@ grammar TTGrammar;
 options {
   language = Java;
   output=AST;
-  ASTLabelType =  CommonTree;
+  ASTLabelType=CommonTree;
 }
 @header{
 	package columbia.plt.tt;
+	import columbia.plt.tt.datatype.*;
+	import columbia.plt.tt.interpreter.*;
 }	
 @lexer :: header {
 	package columbia.plt.tt;
 }
 
-translationUnit
-	: importedLibraries* programBody
-	;
-	
-
-importedLibraries
-	: 'import' STRING_CONSTANT ';'
-	;
-	
-programBody
-	: methodsAndFieldsDeclarations*
-	;
-
-methodsAndFieldsDeclarations
-	: declarationStatement
-	| definitionStatement 
-	| main
-	| methodDeclarations
-	;
-
-main
-	: 'main()' methodBody
-	;
-
-methodDeclarations
-	: methodSignature methodBody
-	;
-	
-methodSignature
-	: type? IDENT methodParameters
-	;
-	
-methodParameters
-	: '(' methodParametersList? ')'
-	;
-
-methodParametersList
-	: typeDeclaration (','typeDeclaration)*
-	;
-
-typeDeclaration
-	: type IDENT
-	;
-
-methodBody
-	:'{' statement_type* '}'
-	;
-
 // Variable declaration and definition
 //@Author : Athresh
 
 declarationStatement
-	: type^ WS* IDENT WS* ';'
+	: type (WS*)! IDENT (WS*)! SEMICOLON!
 	;
+
+	
+definitionStatement
+	: type (WS*)! assignmentStmt 
+	;
+
 
 type
 	: 'String'
@@ -73,57 +33,15 @@ type
 	| 'Date'
 	| 'Task'
 	| 'TimeFrame'
-	| 'Calendar'
+	|	'Calendar'
 	| 'Time'
 	;
-	
-definitionStatement
-	: dateDefnStmt
-	|	calendarDefnStmt
-	| timeFrameDefnStmt
-	|	taskDefnStmt
-	| stringDefnStmt
-	| numberDefnStmt
-	|	fieldDefnStmt
-	;
-	
 
-dateDefnStmt
-	: 'Date' WS* IDENT WS* ASSIGN WS* DATE_CONSTANT WS* ';'
-	|	IDENT ASSIGN WS* DATE_CONSTANT WS* ';'
-	;
-	
-timeFrameDefnStmt
-	: 'Timeframe' WS* IDENT WS* ASSIGN WS* timeFrameConstant WS* ';'
-	| IDENT WS* ASSIGN  WS* timeFrameConstant WS* ';'
+assignmentStmt
+	: IDENT ^ASSIGN (WS*)! expression (WS*)! SEMICOLON!
+	| memberAccessExpression ^ASSIGN (WS*)! expression (WS*)! SEMICOLON!
 	;
 
-taskDefnStmt
-	: 'Task' WS* IDENT ASSIGN WS* STRING_CONSTANT WS* ';'
-	;
-
-fieldDefnStmt
-	: IDENT '.''name' WS* ASSIGN STRING_CONSTANT WS* ';'
-	| IDENT '.' 'start' WS* ASSIGN DATE_CONSTANT WS* ';'
-	| IDENT '.' 'end'	WS*	ASSIGN DATE_CONSTANT WS* ';'
-	| IDENT '.' 'location' WS* ASSIGN STRING_CONSTANT WS* ';'
-	| IDENT '.' 'description' WS* ASSIGN STRING_CONSTANT WS* ';'
-	;
-	
-stringDefnStmt
-	: 'String' WS* IDENT WS* ASSIGN WS* STRING_CONSTANT WS* ';'
-	| IDENT WS* ASSIGN WS* STRING_CONSTANT ';'
-	;
-
-numberDefnStmt
-	: 'Number' WS* IDENT WS* ASSIGN WS* NUMBER WS* ';'
-	| IDENT WS* ASSIGN WS* NUMBER ';'
-	;
-
-calendarDefnStmt
-	: 'Calendar' WS* IDENT WS* ASSIGN WS* STRING_CONSTANT WS* ';'
-	;
-	
 
 //Statement
 //@Author : Michelle
@@ -134,7 +52,8 @@ statement
 statement_type 
 	: print
 	| declarationStatement
-	| definitionStatement
+	|	definitionStatement
+	|	assignmentStmt
 	| ifThenStatement
 	| everyFromToByStatement
 	| everyInStatement
@@ -143,7 +62,6 @@ statement_type
 	| exitStatement
 	| readStatement
 	| functionInvocationStatement
-	| returnStatement
 	;
 
 expression
@@ -161,7 +79,7 @@ elseStatement
 	;
 
 everyFromToByStatement
-	: 'every'! 'Date'! IDENT^ 'from'! dateOrIdent 'to'! dateOrIdent 'by'! timeframeOrIdent '{'! statement_type* '}'!
+	: 'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}'
 	;
   
 everyInStatement
@@ -188,27 +106,23 @@ timeframeOrIdent
 	;
 	
 breakStatement
-	: 'break' ';'
+	: 'break' SEMICOLON
 	;
 	
 continueStatement
-	: 'continue' ';'
+	: 'continue' SEMICOLON
 	;
 	
 exitStatement
-	: 'exit' ';'
+	: 'exit' SEMICOLON
 	;
-
-returnStatement
-	: 'return' expression? ';'
-	;
-
+	
 readStatement
-	: 'read' '(' STRING_CONSTANT ')' ';'
+	: 'read' '(' STRING_CONSTANT ')' SEMICOLON
 	;
 	
 functionInvocationStatement
-	: functionInvocation ';'
+	: functionInvocation SEMICOLON
 	;
 	
 functionInvocation
@@ -224,7 +138,7 @@ expressionList
 	;
 	
 
-print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
+print : 'print' '(' STRING_CONSTANT  ')' SEMICOLON {System.out.println($STRING_CONSTANT.text);} ; 
 
 
 
@@ -234,52 +148,52 @@ timeFrame
   ;
 
 timeFrameConstant
-  : timeFrame ('+' timeFrame)*
+ : timeFrame ('+' timeFrame)*
  ;
 
 // Arithmetic Expressions .. Jason
 // @Author : Jason
-
-//program : logicalExpression
-//        | stringExpression
-//        ;
-        
+      
 logicalExpression
-	: booleanAndExpression (OR booleanAndExpression)*
+	: booleanAndExpression (OR^ booleanAndExpression)*
     ;
 
 booleanAndExpression
-    : equalityExpression (AND equalityExpression)*
+    : equalityExpression (AND^ equalityExpression)*
     ;
 
 equalityExpression
-    : relationalExpression ((EQUALS | NOTEQUALS) relationalExpression)*
+    : relationalExpression ((EQUALS | NOTEQUALS)^ relationalExpression)*
     ;
 
 relationalExpression
-    : additiveExpression ((LT | LTEQ | GT | GTEQ) additiveExpression)*
+    : additiveExpression ((LT | LTEQ | GT | GTEQ)^ additiveExpression)*
     ;
 
 additiveExpression
-    : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
+    : multiplicativeExpression ((PLUS | MINUS)^ multiplicativeExpression)*
     ;
 
 multiplicativeExpression
-    : unaryExpression ((MULT | DIV | MOD) unaryExpression)*
+    : unaryExpression ((MULT | DIV | MOD)^ unaryExpression)*
     ;
+
+memberAccessExpression
+	:	IDENT DOT^ IDENT 
+	;
 
 unaryExpression 
-	: NOT? primaryExpression
-    ;
+	: (NOT?)^  primaryExpression
+  ;
 
 primaryExpression 
-	: '(' expression ')'
-	| NUMBER
+	: '('! expression ')'!
+	| CONSTANT
 	| IDENT
-    ;
+  ;
 
 stringExpression
-	: STRING_CONSTANT ((PLUS) STRING_CONSTANT)*
+	: STRING_CONSTANT ((PLUS)^ STRING_CONSTANT)*
 	;
 	
 	
@@ -307,63 +221,62 @@ NOT   		: 'not';
 //@Author : Zheng
 
 DOT         : '.';
-fragment SYMPOL_PLUS  : '+';
-
-
+SEMICOLON		: ';' ;
 IDENT 	: 	('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-//STRING 	: 	QUOTE ('a'..'z'|'A'..'Z'|'0'..'9'|' '|SYMBOL|SPACE)+ QUOTE;
-QUOTE 	: 	'\"' ;
 WS 			: 	(' '|'\t'|'\n'|'\r'|'\f')+ 	{$channel = HIDDEN;};
 COMMENT : 	'//' (~('\n'|'\r'))*		{ $channel = HIDDEN; };
 
-DATE_CONSTANT:	YEAR DOT MONTH DOT DAY DOT HOUR DOT MINUTE 
+
+CONSTANT : STRING_CONSTANT
+				|	DATE_CONSTANT
+				| TIMEFRAME
+				| NUMBER
+				| TIME_ENTITY_CONSTANT
+				;
+
+fragment STRING_CONSTANT: QUOTE NONCONTROL_CHAR+ QUOTE ;
+fragment DATE_CONSTANT:	YEAR DOT MONTH DOT DAY DOT HOUR DOT MINUTE 
  			  |	YEAR DOT MONTH DOT DAY DOT HOUR  
  			  | YEAR DOT MONTH DOT DAY 
  			  | YEAR DOT MONTH  
  			  | YEAR  			   
  			  ;
+fragment NUMBER		: 	DIGIT+;
+fragment YEAR 		: 	DIGIT DIGIT DIGIT DIGIT; 
+fragment MONTH   	:  ('0'('0'.. '9')) | ('1'('0'.. '2'));
+fragment DAY     	:  ('0'('1'.. '9')) | (('1'..'2')('0'.. '9')) | ('3'('0'.. '1')) ;
+fragment HOUR    	:  ('0'.. '1')('0'.. '9') | '2'('0'.. '3') ;    
+fragment MINUTE  	:  ('0'.. '5')('0'.. '9') ;
 
-fragment YEAR : DIGIT DIGIT DIGIT DIGIT; 
-fragment MONTH   :  ('0'('0'.. '9')) | ('1'('0'.. '2'));
-fragment DAY     :  ('0'('1'.. '9')) | (('1'..'2')('0'.. '9')) | ('3'('0'.. '1')) ;
-//           0 [1 - 9] | [1 - 2][0 - 9] | 3[0 - 1]
-fragment HOUR    :  ('0'.. '1')('0'.. '9') | '2'('0'.. '3') ;    //[0 -1] [0 - 9]| 2 [0 - 3]
-fragment MINUTE  :  ('0'.. '5')('0'.. '9') ;
-
-fragment TIMEFRAME: 'year'|'years'|'month'|'months'|'weeks'|'week'|'day'|'days'|'hour'|'hours'|'minute'|'minutes'
-				;
-
-NUMBER: DIGIT+;
-
+fragment TIMEFRAME: 'year'|'years'|'month'|'months'
+									|'weeks'|'week'|'day'|'days'
+									|'hour'|'hours'|'minute'|'minutes'
+									;
 
 fragment BOOL    : 'true' | 'false' ;
-
-STRING_CONSTANT: '"' NONCONTROL_CHAR+ '"';
 fragment NONCONTROL_CHAR: LETTER | DIGIT | SYMBOL | SPACE;
+fragment QUOTE 	: 	'\"' ;
 fragment LETTER: LOWER | UPPER;
 fragment LOWER: 'a'..'z';
 fragment UPPER: 'A'..'Z';
 fragment DIGIT: '0'..'9';
 fragment SPACE: ' ' | '\t';
+fragment SYMBOL: '!' | '#'..'/' | ':'..'@' | '['..'`' | '{'..'~';	
 // Note that SYMBOL does not include the double-quote character.
-fragment SYMBOL: '!' | '#'..'/' | ':'..'@' | '['..'`' | '{'..'~';
 // Windows uses \r\n. UNIX and Mac OS X use \n.
 // To use newlines as a terminator,
 // they can't be written to the hidden channel!
 
 
 fragment TIME_ENTITY_CONSTANT
-	: 'Monday'|'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday'
-	 |'January'|'February'|'March'|'April'|'May'|'June'|'July'|'August'
-	             |'September'|'October'|'November'|'December'
-	 |'Weekend'|'Weekday'
+	: 'Monday'|'Tuesday'|'Wednesday'|'Thursday'
+	|'Friday'|'Saturday'|'Sunday'
+	|'January'|'February'|'March'|'April'
+	|'May'|'June'|'July'|'August'
+	|'September'|'October'|'November'|'December'
+	|'Weekend'|'Weekday'
 	;
 
-/*TIME_FRAME_CONSTANT
-	:(NUMBER WS* TIMEFRAME_TYPE WS* SYMPOL_PLUS  )* WS* NUMBER WS* TIMEFRAME_TYPE
-		 
-	;	
-  */ 
 // End by Zheng
 
 
