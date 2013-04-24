@@ -88,6 +88,10 @@ type returns [String result]
   | 'Calendar' {result = "Calendar";}
   | 'Time' {result = "Time";}
   ;
+
+//zheng
+checkType returns [BOOL result]
+  : 
   
 definitionStatement
   : dateDefnStmt
