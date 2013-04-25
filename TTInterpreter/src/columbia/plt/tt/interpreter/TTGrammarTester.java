@@ -20,7 +20,7 @@ public class TTGrammarTester {
 
   public static void main(String[] args) throws RecognitionException {
     try {
-      CharStream stream = new ANTLRInputStream(new FileInputStream("C:/eclipse/workspace/TTInterpreter/src/columbia/plt/tt/Program1.tt"));
+      CharStream stream = new ANTLRInputStream(new FileInputStream("src/columbia/plt/tt/Program1.tt"));
       //CharStream stream = new ANTLRStringStream(	"Calendar x;");
       //CharStream stream = new ANTLRStringStream( "Calendar x; every Date d from 2013.01.01 to 2013.01.03 by tf { }");
       TTGrammarLexer lexer = new TTGrammarLexer(stream);
