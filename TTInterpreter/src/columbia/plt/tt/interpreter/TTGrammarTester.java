@@ -20,7 +20,7 @@ public class TTGrammarTester {
 
   public static void main(String[] args) throws RecognitionException {
     try {
-      CharStream stream = new ANTLRInputStream(new FileInputStream("/Program.tt"));
+      CharStream stream = new ANTLRInputStream(new FileInputStream("C:/eclipse/workspace/TTInterpreter/src/columbia/plt/tt/Program1.tt"));
       //CharStream stream = new ANTLRStringStream(	"Calendar x;");
       //CharStream stream = new ANTLRStringStream( "Calendar x; every Date d from 2013.01.01 to 2013.01.03 by tf { }");
       TTGrammarLexer lexer = new TTGrammarLexer(stream);
@@ -36,6 +36,18 @@ public class TTGrammarTester {
       TTGrammarEvaluator evaluator = new TTGrammarEvaluator(new CommonTreeNodeStream(every.getTree()));//declaration.tree));
   	//evaluator.declarationStatement();
       evaluator.everyFromToByStatement();
+      
+      for (int i = 0; i < lexer.getErrors().size(); i ++) {
+        System.out.println(lexer.getErrors().get(i));
+      }
+        		
+      for (int i = 0; i < parser.getErrors().size(); i ++) {
+      	System.out.println(lexer.getErrors().get(i));
+      }
+                    		
+      for (int i = 0; i < evaluator.getErrors().size(); i ++) {
+        System.out.println(evaluator.getErrors().get(i));
+      }
     } 
     catch (FileNotFoundException e) {
       e.printStackTrace();
