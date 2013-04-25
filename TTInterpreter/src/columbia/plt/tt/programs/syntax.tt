@@ -1,0 +1,47 @@
+// Comments here to be ignored by the compiler
+
+print("Hello world");
+
+var = 3;
+
+Date d = 2013;
+Date d = 2013.03.13.12.30;
+Timeframe t = 3 days + 5 years;
+
+t.name = "hello";
+
+every Date d from startTime to endTime by inc {
+	read("enter data");
+	print("here");
+}
+
+function(arg1, arg2);
+
+every Task t in c {
+	function(arg1, arg2);
+}
+
+every Task t in c on (4==5){
+	function(12,41);
+}
+
+every Task t in c from startTime to endTime {
+
+	function();
+	exit;
+}
+
+every Task t in c from startTime to endTime on (3<4) {
+
+	if ( 4 == 5 ) {
+		continue;
+	}
+	else {
+		break;
+	}
+}
+
+every Date d from 2013.01.12 to 2013.02.12 by 3 days + 4 minutes {
+	functionsomething();
+}
+
