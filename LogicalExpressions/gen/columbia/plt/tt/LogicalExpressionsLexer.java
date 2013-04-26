@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // $ANTLR 3.5 /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g 2013-04-22 14:20:26
+=======
+// $ANTLR 3.5 /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g 2013-04-24 16:31:17
+>>>>>>> b47db36b0be89b61e9a3412e74b6659a7b850bab
 
   package columbia.plt.tt;
 
@@ -38,15 +42,15 @@ public class LogicalExpressionsLexer extends Lexer {
 	public LogicalExpressionsLexer(CharStream input, RecognizerSharedState state) {
 		super(input,state);
 	}
-	@Override public String getGrammarFileName() { return "/Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g"; }
+	@Override public String getGrammarFileName() { return "/home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g"; }
 
 	// $ANTLR start "T__10"
 	public final void mT__10() throws RecognitionException {
 		try {
 			int _type = T__10;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:11:7: ( '!' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:11:9: '!'
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:11:7: ( '!' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:11:9: '!'
 			{
 			match('!'); 
 			}
@@ -65,8 +69,8 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = T__11;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:12:7: ( '&&' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:12:9: '&&'
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:12:7: ( '&&' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:12:9: '&&'
 			{
 			match("&&"); 
 
@@ -86,8 +90,8 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = T__12;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:13:7: ( '(' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:13:9: '('
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:13:7: ( '(' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:13:9: '('
 			{
 			match('('); 
 			}
@@ -106,8 +110,8 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = T__13;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:14:7: ( ')' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:14:9: ')'
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:14:7: ( ')' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:14:9: ')'
 			{
 			match(')'); 
 			}
@@ -126,8 +130,8 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = T__14;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:15:7: ( ';' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:15:9: ';'
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:15:7: ( ';' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:15:9: ';'
 			{
 			match(';'); 
 			}
@@ -146,8 +150,8 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = T__15;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:16:7: ( '=' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:16:9: '='
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:16:7: ( '=' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:16:9: '='
 			{
 			match('='); 
 			}
@@ -166,8 +170,8 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = T__16;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:17:7: ( '||' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:17:9: '||'
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:17:7: ( '||' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:17:9: '||'
 			{
 			match("||"); 
 
@@ -185,8 +189,8 @@ public class LogicalExpressionsLexer extends Lexer {
 	// $ANTLR start "LETTER"
 	public final void mLETTER() throws RecognitionException {
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:54:17: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:54:17: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
 			{
 			if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
 				input.consume();
@@ -208,8 +212,8 @@ public class LogicalExpressionsLexer extends Lexer {
 	// $ANTLR start "DIGIT"
 	public final void mDIGIT() throws RecognitionException {
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:55:16: ( '0' .. '9' )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:55:16: ( '0' .. '9' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
 			{
 			if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 				input.consume();
@@ -233,7 +237,7 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = BOOL;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:56:6: ( 'true' | 'false' )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:56:6: ( 'true' | 'false' )
 			int alt1=2;
 			int LA1_0 = input.LA(1);
 			if ( (LA1_0=='t') ) {
@@ -251,14 +255,14 @@ public class LogicalExpressionsLexer extends Lexer {
 
 			switch (alt1) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:56:8: 'true'
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:56:8: 'true'
 					{
 					match("true"); 
 
 					}
 					break;
 				case 2 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:56:17: 'false'
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:56:17: 'false'
 					{
 					match("false"); 
 
@@ -280,12 +284,12 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = IDENT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:57:7: ( LETTER ( LETTER | DIGIT )* )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:57:9: LETTER ( LETTER | DIGIT )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:57:7: ( LETTER ( LETTER | DIGIT )* )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:57:9: LETTER ( LETTER | DIGIT )*
 			{
 			mLETTER(); 
 
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:57:16: ( LETTER | DIGIT )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:57:16: ( LETTER | DIGIT )*
 			loop2:
 			while (true) {
 				int alt2=2;
@@ -296,7 +300,7 @@ public class LogicalExpressionsLexer extends Lexer {
 
 				switch (alt2) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
 					{
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
 						input.consume();
@@ -330,10 +334,10 @@ public class LogicalExpressionsLexer extends Lexer {
 		try {
 			int _type = WS;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:58:4: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:58:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:58:4: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:58:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
 			{
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:58:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:58:6: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
 			int cnt3=0;
 			loop3:
 			while (true) {
@@ -345,7 +349,7 @@ public class LogicalExpressionsLexer extends Lexer {
 
 				switch (alt3) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:
 					{
 					if ( (input.LA(1) >= '\t' && input.LA(1) <= '\n')||(input.LA(1) >= '\f' && input.LA(1) <= '\r')||input.LA(1)==' ' ) {
 						input.consume();
@@ -380,7 +384,7 @@ public class LogicalExpressionsLexer extends Lexer {
 
 	@Override
 	public void mTokens() throws RecognitionException {
-		// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:8: ( T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | BOOL | IDENT | WS )
+		// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:8: ( T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | BOOL | IDENT | WS )
 		int alt4=10;
 		switch ( input.LA(1) ) {
 		case '!':
@@ -570,70 +574,70 @@ public class LogicalExpressionsLexer extends Lexer {
 		}
 		switch (alt4) {
 			case 1 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:10: T__10
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:10: T__10
 				{
 				mT__10(); 
 
 				}
 				break;
 			case 2 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:16: T__11
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:16: T__11
 				{
 				mT__11(); 
 
 				}
 				break;
 			case 3 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:22: T__12
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:22: T__12
 				{
 				mT__12(); 
 
 				}
 				break;
 			case 4 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:28: T__13
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:28: T__13
 				{
 				mT__13(); 
 
 				}
 				break;
 			case 5 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:34: T__14
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:34: T__14
 				{
 				mT__14(); 
 
 				}
 				break;
 			case 6 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:40: T__15
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:40: T__15
 				{
 				mT__15(); 
 
 				}
 				break;
 			case 7 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:46: T__16
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:46: T__16
 				{
 				mT__16(); 
 
 				}
 				break;
 			case 8 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:52: BOOL
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:52: BOOL
 				{
 				mBOOL(); 
 
 				}
 				break;
 			case 9 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:57: IDENT
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:57: IDENT
 				{
 				mIDENT(); 
 
 				}
 				break;
 			case 10 :
-				// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:63: WS
+				// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:1:63: WS
 				{
 				mWS(); 
 

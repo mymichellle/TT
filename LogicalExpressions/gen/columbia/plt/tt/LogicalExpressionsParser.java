@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // $ANTLR 3.5 /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g 2013-04-22 14:20:26
+=======
+// $ANTLR 3.5 /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g 2013-04-24 16:31:16
+>>>>>>> b47db36b0be89b61e9a3412e74b6659a7b850bab
 
   package columbia.plt.tt;
 
@@ -56,7 +60,7 @@ public class LogicalExpressionsParser extends Parser {
 		return adaptor;
 	}
 	@Override public String[] getTokenNames() { return LogicalExpressionsParser.tokenNames; }
-	@Override public String getGrammarFileName() { return "/Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g"; }
+	@Override public String getGrammarFileName() { return "/home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g"; }
 
 
 	public static class evaluator_return extends ParserRuleReturnScope {
@@ -67,7 +71,7 @@ public class LogicalExpressionsParser extends Parser {
 
 
 	// $ANTLR start "evaluator"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:21:1: evaluator : ( assignmentStmt )* expression EOF !;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:21:1: evaluator : ( assignmentStmt )* expression EOF !;
 	public final LogicalExpressionsParser.evaluator_return evaluator() throws RecognitionException {
 		LogicalExpressionsParser.evaluator_return retval = new LogicalExpressionsParser.evaluator_return();
 		retval.start = input.LT(1);
@@ -81,13 +85,13 @@ public class LogicalExpressionsParser extends Parser {
 		CommonTree EOF3_tree=null;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:2: ( ( assignmentStmt )* expression EOF !)
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:4: ( assignmentStmt )* expression EOF !
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:2: ( ( assignmentStmt )* expression EOF !)
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:4: ( assignmentStmt )* expression EOF !
 			{
 			root_0 = (CommonTree)adaptor.nil();
 
 
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:4: ( assignmentStmt )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:4: ( assignmentStmt )*
 			loop1:
 			while (true) {
 				int alt1=2;
@@ -102,7 +106,7 @@ public class LogicalExpressionsParser extends Parser {
 
 				switch (alt1) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:4: assignmentStmt
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:22:4: assignmentStmt
 					{
 					pushFollow(FOLLOW_assignmentStmt_in_evaluator63);
 					assignmentStmt1=assignmentStmt();
@@ -154,7 +158,7 @@ public class LogicalExpressionsParser extends Parser {
 
 
 	// $ANTLR start "assignmentStmt"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:25:1: assignmentStmt : IDENT '=' ^ expression ';' !;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:25:1: assignmentStmt : IDENT '=' ^ expression ';' !;
 	public final LogicalExpressionsParser.assignmentStmt_return assignmentStmt() throws RecognitionException {
 		LogicalExpressionsParser.assignmentStmt_return retval = new LogicalExpressionsParser.assignmentStmt_return();
 		retval.start = input.LT(1);
@@ -171,8 +175,8 @@ public class LogicalExpressionsParser extends Parser {
 		CommonTree char_literal7_tree=null;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:26:2: ( IDENT '=' ^ expression ';' !)
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:26:4: IDENT '=' ^ expression ';' !
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:26:2: ( IDENT '=' ^ expression ';' !)
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:26:4: IDENT '=' ^ expression ';' !
 			{
 			root_0 = (CommonTree)adaptor.nil();
 
@@ -221,7 +225,7 @@ public class LogicalExpressionsParser extends Parser {
 
 
 	// $ANTLR start "term"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:31:1: term : ( IDENT | '(' ! expression ')' !| BOOL );
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:31:1: term : ( IDENT | '(' ! expression ')' !| BOOL );
 	public final LogicalExpressionsParser.term_return term() throws RecognitionException {
 		LogicalExpressionsParser.term_return retval = new LogicalExpressionsParser.term_return();
 		retval.start = input.LT(1);
@@ -240,7 +244,7 @@ public class LogicalExpressionsParser extends Parser {
 		CommonTree BOOL12_tree=null;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:32:2: ( IDENT | '(' ! expression ')' !| BOOL )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:32:2: ( IDENT | '(' ! expression ')' !| BOOL )
 			int alt2=3;
 			switch ( input.LA(1) ) {
 			case IDENT:
@@ -265,7 +269,7 @@ public class LogicalExpressionsParser extends Parser {
 			}
 			switch (alt2) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:32:4: IDENT
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:32:4: IDENT
 					{
 					root_0 = (CommonTree)adaptor.nil();
 
@@ -277,7 +281,7 @@ public class LogicalExpressionsParser extends Parser {
 					}
 					break;
 				case 2 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:33:4: '(' ! expression ')' !
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:33:4: '(' ! expression ')' !
 					{
 					root_0 = (CommonTree)adaptor.nil();
 
@@ -293,7 +297,7 @@ public class LogicalExpressionsParser extends Parser {
 					}
 					break;
 				case 3 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:34:4: BOOL
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:34:4: BOOL
 					{
 					root_0 = (CommonTree)adaptor.nil();
 
@@ -333,7 +337,7 @@ public class LogicalExpressionsParser extends Parser {
 
 
 	// $ANTLR start "unary"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:37:1: unary : ( negation ^)* term ;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:37:1: unary : ( negation ^)* term ;
 	public final LogicalExpressionsParser.unary_return unary() throws RecognitionException {
 		LogicalExpressionsParser.unary_return retval = new LogicalExpressionsParser.unary_return();
 		retval.start = input.LT(1);
@@ -345,13 +349,13 @@ public class LogicalExpressionsParser extends Parser {
 
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:2: ( ( negation ^)* term )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:4: ( negation ^)* term
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:2: ( ( negation ^)* term )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:4: ( negation ^)* term
 			{
 			root_0 = (CommonTree)adaptor.nil();
 
 
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:4: ( negation ^)*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:4: ( negation ^)*
 			loop3:
 			while (true) {
 				int alt3=2;
@@ -362,7 +366,7 @@ public class LogicalExpressionsParser extends Parser {
 
 				switch (alt3) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:5: negation ^
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:38:5: negation ^
 					{
 					pushFollow(FOLLOW_negation_in_unary132);
 					negation13=negation();
@@ -412,7 +416,7 @@ public class LogicalExpressionsParser extends Parser {
 
 
 	// $ANTLR start "negation"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:41:1: negation : '!' -> NEGATION ;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:41:1: negation : '!' -> NEGATION ;
 	public final LogicalExpressionsParser.negation_return negation() throws RecognitionException {
 		LogicalExpressionsParser.negation_return retval = new LogicalExpressionsParser.negation_return();
 		retval.start = input.LT(1);
@@ -425,8 +429,8 @@ public class LogicalExpressionsParser extends Parser {
 		RewriteRuleTokenStream stream_10=new RewriteRuleTokenStream(adaptor,"token 10");
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:42:2: ( '!' -> NEGATION )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:42:4: '!'
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:42:2: ( '!' -> NEGATION )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:42:4: '!'
 			{
 			char_literal15=(Token)match(input,10,FOLLOW_10_in_negation148);  
 			stream_10.add(char_literal15);
@@ -479,7 +483,7 @@ public class LogicalExpressionsParser extends Parser {
 
 
 	// $ANTLR start "logicalAnd"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:45:1: logicalAnd : unary ( ( '&&' ) unary )* ;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:45:1: logicalAnd : unary ( ( '&&' ) unary )* ;
 	public final LogicalExpressionsParser.logicalAnd_return logicalAnd() throws RecognitionException {
 		LogicalExpressionsParser.logicalAnd_return retval = new LogicalExpressionsParser.logicalAnd_return();
 		retval.start = input.LT(1);
@@ -493,8 +497,8 @@ public class LogicalExpressionsParser extends Parser {
 		CommonTree string_literal17_tree=null;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:2: ( unary ( ( '&&' ) unary )* )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:4: unary ( ( '&&' ) unary )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:2: ( unary ( ( '&&' ) unary )* )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:4: unary ( ( '&&' ) unary )*
 			{
 			root_0 = (CommonTree)adaptor.nil();
 
@@ -505,7 +509,7 @@ public class LogicalExpressionsParser extends Parser {
 
 			adaptor.addChild(root_0, unary16.getTree());
 
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:10: ( ( '&&' ) unary )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:10: ( ( '&&' ) unary )*
 			loop4:
 			while (true) {
 				int alt4=2;
@@ -516,10 +520,10 @@ public class LogicalExpressionsParser extends Parser {
 
 				switch (alt4) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:11: ( '&&' ) unary
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:11: ( '&&' ) unary
 					{
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:11: ( '&&' )
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:12: '&&'
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:11: ( '&&' )
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:46:12: '&&'
 					{
 					string_literal17=(Token)match(input,11,FOLLOW_11_in_logicalAnd167); 
 					string_literal17_tree = (CommonTree)adaptor.create(string_literal17);
@@ -570,7 +574,7 @@ public class LogicalExpressionsParser extends Parser {
 
 
 	// $ANTLR start "expression"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:49:1: expression : logicalAnd ( ( '||' ^) logicalAnd )* ;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:49:1: expression : logicalAnd ( ( '||' ^) logicalAnd )* ;
 	public final LogicalExpressionsParser.expression_return expression() throws RecognitionException {
 		LogicalExpressionsParser.expression_return retval = new LogicalExpressionsParser.expression_return();
 		retval.start = input.LT(1);
@@ -584,8 +588,8 @@ public class LogicalExpressionsParser extends Parser {
 		CommonTree string_literal20_tree=null;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:2: ( logicalAnd ( ( '||' ^) logicalAnd )* )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:4: logicalAnd ( ( '||' ^) logicalAnd )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:2: ( logicalAnd ( ( '||' ^) logicalAnd )* )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:4: logicalAnd ( ( '||' ^) logicalAnd )*
 			{
 			root_0 = (CommonTree)adaptor.nil();
 
@@ -596,7 +600,7 @@ public class LogicalExpressionsParser extends Parser {
 
 			adaptor.addChild(root_0, logicalAnd19.getTree());
 
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:15: ( ( '||' ^) logicalAnd )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:15: ( ( '||' ^) logicalAnd )*
 			loop5:
 			while (true) {
 				int alt5=2;
@@ -607,10 +611,10 @@ public class LogicalExpressionsParser extends Parser {
 
 				switch (alt5) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:16: ( '||' ^) logicalAnd
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:16: ( '||' ^) logicalAnd
 					{
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:16: ( '||' ^)
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:17: '||' ^
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:16: ( '||' ^)
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g:50:17: '||' ^
 					{
 					string_literal20=(Token)match(input,16,FOLLOW_16_in_expression188); 
 					string_literal20_tree = (CommonTree)adaptor.create(string_literal20);

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // $ANTLR 3.5 /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g 2013-04-22 14:20:27
+=======
+// $ANTLR 3.5 /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g 2013-04-24 16:31:15
+>>>>>>> b47db36b0be89b61e9a3412e74b6659a7b850bab
 
   package columbia.plt.tt;
   import java.util.Map;
@@ -48,7 +52,7 @@ public class EvaluatorWalker extends TreeParser {
 	}
 
 	@Override public String[] getTokenNames() { return EvaluatorWalker.tokenNames; }
-	@Override public String getGrammarFileName() { return "/Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g"; }
+	@Override public String getGrammarFileName() { return "/home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g"; }
 
 
 	  private Map<String, Boolean> symbolTable = new HashMap<String, Boolean>();
@@ -56,7 +60,7 @@ public class EvaluatorWalker extends TreeParser {
 
 
 	// $ANTLR start "evaluator"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:19:1: evaluator returns [boolean result] : ( assignment )* e= expression EOF ;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:19:1: evaluator returns [boolean result] : ( assignment )* e= expression EOF ;
 	public final boolean evaluator() throws RecognitionException {
 		boolean result = false;
 
@@ -64,10 +68,10 @@ public class EvaluatorWalker extends TreeParser {
 		boolean e =false;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:2: ( ( assignment )* e= expression EOF )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:4: ( assignment )* e= expression EOF
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:2: ( ( assignment )* e= expression EOF )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:4: ( assignment )* e= expression EOF
 			{
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:4: ( assignment )*
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:4: ( assignment )*
 			loop1:
 			while (true) {
 				int alt1=2;
@@ -78,7 +82,7 @@ public class EvaluatorWalker extends TreeParser {
 
 				switch (alt1) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:4: assignment
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:20:4: assignment
 					{
 					pushFollow(FOLLOW_assignment_in_evaluator61);
 					assignment();
@@ -115,14 +119,14 @@ public class EvaluatorWalker extends TreeParser {
 
 
 	// $ANTLR start "assignment"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:23:1: assignment : ^( '=' IDENT e= expression ) ;
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:23:1: assignment : ^( '=' IDENT e= expression ) ;
 	public final void assignment() throws RecognitionException {
 		CommonTree IDENT1=null;
 		boolean e =false;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:24:2: ( ^( '=' IDENT e= expression ) )
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:24:4: ^( '=' IDENT e= expression )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:24:2: ( ^( '=' IDENT e= expression ) )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:24:4: ^( '=' IDENT e= expression )
 			{
 			match(input,15,FOLLOW_15_in_assignment82); 
 			match(input, Token.DOWN, null); 
@@ -150,7 +154,7 @@ public class EvaluatorWalker extends TreeParser {
 
 
 	// $ANTLR start "expression"
-	// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:28:1: expression returns [boolean result] : ( ^( '&&' op1= expression op2= expression ) | ^( '||' op1= expression op2= expression ) | ^( NEGATION e= expression ) | IDENT | BOOL );
+	// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:28:1: expression returns [boolean result] : ( ^( '&&' op1= expression op2= expression ) | ^( '||' op1= expression op2= expression ) | ^( NEGATION e= expression ) | IDENT | BOOL );
 	public final boolean expression() throws RecognitionException {
 		boolean result = false;
 
@@ -162,7 +166,7 @@ public class EvaluatorWalker extends TreeParser {
 		boolean e =false;
 
 		try {
-			// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:29:2: ( ^( '&&' op1= expression op2= expression ) | ^( '||' op1= expression op2= expression ) | ^( NEGATION e= expression ) | IDENT | BOOL )
+			// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:29:2: ( ^( '&&' op1= expression op2= expression ) | ^( '||' op1= expression op2= expression ) | ^( NEGATION e= expression ) | IDENT | BOOL )
 			int alt2=5;
 			switch ( input.LA(1) ) {
 			case 11:
@@ -197,7 +201,7 @@ public class EvaluatorWalker extends TreeParser {
 			}
 			switch (alt2) {
 				case 1 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:29:4: ^( '&&' op1= expression op2= expression )
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:29:4: ^( '&&' op1= expression op2= expression )
 					{
 					match(input,11,FOLLOW_11_in_expression111); 
 					match(input, Token.DOWN, null); 
@@ -215,7 +219,7 @@ public class EvaluatorWalker extends TreeParser {
 					}
 					break;
 				case 2 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:30:4: ^( '||' op1= expression op2= expression )
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:30:4: ^( '||' op1= expression op2= expression )
 					{
 					match(input,16,FOLLOW_16_in_expression128); 
 					match(input, Token.DOWN, null); 
@@ -233,7 +237,7 @@ public class EvaluatorWalker extends TreeParser {
 					}
 					break;
 				case 3 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:31:4: ^( NEGATION e= expression )
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:31:4: ^( NEGATION e= expression )
 					{
 					match(input,NEGATION,FOLLOW_NEGATION_in_expression145); 
 					match(input, Token.DOWN, null); 
@@ -247,14 +251,14 @@ public class EvaluatorWalker extends TreeParser {
 					}
 					break;
 				case 4 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:32:4: IDENT
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:32:4: IDENT
 					{
 					IDENT2=(CommonTree)match(input,IDENT,FOLLOW_IDENT_in_expression158); 
 					 result = symbolTable.get((IDENT2!=null?IDENT2.getText():null)); 
 					}
 					break;
 				case 5 :
-					// /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:33:4: BOOL
+					// /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/EvaluatorWalker.g:33:4: BOOL
 					{
 					BOOL3=(CommonTree)match(input,BOOL,FOLLOW_BOOL_in_expression165); 
 					 result = Boolean.parseBoolean((BOOL3!=null?BOOL3.getText():null)); 
