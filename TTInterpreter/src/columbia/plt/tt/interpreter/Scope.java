@@ -26,7 +26,6 @@ public class Scope extends HashMap<String, Symbol> {
     
     public Object getType(String name)
     {
-    	return this.
-    }
-    
+    	return this.get(name);
+    }    
 }
