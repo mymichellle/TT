@@ -152,6 +152,7 @@ assignmentStmt returns [Evaluator result]
 				line = ahead.getToken().getCharPositionInLine();    
 				throw new RuntimeException("line " + line + " Type Checking Error");
 	    }
+	    }
 	;
 
 //end by zheng
@@ -166,14 +167,11 @@ type returns [String result]
   | 'Calendar' {result = "Calendar";}
   ;
 
-<<<<<<< HEAD
-//zheng
-checkType returns [boolean result]
-  : 
-  ;
-=======
 
->>>>>>> update
+//checkType returns [boolean result]
+//  : 
+//  ;
+
   
 memberAccessExpression returns[Evaluator result]
 	:	^(DOT IDENT IDENT )
@@ -335,50 +333,75 @@ timeFrameConstant returns [TimeFrame result]
 //// @Author : Jason
 
          
-  
-expression returns [Evaluator result]
-	:^(PLUS s1=STRING s2=STRING)						{ $result = null;} /*result = s1.concat(s2);}
-	|^(OR op1 = expression op2=expression) 	{	result = op1 || op2;}
-	|^(AND op1= expression op2=expression)	{ result = op1 && op2;}
-	|^(o = (EQUALS | NOTEQUALS) 
-	op1=expression op2=expression)  				{ if (o == "==")
-		 																					result = (op1 == op2);
-		 																				else (o == "!=")
-		 																					result = (op1 != op2);	}
-	|	^(o = (LT | LTEQ | GT | GTEQ) 
-		op1=expression op2=expression) 				{	if (o == "<")
-																							result = op1 < op2;
-																					else if ( o == ">")
-																						result = op1 > op2;
-																					else if( o == ">=")
-																						result = (op1 >=op2);
-																					else if (o == "<=")
-																						result = (op1 <=op2);}
-	| ^(o = (PLUS| MINUS) 
-	op1=expression op2=expression)					{ if (o == '+')
-		 																						result = op1 + op2;
-		 																				else if( o == '-')
-		 																						result = op1 - op2;
-		 		
-		 																			}																					
-	| ^(o = (MULT | DIV | MOD) 
-	op1=expression op2=expression)					{ if( o == '*')
-																								result = op1 * op2;
-																						else if( o == '/')
-																								result = op1 / op2;
-																					 }	
+ //// Arithmetic Expressions .. Jason
+//// @Author : Jason
 
-	|	 ^(o=(NOT?) e= expression)						{ if (o == '!') result = !e;}																			 
+// need to handle a+= 
+primaryExpression returns [String result]
+	: ^(VARDEF VARDEF e = expression)		{ result = e;}
+	| ^(VARDEF VARDEF CONSTANT	)	{ result = $CONSTANT.text;}
+	| ^(VARDEF VARDEF IDENT) {	int scopeID = symbolTable.addScope();	
+															result = (String)symbolTable.get(scopeID).getValue($IDENT.text);} 
+  ;
 
 
+expression returns [ String result]
+:logicalExpression
+//|stringExpression
+|memberAccessExpr
+|functionInvocation
+;
 
-	| IDENT 																{symbolTable.get($IDENT.text);}
-	
-	| CONSTANT															{ result = $CONSTANT.text;}*/
-	;
-	
-primaryExpression 
-  : '(' expression ')'
-  | NUMBER
-  | IDENT
+      
+logicalExpression returns [boolean result]
+		: ^(OR a = booleanAndExpression b = booleanAndExpression*)	{ result = a && b ;}
     ;
+
+booleanAndExpression returns [boolean result]
+		: ^(AND a = equalityExpression b = equalityExpression*)	{result = a && b;}
+    ;
+
+// what about logical expression comparsion
+equalityExpression returns [ boolean result]
+		: ^(EQUALS a = relationalExpression b = relationalExpression *)			{result = a == b;}
+    | ^(NOTEQUALS a = relationalExpression b = relationalExpression*)		{result = a != b;}
+    ;
+
+relationalExpression returns [boolean result]
+		: ^(LT a = additionExpression b = additionExpression*)			{result = a < b;}
+		| ^(LTEQ a = additionExpression b = additionExpression*)		{result = a <= b;}
+		|	^(GT a = additionExpression b = additionExpression*)			{result = a > b;}
+		| ^(GTEQ a = additionExpression b = additionExpression*)		{result = a >= b;}
+		;
+
+additionExpression returns [int result]
+		: ^(PLUS a = multiplicationExpression b = multiplicationExpression*)		{result = a + b;}
+		| ^(MINUS a = multiplicationExpression b = multiplicationExpression*)	  {result = a - b;} 
+    ;
+
+multiplicationExpression returns [int result]
+		: ^(MULT a = unaryExpression b = unaryExpression*)		{result = Integer.parseInt(a) * Integer.parseInt(b); }
+		| ^(DIV a = unaryExpression b = unaryExpression*)		{result = Integer.parseInt(a) / Integer.parseInt(b);}
+		| ^(MOD a = unaryExpression b = unaryExpression*)		{result = Integer.parseInt(a)\% Integer.parseInt(b);}
+    ;
+
+
+unaryExpression returns [String result]
+	: ^(VARDEF NOT? op=primaryExpression)		 { 
+																				Boolean boolResult = Boolean.parseBoolean(op);
+																				if ($NOT.text != null)
+																						boolResult = !boolResult;
+																				result = String.valueOf(boolResult);
+																		}
+
+																		
+  ;
+
+
+memberAccessExpr returns [String result]
+	: ^(DOT IDENT IDENT)		{} //to do
+	;
+
+//stringExpression returns [String result]
+
+ 
