@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+// $ANTLR 3.5 /Users/caozheng/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g 2013-04-22 14:20:26
+=======
 // $ANTLR 3.5 /home/athresh/Projects/PLT/TT/LogicalExpressions/src/columbia/plt/tt/LogicalExpressions.g 2013-04-24 16:31:17
+>>>>>>> b47db36b0be89b61e9a3412e74b6659a7b850bab
 
   package columbia.plt.tt;
 

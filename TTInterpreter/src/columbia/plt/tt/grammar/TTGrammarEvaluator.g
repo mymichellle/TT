@@ -12,14 +12,21 @@ options {
   import columbia.plt.tt.datatype.Date;
   import columbia.plt.tt.datatype.Task;
   import columbia.plt.tt.datatype.TimeFrame;
-	import columbia.plt.tt.interpreter.*;
-	import columbia.plt.tt.evaluator.implementations.*;
-	import org.antlr.runtime.BitSet;
+  import columbia.plt.tt.interpreter.*;
+  import columbia.plt.tt.evaluator.implementations.*;
+  import org.antlr.runtime.BitSet;
   import java.util.*;
 }
 
 @members {
   private SymbolTable symbolTable = new SymbolTable();
+
+  private ArrayList<String> errors = new ArrayList<String>();  
+  
+  public ArrayList<String> getErrors()
+  {
+	return errors;
+  }
 }
 
 
@@ -94,6 +101,10 @@ type returns [String result]
   | 'TimeFrame' {result = "TimeFrame";}
   | 'Calendar' {result = "Calendar";}
   ;
+
+//zheng
+checkType returns [BOOL result]
+  : 
   
 memberAccessExpression
 	:	^(DOT IDENT IDENT )
