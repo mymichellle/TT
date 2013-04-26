@@ -1,0 +1,25 @@
+package columbia.plt.tt.evaluator.implementations;
+
+import org.antlr.runtime.tree.BufferedTreeNodeStream;
+
+public class EveryLoopsEvaluator {
+
+	public static void continueThis(boolean b, BufferedTreeNodeStream s, int place, int count)
+	{
+		s.push(place);
+		if(count > 3)
+			return;
+		System.out.println("well cail");
+		wll(s,place);
+		//continueThis(true, s, place, count++);
+	}
+	
+	public static void wll(BufferedTreeNodeStream s, int place)
+	{
+		//s.seek(place);
+		//s.consume();
+	
+		System.out.println("werwe");
+	}
+
+}

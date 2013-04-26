@@ -105,7 +105,6 @@ type returns [String result]
 //zheng
 checkType returns [BOOL result]
   : 
-  ;
   
 memberAccessExpression
 	:	^(DOT IDENT IDENT )
@@ -126,6 +125,7 @@ statement_type
   | ifThenStatement
   | everyFromToByStatement
   | everyInStatement
+  | untilStatement
   | breakStatement
   | continueStatement
   | exitStatement
@@ -195,6 +195,7 @@ loopOptions
   |
   ;
   
+  
 dateOrIdent returns [Date result]
   : IDENT         { Scope scope = symbolTable.getCurrentScope();
                     $result = (Date)scope.getSymbol($IDENT.text);}
@@ -208,7 +209,11 @@ timeframeOrIdent returns [TimeFrame result]
     $result = new TimeFrame("1 days");}
   | t=timeFrameConstant { $result = $t.result;}
   ;
-    
+  
+untilStatement
+  : 'until' dateOrIdent ';'
+  ;
+  
 breakStatement
   : 'break' ';'
   ;

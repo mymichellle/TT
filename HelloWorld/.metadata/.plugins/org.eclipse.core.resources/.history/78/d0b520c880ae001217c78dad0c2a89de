@@ -108,7 +108,7 @@ checkType returns [BOOL result]
   ;
   
 memberAccessExpression
-	:	^(DOT IDENT IDENT )
+	:	^(' IDENT IDENT )
 	;
 	
 //Statement
@@ -126,6 +126,7 @@ statement_type
   | ifThenStatement
   | everyFromToByStatement
   | everyInStatement
+  | untilStatement
   | breakStatement
   | continueStatement
   | exitStatement

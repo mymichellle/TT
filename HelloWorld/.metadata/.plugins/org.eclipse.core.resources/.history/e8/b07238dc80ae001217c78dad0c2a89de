@@ -126,6 +126,7 @@ statement_type
   | ifThenStatement
   | everyFromToByStatement
   | everyInStatement
+  | untilStatement
   | breakStatement
   | continueStatement
   | exitStatement
