@@ -75,22 +75,86 @@ declarationStatement
   		}
   	}
   ;
-
+  
+//by zheng
 definitionStatement
-	: ^(t=type as=assignmentStmt) {
-	
-		if(t == "String"){
-			// code to check if as is string
+	: ^(ASSIGN ^(IDENT t=type) er=expression) {
+	    
+	    if(!checkType(t, er.getType())) {
+	    	CommonTree ahead = (CommonTree)input.LT(1);
+	    	int line = ahead.getToken().getLine();
+	    	line = ahead.getToken().getCharPositionInLine();    
+	    	throw new RuntimeException("line " + line + " Type Checking Error");
+	    }
+	    
+		else{
+			if( t == "String"){				
+			int scopeID = symbolTable.addScope();
+			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "String", er.getValue());				
 		}
+		
+		if( t == "Number"){
+			int scopeID = symbolTable.addScope();
+			symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Number", er.getValue());				
+
+		}
+		
+		    if( t == "Bool"){
+		    	int scopeID = symbolTable.addScope();
+		    	symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Bool", er.getValue());				
+
+			}
+		
+			if( t == "Date"){
+				int scopeID = symbolTable.addScope();
+				symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Date", er.getValue());					
+		
+			}
+			
+		    if( t == "TimeFrame"){
+		    	int scopeID = symbolTable.addScope();
+		    	symbolTable.getScope(scopeID).addSymbol($IDENT.text, "TimeFrame", er.getValue());				
+
+		    }
+		
+		    if (t == "Calendar") {				
+		    	int scopeID = symbolTable.addScope();
+		    	symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Calendar", er.getValue());				
+			
+		    }
+		    
+		    if( t == "Task"){
+		    	int scopeID = symbolTable.addScope();
+		    	symbolTable.getScope(scopeID).addSymbol($IDENT.text, "Task", er.getValue());				
+		    }
+  		}
 	
 	}
 	
 	;
 
 assignmentStmt returns [Evaluator result]
-	:	^(ASSIGN IDENT e=expression)
-	| ^(ASSIGN memberAccessExpression e=expression)
+	:	^(ASSIGN IDENT e=expression){
+			Scope scope = symbolTable.getCurrentScope();
+			if(!scope.containKey($IDENT.text)){
+				CommonTree ahead = (CommonTree)input.LT(1);
+				int line = ahead.getToken().getLine();
+				line = ahead.getToken().getCharPositionInLine();    
+				throw new RuntimeException("line " + line + " Type Checking Error");
+			}
+			
+		}
+	|   ^(ASSIGN memberAccessExpression e=expression){
+			Scope scope = symbolTable.getCurrentScope();
+			if(!scope.containKey($IDENT.text)){
+				CommonTree ahead = (CommonTree)input.LT(1);
+				int line = ahead.getToken().getLine();
+				line = ahead.getToken().getCharPositionInLine();    
+				throw new RuntimeException("line " + line + " Type Checking Error");
+	    }
 	;
+
+//end by zheng
 
 type returns [String result]
   : 'String' {result = "String";}
@@ -102,12 +166,16 @@ type returns [String result]
   | 'Calendar' {result = "Calendar";}
   ;
 
+<<<<<<< HEAD
 //zheng
 checkType returns [BOOL result]
   : 
   ;
+=======
+
+>>>>>>> update
   
-memberAccessExpression
+memberAccessExpression returns[Evaluator result]
 	:	^(DOT IDENT IDENT )
 	;
 	

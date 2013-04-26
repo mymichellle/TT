@@ -21,12 +21,12 @@ public class Scope extends HashMap<String, Symbol> {
     
     public Object getValue(String name)
     {
-    	return this.get(name);
+    	return this.get(name).getValue();
     }
     
     public Object getType(String name)
     {
-    	return this.
+    	return this.get(name).getType();
     }
     
 }
