@@ -4,7 +4,7 @@ public class CheckType {
 	
 	
 	
-	
+	/*
 	
 	
 	type returns[String type]
@@ -33,5 +33,5 @@ public class CheckType {
 		 checkType(number, e1.type, $text); 
 		 checkType(number, e2.type, $text); 
 		 $type = number;} 
-
+*/
 }
