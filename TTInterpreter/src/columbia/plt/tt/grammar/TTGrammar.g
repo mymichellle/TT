@@ -14,6 +14,38 @@ options {
 	package columbia.plt.tt;
 }
 
+@lexer::members { 
+	private ArrayList<String> errors = new ArrayList<String>();    
+  
+	public ArrayList<String> getErrors()
+	{
+		return errors;
+	}
+	
+	@Override  
+	public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
+		String hdr = getErrorHeader(e);
+		String msg = getErrorMessage(e, tokenNames);
+		errors.add(hdr + " " + msg);
+	}
+}
+
+@parser::members { 
+	private ArrayList<String> errors = new ArrayList<String>();    
+  
+    	public ArrayList<String> getErrors()
+	{
+		return errors;
+	}
+	
+	@Override  
+	public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
+		String hdr = getErrorHeader(e);
+		String msg = getErrorMessage(e, tokenNames);
+		errors.add(hdr + " " + msg); 
+	}  
+}
+
 // Variable declaration and definition
 //@Author : Athresh
 
