@@ -130,16 +130,29 @@ elseStatement
   : 'else' '{' statement_type* '}'
   |
   ;
-
+/*
 everyFromToByStatement
-  : ^(dateVar=IDENT start=dateOrIdent end=dateOrIdent increment=timeframeOrIdent statements=statement_type*){
-        // Create a new scope for inside the every loop
-        int scopeID = symbolTable.addScope();
-        
-        // Add the Date IDENT to the symbol table
-        Date itterDate = new Date(start.getYear(), start.getMonth(), start.getDay(), start.getHour(), start.getMinute());
-        symbolTable.getScope(scopeID).addSymbol($dateVar.text, "Date", itterDate);
-        
+  :'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}'
+  ;
+*/
+everyFromToByStatement
+  : ^('every' dateVar=IDENT start=dateOrIdent end=dateOrIdent increment=timeframeOrIdent statements=statement_type*)
+  {
+         System.out.println("HMM: "+$increment.result);
+         // Get the current scope
+              Scope currentScope = symbolTable.getCurrentScope();
+              
+              // Add the Date IDENT to the current symbol table
+              Date itterDate = new Date(start.getYear(), start.getMonth(), start.getDay(), start.getHour(), start.getMinute());
+              currentScope.addSymbol($dateVar.text, "Date", itterDate);
+              
+              System.out.println("begin itterDate " + itterDate.toString());
+              
+          System.out.println(input.LT(0));
+          BufferedTreeNodeStream stream = (BufferedTreeNodeStream)input;
+          int place = stream.mark();
+          
+          stream.seek(place);
         // Perform a while loop incrementing the dateVar by increment each loop
         while( itterDate.compareTo((Date)end) <= 0) {
           int day = itterDate.getDay();
@@ -147,15 +160,16 @@ everyFromToByStatement
           
           // Update the itterDate variable
           itterDate.setDay(day);
-          symbolTable.getScope(scopeID).addSymbol($dateVar.text, "Date", itterDate);
+          currentScope.addSymbol($dateVar.text, "Date", itterDate);
         
           System.out.println("loopDate " + itterDate.toString());
-          
+          System.out.println(input.LT(1));
+          //stream.rewind(place);
         }
     }
- // 'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}'
+ // 'every' 'Date' IDENT 'from' dateOrIdent 'to' dateOrIdent 'by' timeframeOrIdent '{' statement_type* '}' 
   ;
-  
+
 everyInStatement
   : 'every' 'Task' IDENT 'in' IDENT constraintOptions  '{' statement_type* '}'
   ;
@@ -177,8 +191,11 @@ dateOrIdent returns [Date result]
   ; 
   
 timeframeOrIdent returns [TimeFrame result]
-  : IDENT { $result = new TimeFrame(0,0,1,0,0);}
-  | TIMEFRAME { $result = new TimeFrame(0,0,1,0,0);}
+  : IDENT
+  { 
+    // TODO get the saved IDENT data
+    $result = new TimeFrame("1 days");}
+  | t=timeFrameConstant { $result = $t.result;}
   ;
   
 untilStatement
@@ -218,8 +235,26 @@ expressionList
   ;
   
 
-print : 'print' '(' STRING_CONSTANT  ')' ';' 		{System.out.println($STRING_CONSTANT.text);} ; 
+print : ^('print' '(' STRING_CONSTANT ')') 		{System.out.println($STRING_CONSTANT.text);} ; 
 
+timeFrame returns [String result]
+  : p=primaryExpression
+    t=('year'|'years'|'month'|'months'|'day'|'days'|'hour'|'hours'|'minute'|'minutes') 
+    {
+      //TODO get primaryExpression
+      $result = "1 "+$t.text;
+    }
+  ;
+
+timeFrameConstant returns [TimeFrame result]
+  : t1=timeFrame (p='+' t2=timeFrame)* 
+  {
+    if ($t2.result != null && $p.text != null)
+       $result = new TimeFrame($t1.result + " " + $p.text + " " + $t2.result);
+    else
+      $result = new TimeFrame($t1.result);
+    }
+ ;
 
 //// Arithmetic Expressions .. Jason
 //// @Author : Jason
@@ -266,4 +301,9 @@ expression returns [Evaluator result]
 	
 	| CONSTANT															{ result = $CONSTANT.text;}
 	;
-
+	
+primaryExpression 
+  : '(' expression ')'
+  | NUMBER
+  | IDENT
+    ;
