@@ -103,7 +103,7 @@ type returns [String result]
   ;
 
 //zheng
-checkType returns [BOOL result]
+checkType returns [boolean result]
   : 
   ;
   
@@ -197,7 +197,7 @@ loopOptions
   
 dateOrIdent returns [Date result]
   : IDENT         { Scope scope = symbolTable.getCurrentScope();
-                    $result = (Date)scope.getSymbol($IDENT.text);}
+                    $result = (Date)scope.get($IDENT.text).getValue();}
   | DATE_CONSTANT	{ $result = new Date($DATE_CONSTANT.text);}
   ; 
   
@@ -269,7 +269,7 @@ timeFrameConstant returns [TimeFrame result]
          
   
 expression returns [Evaluator result]
-	:^(PLUS s1=STRING s2=STRING)						{ result = s1.concat(s2);}
+	:^(PLUS s1=STRING s2=STRING)						{ $result = null;} /*result = s1.concat(s2);}
 	|^(OR op1 = expression op2=expression) 	{	result = op1 || op2;}
 	|^(AND op1= expression op2=expression)	{ result = op1 && op2;}
 	|^(o = (EQUALS | NOTEQUALS) 
@@ -306,7 +306,7 @@ expression returns [Evaluator result]
 
 	| IDENT 																{symbolTable.get($IDENT.text);}
 	
-	| CONSTANT															{ result = $CONSTANT.text;}
+	| CONSTANT															{ result = $CONSTANT.text;}*/
 	;
 	
 primaryExpression 
