@@ -2,8 +2,6 @@ package columbia.plt.tt;
 
 public class CheckType {
 	
-	
-	
 	public boolean checkType (String t, String type){
 		
 		
@@ -12,7 +10,5 @@ public class CheckType {
 		
 	}
 	
-	
-	
-			
+
 }
