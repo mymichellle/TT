@@ -5,6 +5,17 @@ options {
   output=AST;
   ASTLabelType=CommonTree;
 }
+
+tokens {
+	TUNIT;
+	IMPORTS;
+	METHOD;
+	ARG;
+	CALL;
+	SLIST;
+	MAIN;
+}
+
 @header{
 	package columbia.plt.tt;
 	import columbia.plt.tt.datatype.*;
@@ -46,6 +57,57 @@ options {
 	}  
 }
 
+translationUnit
+	: imports programBody -> ^(TUNIT imports programBody)
+	;
+
+imports :
+	importedLibraries* -> ^(IMPORTS importedLibraries*)
+	;
+importedLibraries
+	: 'import' STRING_CONSTANT ';' -> STRING_CONSTANT
+	;
+
+programBody
+	: methodsAndFieldsDeclarations*
+	;
+
+methodsAndFieldsDeclarations
+	: declarationStatement
+	| definitionStatement 
+	| main
+	| methodDeclarations
+	;
+
+main
+	: 'main('WS*')' methodBody -> ^(MAIN methodBody)
+	;
+
+methodDeclarations
+	: methodSignature methodBody -> ^(METHOD methodSignature methodBody)
+	;
+	
+methodSignature
+	: type? IDENT methodParameters
+	;
+	
+methodParameters
+	: '(' methodParametersList? ')' -> methodParametersList?
+	;
+
+methodParametersList
+	: argDeclaration (','argDeclaration)* -> argDeclaration+
+	;
+
+argDeclaration
+	: type IDENT -> ^(ARG type IDENT)
+	;
+
+methodBody
+	:'{' statement_type* '}' -> ^(SLIST statement_type*)
+	;
+
+
 // Variable declaration and definition
 //@Author : Athresh
 
@@ -65,7 +127,7 @@ type
 	| 'Date'
 	| 'Task'
 	| 'TimeFrame'
-	|	'Calendar'
+	| 'Calendar'
 	| 'Time'
 	;
 
@@ -154,20 +216,21 @@ readStatement
 	;
 	
 functionInvocationStatement
-	: functionInvocation SEMICOLON
+	: functionInvocation ';'!
 	;
 	
 functionInvocation
-	: IDENT argumentList
+	: IDENT argumentList -> ^(CALL IDENT argumentList)
 	;
 	
 argumentList
-	: '(' expressionList? ')'
+	: '(' expressionList? ')' -> expressionList?
 	;
 	
 expressionList
-	: expression (','expression)*
+	: expression (','expression)* -> expression*
 	;
+	
 	
 
 print : 'print' '(' STRING_CONSTANT  ')' SEMICOLON {System.out.println($STRING_CONSTANT.text);} ; 
@@ -255,12 +318,12 @@ NOT   		: 'not';
 DOT         : '.';
 SEMICOLON		: ';' ;
 IDENT 	: 	('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')*;
-WS 			: 	(' '|'\t'|'\n'|'\r'|'\f')+ 	{$channel = HIDDEN;};
+WS 			: 	('\w'|'\t'|'\n'|'\r'|'\f')+ 	{$channel = HIDDEN;};
 COMMENT : 	'//' (~('\n'|'\r'))*		{ $channel = HIDDEN; };
 
 
 CONSTANT : STRING_CONSTANT
-				|	DATE_CONSTANT
+				| DATE_CONSTANT
 				| TIMEFRAME
 				| NUMBER
 				| TIME_ENTITY_CONSTANT
