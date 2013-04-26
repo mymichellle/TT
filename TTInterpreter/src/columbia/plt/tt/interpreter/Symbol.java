@@ -2,7 +2,7 @@ package columbia.plt.tt.interpreter;
 
 public class Symbol {
 
-  private String type;	
+    private String type;	
     private Object value;
 
     public Symbol(String type, Object value) {
