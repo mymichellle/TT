@@ -226,7 +226,8 @@ readStatement
 print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
 
 timeFrame
-	: primaryExpression timeFrameSuffix
+	//: primaryExpression timeFrameSuffix
+	: (NUMBER|IDENT) timeFrameSuffix
 	;
 
 timeFrameConstant
@@ -320,7 +321,7 @@ constant
 	: STRING_CONSTANT
 	| DATE_CONSTANT
 	| NUMBER
-//	| timeFrameConstant
+	| timeFrameConstant
 	| timeEntityConstant
 	| boolConstant
 	;
