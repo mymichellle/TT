@@ -126,9 +126,6 @@ type
 
 //Statement
 //@Author : Michelle
-statement 
-	: statement_type +
-	;
 
 statement_type 
 	: declarationStatement
@@ -277,6 +274,7 @@ primaryExpression
 	: exprInParentheses
 	| constant
 	| IDENT
+	| memberAccessExpression
 	;
 
 exprInParentheses
