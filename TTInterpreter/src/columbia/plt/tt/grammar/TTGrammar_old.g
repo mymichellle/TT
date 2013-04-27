@@ -1,11 +1,10 @@
-grammar TTGrammar;
+grammar TTGrammar_old;
 
 options {
   language = Java;
   output=AST;
   ASTLabelType=CommonTree;
 }
-
 tokens {
 	TUNIT;
 	IMPORTS;
@@ -15,7 +14,6 @@ tokens {
 	SLIST;
 	MAIN;
 }
-
 @header{
 	package columbia.plt.tt;
 	import columbia.plt.tt.datatype.*;

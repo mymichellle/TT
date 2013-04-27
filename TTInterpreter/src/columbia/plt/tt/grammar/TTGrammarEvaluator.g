@@ -2,7 +2,7 @@ tree grammar TTGrammarEvaluator;
 
 options {
   language = Java;
-  tokenVocab = TTGrammar;
+  tokenVocab = TTGrammar_old;
   ASTLabelType = CommonTree;
 }
 

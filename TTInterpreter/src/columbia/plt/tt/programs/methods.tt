@@ -3,7 +3,7 @@ import "test1.tt";
 import "test2.tt";
 
 main() {
-	add(1,2);
+	a = 1 + 2;
 }
 
 Number add(Number a, Number b) {
