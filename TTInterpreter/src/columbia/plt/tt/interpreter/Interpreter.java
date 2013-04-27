@@ -9,28 +9,28 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 
-import columbia.plt.tt.TTGrammarLexer;
-import columbia.plt.tt.TTGrammarParser;
+import columbia.plt.tt.TTLexer;
+import columbia.plt.tt.TTParser;
 
 import antlr.RecognitionException;
 
 public class Interpreter {
 	
-	TTGrammarLexer lexer;
+	TTLexer lexer;
 	TokenStream tokenStream;
-	TTGrammarParser parser;
+	TTParser parser;
 	// Right now our TTGrammar.g makes each node a CommonTree
 	CommonTree root;
 	
 	public void interp(InputStream input) throws RecognitionException, IOException, org.antlr.runtime.RecognitionException {
 		CharStream stream = new ANTLRInputStream(input);       
-        lexer = new TTGrammarLexer(stream);
+        lexer = new TTLexer(stream);
         tokenStream = new CommonTokenStream(lexer);
-        parser = new TTGrammarParser(tokenStream);
+        parser = new TTParser(tokenStream);
         // Do we have a tree adaptor??
         //parser.setTreeAdaptor(InterPie.pieAdaptor);
         
-        TTGrammarParser.translationUnit_return r = parser.translationUnit();
+        TTParser.translationUnit_return r = parser.translationUnit();
         if( parser.getNumberOfSyntaxErrors()==0 ) {
         	root = r.getTree();
         	System.out.println("tree: "+root.toStringTree());
@@ -42,7 +42,7 @@ public class Interpreter {
     public Object exec(CommonTree t) {
         try {
             switch ( t.getType() ) {
-            	case TTGrammarParser.MAIN : mainBlock(t); break;
+            	case TTParser.MAIN : mainBlock(t); break;
              /*   case PieParser.BLOCK : block(t); break;
                 case PieParser.ASSIGN : assign(t); break;
                 case PieParser.RETURN : ret(t); break;
@@ -76,7 +76,7 @@ public class Interpreter {
     }
 
     public void mainBlock(CommonTree t) {
-        if ( t.getType()!=TTGrammarParser.MAIN ) {
+        if ( t.getType()!=TTParser.MAIN ) {
         	// Handle error
             //listener.error("not a block: "+t.toStringTree());
         }
