@@ -1,7 +1,10 @@
 package columbia.plt.tt.interpreter;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CharStream;
@@ -30,19 +33,33 @@ public class Interpreter {
         // Do we have a tree adaptor??
         //parser.setTreeAdaptor(InterPie.pieAdaptor);
         
+        // Show any lexer/parser errors
+        for (int i = 0; i < lexer.getErrors().size(); i++) {
+			System.out.println(lexer.getErrors().get(i));
+		}
+
+		for (int i = 0; i < parser.getErrors().size(); i++) {
+			System.out.println(parser.getErrors().get(i));
+		}
+        
         TTParser.translationUnit_return r = parser.translationUnit();
         if( parser.getNumberOfSyntaxErrors()==0 ) {
         	root = r.getTree();
         	System.out.println("tree: "+root.toStringTree());
-        	mainBlock(root);
+        	tunit(root);
         }
     }
+
 	
 	/** visitor dispatch according to node token type */
     public Object exec(CommonTree t) {
         try {
-            switch ( t.getType() ) {
+            switch ( t.getType() ) 
+            {
+            	case TTParser.TUNIT : tunit(t); break;
+            	case TTParser.IMPORTS : imports(t); break;
             	case TTParser.MAIN : mainBlock(t); break;
+            	case TTParser.SLIST : block(t); break;
              /*   case PieParser.BLOCK : block(t); break;
                 case PieParser.ASSIGN : assign(t); break;
                 case PieParser.RETURN : ret(t); break;
@@ -75,14 +92,44 @@ public class Interpreter {
         return null;
     }
 
+    public void tunit(CommonTree t) {
+    	if ( t.getType()!=TTParser.TUNIT) {
+    		System.out.println("NOT a TUNIT");
+    	}
+    	// Execute code    	
+    	List<CommonTree> stats = null;
+    	for (int i = 0; i < t.getChildCount(); i++)
+    	{
+    		exec((CommonTree)t.getChild(i));
+    	}
+    }
+    
+    public void imports(CommonTree t) {
+    	System.out.println("Imports");
+    }
+    
     public void mainBlock(CommonTree t) {
+    	System.out.println("main");
         if ( t.getType()!=TTParser.MAIN ) {
         	// Handle error
             //listener.error("not a block: "+t.toStringTree());
         }
-        // Execute code
-        //List<PieAST> stats = t.getChildren();
-        //for (PieAST x : stats) exec(x);
+    	// Execute code    	
+    	List<CommonTree> stats = null;
+    	for (int i = 0; i < t.getChildCount(); i++)
+    	{
+    		exec((CommonTree)t.getChild(i));
+    	}
+    }
+    
+    public void block(CommonTree t) {
+    	System.out.println("block");
+    	// Execute code    	
+    	List<CommonTree> stats = null;
+    	for (int i = 0; i < t.getChildCount(); i++)
+    	{
+    		exec((CommonTree)t.getChild(i));
+    	}
     }
 	
 }

@@ -62,7 +62,25 @@ public class TTGrammarTester {
 //			e.printStackTrace();
 //		}
 //	}
-
+	
+	
+	public static void main(String[] args) throws RecognitionException {
+		try {
+			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/methods.tt");
+			
+			Interpreter interpreter = new Interpreter();
+			interpreter.interp(fileStream);
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (antlr.RecognitionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+/*
 	public static void main(String[] args) throws RecognitionException {
 		try {
 			CharStream stream = new ANTLRInputStream(new FileInputStream(
@@ -92,7 +110,7 @@ public class TTGrammarTester {
 			}
 
 			for (int i = 0; i < parser.getErrors().size(); i++) {
-				System.out.println(lexer.getErrors().get(i));
+				System.out.println(parser.getErrors().get(i));
 			}
 
 			for (int i = 0; i < evaluator.getErrors().size(); i++) {
@@ -103,5 +121,5 @@ public class TTGrammarTester {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }
