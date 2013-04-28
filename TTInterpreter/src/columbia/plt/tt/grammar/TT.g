@@ -222,13 +222,8 @@ readStatement
 	;
 print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
 
-timeFrame
-	//: primaryExpression timeFrameSuffix
-	: (NUMBER|IDENT) timeFrameSuffix
-	;
-
 timeFrameConstant
-	: timeFrame ('+' timeFrame)*
+  : NUMBER? timeFrameSuffix
 	;
 
 // Arithmetic Expressions .. Jason
