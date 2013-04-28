@@ -39,4 +39,23 @@ public class SymbolTable extends Stack<Scope> {
       return nextScopeID - 1;
     }   
     
+    public void addSymbol(String name, String type, Object value) {
+            getCurrentScope().put(name, new Symbol(type, value));    	
+    }
+        
+    public Symbol getSymbol(String name) {
+      return getCurrentScope().get(name);
+    }
+                
+    public String getType(String name) {
+      return getCurrentScope().get(name).getType();
+    }
+                        
+    public Object getValue(String name) {
+      return getCurrentScope().get(name).getValue();
+    }
+                                
+    public void setValue(String name, Object value) {
+      getCurrentScope().get(name).setValue(value);
+    }
 }
