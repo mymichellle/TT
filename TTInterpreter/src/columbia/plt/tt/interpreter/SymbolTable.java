@@ -38,7 +38,12 @@ public class SymbolTable extends Stack<Scope> {
       nextScopeID++;
       return nextScopeID - 1;
     }   
-    
+
+    public void removeScope() {
+        this.pop();
+        nextScopeID--;
+    }
+
     public void addSymbol(String name, String type, Object value) {
             getCurrentScope().put(name, new Symbol(type, value));    	
     }
