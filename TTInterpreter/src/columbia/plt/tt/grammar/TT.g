@@ -8,7 +8,6 @@ options {
 tokens {
 	TUNIT;
 	IMPORTS;
-	IMPORT;  // is this same with IMPORTS?
 	METHOD;
 	ARG;
 	CALL;
@@ -115,7 +114,7 @@ imports :
 	importedLibraries* -> ^(IMPORTS importedLibraries*)
 ;
 importedLibraries
-	: IMPORT STRING_CONSTANT ';' -> STRING_CONSTANT
+	: 'import' STRING_CONSTANT ';' -> STRING_CONSTANT
 	;
 
 programBody
@@ -241,7 +240,7 @@ timeframeOrIdent
 	;
 
 breakStatement
-	: EVERY ';'
+	: BREAK ';'
 	;
 
 continueStatement
@@ -279,13 +278,8 @@ readStatement
 	;
 print : PRINT '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
 
-timeFrame
-	//: primaryExpression timeFrameSuffix
-	: (NUMBER|IDENT) timeFrameSuffix
-	;
-
 timeFrameConstant
-	: timeFrame ('+' timeFrame)*
+	: NUMBER timeFrameSuffix
 	;
 
 // Arithmetic Expressions .. Jason
