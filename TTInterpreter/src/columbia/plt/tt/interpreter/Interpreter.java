@@ -1,7 +1,5 @@
 package columbia.plt.tt.interpreter;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -13,9 +11,9 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 
+import antlr.RecognitionException;
 import columbia.plt.tt.TTLexer;
 import columbia.plt.tt.TTParser;
-import antlr.RecognitionException;
 
 public class Interpreter {
 		
@@ -25,7 +23,7 @@ public class Interpreter {
 	// Right now our TTGrammar.g makes each node a CommonTree
 	CommonTree root;
 	SymbolTable symbolTable = new SymbolTable();
-	ArrayList<String> errors = new ArrayList();
+	ArrayList<String> errors = new ArrayList<String>();
 		      					
 	public void interp(InputStream input) throws RecognitionException, IOException, org.antlr.runtime.RecognitionException {
 		CharStream stream = new ANTLRInputStream(input);       

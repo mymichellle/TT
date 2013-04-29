@@ -3,20 +3,11 @@ package columbia.plt.tt.interpreter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.TokenStream;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
-import columbia.plt.tt.TTGrammarEvaluator;
-import columbia.plt.tt.TTLexer;
-import columbia.plt.tt.TTParser;
-import columbia.plt.tt.TTParser.declarationStatement_return;
-import columbia.plt.tt.TTParser.everyFromToByStatement_return;
-import columbia.plt.tt.TTParser.translationUnit_return;
-import columbia.plt.tt.TTLexer;
+
 import columbia.plt.tt.TTParser;
 
 public class TTGrammarTester {
@@ -66,7 +57,7 @@ public class TTGrammarTester {
 	
 	public static void main(String[] args) throws RecognitionException {
 		try {
-			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/methods.tt");
+			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/operator.tt");
 			
 			Interpreter interpreter = new Interpreter();
 			interpreter.interp(fileStream);

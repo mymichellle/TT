@@ -67,6 +67,11 @@ tokens {
 	TIMEFRAME_DECEMBER = 'December';
 	TIMEFRAME_WEEKEND = 'Weekend';
 	TIMEFRAME_WEEKDAY = 'Weekday';
+	
+	OP;
+	DECLARE;
+	DEFINE;
+	UNARY;
 }
 @header{
 	package columbia.plt.tt;
@@ -164,8 +169,8 @@ definitionStatement
 	;
 
 assignmentStmt
-	: IDENT ASSIGN^ expression ';'!
-	| memberAccessExpression ^ASSIGN expression ';'!
+	: IDENT ASSIGN^ expr ';'!
+	| memberAccessExpr ^ASSIGN expr ';'!
 	;
 
 type
@@ -204,7 +209,7 @@ block
 
 
 ifThenStatement
-	: IF '(' expression ')' block elseStatement?
+	: IF '(' expr ')' block elseStatement?
 	;
 
 elseStatement
@@ -225,7 +230,7 @@ constraintOptions
 	;
 
 loopOptions
-	: ON expression
+	: ON expr
 	|
 	;
 
@@ -252,7 +257,7 @@ exitStatement
 	;
 
 returnStatement
-	: 'return' expression? ';'
+	: 'return' expr? ';'
 	;
 
 functionInvocationStatement
@@ -268,7 +273,7 @@ argumentList
 	;
 	
 expressionList
-	: expression (','expression)* -> expression*
+	: expr (','expr)* -> expr*
 	;
 
 /* TODO: We should remove 'read' and 'print' they belong
@@ -284,52 +289,54 @@ timeFrameConstant
 
 // Arithmetic Expressions .. Jason
 // @Author : Jason
-expression
-	: logicalExpression
+expr
+	: logicalExpr
 	| functionInvocation
 	;
 
-logicalExpression
-	: booleanAndExpression (OR^ booleanAndExpression)*
+logicalExpr
+	: booleanAndExpr (op=OR booleanAndExpr)*   -> ^(OP["booleanOrExpr"] booleanAndExpr+)
 	;
 
-booleanAndExpression
-	: equalityExpression (AND^ equalityExpression)*
+booleanAndExpr
+	: equalityExpr (op=AND equalityExpr)*   -> ^(OP["booleanAndExpr"] equalityExpr+)
 	;
 
-equalityExpression
-	: relationalExpression ((EQUALS | NOTEQUALS)^ relationalExpression)*
+equalityExpr
+	: relationalExpr (op=(EQUALS|NOTEQUALS) relationalExpr)*  -> ^(OP["equalityExpr"] relationalExpr+)
+	
 	;
 
-relationalExpression
-	: additiveExpression ((LT | LTEQ | GT | GTEQ)^ additiveExpression)*
+relationalExpr
+	: additiveExpr (op=(LT | LTEQ | GT | GTEQ) additiveExpr)* -> ^(OP["relationalExpr"] additiveExpr+)
 	;
 
-additiveExpression
-	: multiplicativeExpression ((PLUS | MINUS)^ multiplicativeExpression)*
+additiveExpr
+	: multExpr (op=(PLUS | MINUS) multExpr)* -> ^(OP["additiveExpr"] multExpr+)
 	;
 
-multiplicativeExpression
-	: unaryExpression ((MULT | DIV | MOD)^ unaryExpression)*
+multExpr
+	: unaryExpr (op=(MULT | DIV | MOD) unaryExpr)* -> ^(OP["multExpr"] unaryExpr+)
 	;
 
-memberAccessExpression
-	:	IDENT '.'^ IDENT 
+memberAccessExpr
+	:	IDENT DOT IDENT 		 -> ^(DOT IDENT IDENT)
 	;
 
-unaryExpression 
-	: NOT? primaryExpression
+unaryExpr 
+	: NOT? primaryExpr    -> ^(UNARY NOT? primaryExpr)
 	;
 
-primaryExpression 
-	: exprInParentheses
-	| constant
+primaryExpr  			
+	: exprInParentheses  			
+	| constant				
 	| IDENT
-	| memberAccessExpression
+	| memberAccessExpr
+	|	assignmentStmt
 	;
 
 exprInParentheses
-	: '(' expression ')'
+	: '(' expr ')'    -> expr
 	;
 
 //Lexer Rules
