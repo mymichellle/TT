@@ -8,18 +8,66 @@ options {
 tokens {
 	TUNIT;
 	IMPORTS;
+	IMPORT;  // is this same with IMPORTS?
 	METHOD;
 	ARG;
 	CALL;
 	SLIST;
-	MAIN;
-        STRINGTYPE = 'String';
+	MAIN = 'main';
+	STRINGTYPE = 'String';
 	NUMBERTYPE = 'Number';
 	DATETYPE = 'Date';
 	TASKTYPE = 'Task';
 	TIMEFRAMETYPE = 'TimeFrame';
 	CALENDARTYPE = 'Calendar';
 	TIMETYPE = 'Time';
+	IF = 'if';
+	ELSE = 'else';
+	EVERY = 'every';
+	FROM = 'from';
+	TO = 'to';
+	BY = 'by';
+	IN = 'in';
+	ON = 'on';
+	BREAK = 'break';
+	EXIT = 'exit';
+	CONTINUE = 'continue';
+	TRUE = 'true';
+	FALSE = 'false';
+	RETURN = 'return';
+	READ = 'read';
+	PRINT = 'print';
+	TIMEFRAME_YEAR = 'year';
+	TIMEFRAME_YEARS = 'years';
+	TIMEFRAME_MONTH = 'month';
+	TIMEFRAME_MONTHS = 'months';
+	TIMEFRAME_DAY = 'day';
+	TIMEFRAME_DAYS = 'days';
+	TIMEFRAME_HOUR = 'hour';
+	TIMEFRAME_HOURS = 'hours';
+	TIMEFRAME_MINUTE = 'minute';
+	TIMEFRAME_MINUTES = 'minutes';
+	TIMEFRAME_MONDAY = 'Monday';
+	TIMEFRAME_TUESDAY = 'Tuesday';
+	TIMEFRAME_WEDNESDAY = 'Wednesday';
+	TIMEFRAME_THURSDAY = 'Thursday';
+	TIMEFRAME_FRIDAY = 'Friday';
+	TIMEFRAME_SATURDAY = 'Saturday';
+	TIMEFRAME_SUNDAY = 'Sunday';
+	TIMEFRAME_JANUARY = 'January';
+	TIMEFRAME_FEBRUARY = 'February';
+	TIMEFRAME_MARCH = 'March';
+	TIMEFRAME_APRIL = 'April';
+	TIMEFRAME_MAY = 'May';
+	TIMEFRAME_JUNE = 'June';
+	TIMEFRAME_JULY = 'July';
+	TIMEFRAME_AUGUST = 'August';
+	TIMEFRAME_SEPTEMBER = 'September';
+	TIMEFRAME_OCTOBER = 'October';
+	TIMEFRAME_NOVEMBER = 'November';
+	TIMEFRAME_DECEMBER = 'December';
+	TIMEFRAME_WEEKEND = 'Weekend';
+	TIMEFRAME_WEEKDAY = 'Weekday';
 }
 @header{
 	package columbia.plt.tt;
@@ -67,7 +115,7 @@ imports :
 	importedLibraries* -> ^(IMPORTS importedLibraries*)
 ;
 importedLibraries
-	: 'import' STRING_CONSTANT ';' -> STRING_CONSTANT
+	: IMPORT STRING_CONSTANT ';' -> STRING_CONSTANT
 	;
 
 programBody
@@ -82,7 +130,7 @@ methodsAndFieldsDeclarations
 	;
 
 main
-	: 'main('WS*')' block -> ^(MAIN block)
+	: MAIN '('WS*')' block -> ^(MAIN block)
 	;
 
 methodDeclarations
@@ -113,12 +161,12 @@ declarationStatement
 	;
 
 definitionStatement
-	: type^ (WS*)! assignmentStmt 
+	: type (WS*)! assignmentStmt 
 	;
 
 assignmentStmt
-	: IDENT '='^ expression ';'!
-	| memberAccessExpression ^'=' expression ';'!
+	: IDENT ASSIGN^ expression ';'!
+	| memberAccessExpression ^ASSIGN expression ';'!
 	;
 
 type
@@ -154,29 +202,31 @@ block
 	: '{' statement_type* '}'  -> ^(SLIST statement_type*)
 	;
 
+
+
 ifThenStatement
-	: 'if' '(' expression ')' block elseStatement?
+	: IF '(' expression ')' block elseStatement?
 	;
 
 elseStatement
-	: 'else' block
+	: ELSE block
 	;
 
 everyFromToByStatement
-	: 'every'! 'Date'! IDENT^ 'from'! dateOrIdent 'to'! dateOrIdent 'by'! timeframeOrIdent block
+	: EVERY! 'Date'! IDENT^ FROM! dateOrIdent TO! dateOrIdent BY! timeframeOrIdent block
 	;
 
 everyInStatement
-	: 'every' 'Task' IDENT 'in' IDENT constraintOptions  block
+	: EVERY 'Task' IDENT IN IDENT constraintOptions  block
 	;
 
 constraintOptions
-	: 'from' dateOrIdent 'to' dateOrIdent loopOptions
+	: FROM dateOrIdent TO dateOrIdent loopOptions
 	| loopOptions
 	;
 
 loopOptions
-	: 'on' expression
+	: ON expression
 	|
 	;
 
@@ -191,11 +241,11 @@ timeframeOrIdent
 	;
 
 breakStatement
-	: 'break' ';'
+	: EVERY ';'
 	;
 
 continueStatement
-	: 'continue' ';'
+	: CONTINUE ';'
 	;
 
 exitStatement
@@ -225,12 +275,17 @@ expressionList
 /* TODO: We should remove 'read' and 'print' they belong
  * to the [standard] library. */
 readStatement
-	: 'read' '(' STRING_CONSTANT ')' ';'
+	: READ '(' STRING_CONSTANT ')' ';'
 	;
-print : 'print' '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
+print : PRINT '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
+
+timeFrame
+	//: primaryExpression timeFrameSuffix
+	: (NUMBER|IDENT) timeFrameSuffix
+	;
 
 timeFrameConstant
-  : NUMBER? timeFrameSuffix
+	: timeFrame ('+' timeFrame)*
 	;
 
 // Arithmetic Expressions .. Jason
@@ -395,44 +450,44 @@ DIGIT
 //	;
 
 timeFrameSuffix
-	:'year'
-	|'years'
-	|'month'
-	|'months'
-	|'day'
-	|'days'
-	|'hour'
-	|'hours'
-	|'minute'
-	|'minutes'
+	: TIMEFRAME_YEAR
+	| TIMEFRAME_YEARS
+	| TIMEFRAME_MONTH
+	| TIMEFRAME_MONTHS
+	| TIMEFRAME_DAY
+	| TIMEFRAME_DAYS
+	| TIMEFRAME_HOUR
+	| TIMEFRAME_HOURS
+	| TIMEFRAME_MINUTE
+	| TIMEFRAME_MINUTES
 	;
 
 boolConstant
-	: 'true' 
-	| 'false' 
+	: TRUE
+	| FALSE 
 	;
 
 timeEntityConstant
-	:'Monday'
-	|'Tuesday'
-	|'Wednesday'
-	|'Thursday'
-	|'Friday'
-	|'Saturday'
-	|'Sunday'
-	|'January'
-	|'February'
-	|'March'
-	|'April'
-	|'May'
-	|'June'
-	|'July'
-	|'August'
-	|'September'
-	|'October'
-	|'November'
-	|'December'
-	|'Weekend'
-	|'Weekday'
+	: TIMEFRAME_MONDAY
+	| TIMEFRAME_TUESDAY
+	| TIMEFRAME_WEDNESDAY
+	| TIMEFRAME_THURSDAY
+	| TIMEFRAME_FRIDAY
+	| TIMEFRAME_SATURDAY
+	| TIMEFRAME_SUNDAY
+	| TIMEFRAME_JANUARY
+	| TIMEFRAME_FEBRUARY
+	| TIMEFRAME_MARCH
+	| TIMEFRAME_APRIL
+	| TIMEFRAME_MAY
+	| TIMEFRAME_JUNE
+	| TIMEFRAME_JULY
+	| TIMEFRAME_AUGUST
+	| TIMEFRAME_SEPTEMBER
+	| TIMEFRAME_OCTOBER
+	| TIMEFRAME_NOVEMBER
+	| TIMEFRAME_DECEMBER
+	| TIMEFRAME_WEEKEND
+	| TIMEFRAME_WEEKDAY
 	;
 // End by Zheng
