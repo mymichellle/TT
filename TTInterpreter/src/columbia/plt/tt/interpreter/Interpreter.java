@@ -14,6 +14,8 @@ import org.antlr.runtime.tree.CommonTree;
 import antlr.RecognitionException;
 import columbia.plt.tt.TTLexer;
 import columbia.plt.tt.TTParser;
+import columbia.plt.tt.datatype.Date;
+import columbia.plt.tt.datatype.TimeFrame;
 
 public class Interpreter {
 		
@@ -72,10 +74,11 @@ public class Interpreter {
 		  //case TTParser.TIMETYPE :           (AA)
 		  //case TTParser.IF :                  (MA)
 		  //case TTParser.ELSE :                (MA)
-		  //case TTParser.EVERY :            (MA)
-		  //case TTParser.FROM :             (MA)
-		  //case TTParser.TO :             (MA)
-		  //case TTParser.BY :             (MA)
+		  case TTParser.EVERYDATE : everyDate(t); break; //(MA)
+		  case TTParser.EVERYTASK : everyTask(t); break; // (MA)
+		  case TTParser.FROM : return from(t);  // (MA)
+		  case TTParser.TO :  return to(t);           // (MA)
+		  case TTParser.BY :  return by(t);           // (MA)
 		  //case TTParser.IN :             (MA)
 		  //case TTParser.ON :             (MA)
 		  //case TTParser.BREAK :            (MA)
@@ -90,7 +93,7 @@ public class Interpreter {
 		  //case TTParser.CALL : call(t); break;      (PL)
 		  //case TTParser.RETURN :      (PL)
 		  //case TTParser.READ :      (PL)
-		  //case TTParser.PRINT :      (PL)
+		  case TTParser.PRINT :  print(t); break;     //(PL)
 		  
 		  //case TTParser.TIMEFRAME_YEAR  //(JL)
 		  //case TTParser.TIMEFRAME_YEARS  //(JL)
@@ -265,5 +268,64 @@ public class Interpreter {
 		}
 		
 		symbolTable.removeScope();
+	}
+	
+	public void everyDate(CommonTree t){
+		System.out.println("every!");
+		// First child is the Task/Date declaration -- TODO pass on as a declare statement?
+		Date itterDate = null;
+		String type = ((CommonTree)t.getChild(0)).getText();
+		String name = ((CommonTree)t.getChild(0)).getChild(0).getText();
+		symbolTable.addSymbol(name, type, itterDate);
+
+		// Handling from/to/by only for now
+		System.out.println("every! in symboltable");	
+		Date start = (Date)exec((CommonTree)t.getChild(1));
+		Date end = (Date)exec((CommonTree)t.getChild(2));
+		TimeFrame inc = (TimeFrame)exec((CommonTree)t.getChild(3));
+		// Define the itterDate
+		itterDate = start;
+		symbolTable.addSymbol(name, type, itterDate);
+
+		System.out.println("itterDate: "+itterDate.toString() + " end: "+end.toString() + "compare" + itterDate.compareTo(end));
+		while(itterDate.compareTo(end) <= 0)
+		{
+			System.out.println("LOOP: "+itterDate.toString());
+			// nth Child is the Block to execute every loop
+			exec((CommonTree)t.getChild(4));
+			
+			// Increment the itterDate and update symbolTable
+			itterDate.add(inc);
+			symbolTable.addSymbol(name, type, itterDate);
+		}
+	}
+	
+	public void everyTask(CommonTree t){
+		
+	}
+	
+	public Date from(CommonTree t){
+		// This only handles DATE_CONSTANT
+		return new Date(((CommonTree)t.getChild(0)).getText());
+	}
+	
+	public Date to(CommonTree t){
+		// This only handles DATE_CONSTANT
+		return new Date(((CommonTree)t.getChild(0)).getText());
+	}
+	
+	public TimeFrame by(CommonTree t){
+		// This only handles timeFrameConstant
+		String tf = "";
+		for (int i = 0; i < t.getChildCount(); i++)  
+		{
+			tf = tf + " " + ((CommonTree)t.getChild(i)).getText();
+		}		
+		System.out.println("by: "+tf);
+		return new TimeFrame(tf);
+	}
+	
+	public void print(CommonTree t){
+		System.out.println(t.getChild(0).getText());
 	}
 }

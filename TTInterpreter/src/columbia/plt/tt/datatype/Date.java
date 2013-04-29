@@ -95,4 +95,13 @@ public class Date implements Comparable<Date> {
   public String toString() {
   	return year + "." + month + "." + day + "." + hour + "." + minute;
   }
+  
+  public void add(TimeFrame tf) {
+	  // TODO - handle overflow ie 13 months = 1 year 1 month
+	  this.year = this.year + tf.getYears();
+	  this.month = this.month + tf.getMonths();
+	  this.day = this.day + tf.getDays();
+	  this.hour = this.hour + tf.getHours();
+	  this.minute = this.minute + tf.getMinutes();
+  }
 }

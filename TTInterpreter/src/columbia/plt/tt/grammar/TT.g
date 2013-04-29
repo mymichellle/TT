@@ -22,6 +22,8 @@ tokens {
 	TIMETYPE = 'Time';
 	IF = 'if';
 	ELSE = 'else';
+	EVERYDATE;
+	EVERYTASK;
 	EVERY = 'every';
 	FROM = 'from';
 	TO = 'to';
@@ -217,11 +219,11 @@ elseStatement
 	;
 
 everyFromToByStatement
-	: EVERY! 'Date'! IDENT^ FROM! dateOrIdent TO! dateOrIdent BY! timeframeOrIdent block
+	: EVERY 'Date' IDENT FROM dateOrIdent TO dateOrIdent BY timeframeOrIdent block -> ^(EVERYDATE ^('Date' IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(BY timeframeOrIdent) block)
 	;
 
 everyInStatement
-	: EVERY 'Task' IDENT IN IDENT constraintOptions  block
+	: EVERY 'Task' IDENT IN IDENT constraintOptions  block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) constraintOptions block)
 	;
 
 constraintOptions
@@ -235,8 +237,8 @@ loopOptions
 	;
 
 dateOrIdent
-	: IDENT
-	| DATE_CONSTANT	
+	: IDENT^
+	| DATE_CONSTANT^	
 	; 
 	
 timeframeOrIdent
@@ -281,7 +283,7 @@ expressionList
 readStatement
 	: READ '(' STRING_CONSTANT ')' ';'
 	;
-print : PRINT '(' STRING_CONSTANT  ')' ';' {System.out.println($STRING_CONSTANT.text);} ; 
+print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT); 
 
 timeFrameConstant
 	: NUMBER timeFrameSuffix
