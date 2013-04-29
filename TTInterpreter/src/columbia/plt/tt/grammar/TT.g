@@ -102,15 +102,15 @@ argDeclaration
 //@Author : Athresh
 
 declarationStatement
-	: type (WS*)! IDENT ';'
+	: type^ (WS*)! IDENT ';'
 	;
 
 definitionStatement
-	: type (WS*)! assignmentStmt 
+	: type^ (WS*)! assignmentStmt 
 	;
 
 assignmentStmt
-	: IDENT ^'=' expression ';'!
+	: IDENT '='^ expression ';'!
 	| memberAccessExpression ^'=' expression ';'!
 	;
 
