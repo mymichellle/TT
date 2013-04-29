@@ -13,6 +13,13 @@ tokens {
 	CALL;
 	SLIST;
 	MAIN;
+        STRINGTYPE = 'String';
+	NUMBERTYPE = 'Number';
+	DATETYPE = 'Date';
+	TASKTYPE = 'Task';
+	TIMEFRAMETYPE = 'TimeFrame';
+	CALENDARTYPE = 'Calendar';
+	TIMETYPE = 'Time';
 }
 @header{
 	package columbia.plt.tt;
@@ -115,13 +122,13 @@ assignmentStmt
 	;
 
 type
-	: 'String'
-	| 'Number'
-	| 'Date'
-	| 'Task'
-	| 'TimeFrame'
-	| 'Calendar'
-	| 'Time' /* LRM was TimeEntity */
+	: STRINGTYPE
+	| NUMBERTYPE
+	| DATETYPE
+	| TASKTYPE
+	| TIMEFRAMETYPE
+	| CALENDARTYPE
+	| TIMETYPE /* LRM was TimeEntity */
 	;
 
 //Statement
