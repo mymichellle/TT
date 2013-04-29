@@ -12,6 +12,7 @@ tokens {
 	ARG;
 	CALL;
 	SLIST;
+	EMPTY;
 	MAIN = 'main';
 	STRINGTYPE = 'String';
 	NUMBERTYPE = 'Number';
@@ -211,11 +212,11 @@ block
 
 
 ifThenStatement
-	: IF '(' expr ')' block elseStatement?
+	: IF '(' expr ')' block elseStatement? -> ^(IF expr block elseStatement)
 	;
 
 elseStatement
-	: ELSE block
+	: ELSE block -> ^(ELSE block)
 	;
 
 everyFromToByStatement
@@ -223,19 +224,13 @@ everyFromToByStatement
 	;
 
 everyInStatement
-	: EVERY 'Task' IDENT IN IDENT constraintOptions  block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) constraintOptions block)
+	//: EVERY 'Task' IDENT IN IDENT constraintOptions  block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(constraintOptions) block)
+	: EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) block)
+	| EVERY 'Task' IDENT IN IDENT ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN IDENT) block)
 	;
-
-constraintOptions
-	: FROM dateOrIdent TO dateOrIdent loopOptions
-	| loopOptions
-	;
-
-loopOptions
-	: ON expr
-	|
-	;
-
+	
 dateOrIdent
 	: IDENT^
 	| DATE_CONSTANT^	

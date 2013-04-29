@@ -14,7 +14,9 @@ import org.antlr.runtime.tree.CommonTree;
 import antlr.RecognitionException;
 import columbia.plt.tt.TTLexer;
 import columbia.plt.tt.TTParser;
+import columbia.plt.tt.datatype.Calendar;
 import columbia.plt.tt.datatype.Date;
+import columbia.plt.tt.datatype.Task;
 import columbia.plt.tt.datatype.TimeFrame;
 
 public class Interpreter {
@@ -72,14 +74,14 @@ public class Interpreter {
 		  //case TTParser.TIMEFRAMETYPE :  (AA)
 		  //case TTParser.CALENDARTYPE :    (AA)
 		  //case TTParser.TIMETYPE :           (AA)
-		  //case TTParser.IF :                  (MA)
-		  //case TTParser.ELSE :                (MA)
+		  case TTParser.IF :  ifStatement(t);break;// (MA)
+		  case TTParser.ELSE : elseStatement(t);break;//   (MA)
 		  case TTParser.EVERYDATE : everyDate(t); break; //(MA)
 		  case TTParser.EVERYTASK : everyTask(t); break; // (MA)
-		  case TTParser.FROM : return from(t);  // (MA)
-		  case TTParser.TO :  return to(t);           // (MA)
-		  case TTParser.BY :  return by(t);           // (MA)
-		  //case TTParser.IN :             (MA)
+		  case TTParser.FROM : return dateOrIdent(t);  // (MA)
+		  case TTParser.TO :  return dateOrIdent(t);           // (MA)
+		  case TTParser.BY :  return timeFrameOrIdent(t);           // (MA)
+		  case TTParser.IN :  return in(t);//(MA)
 		  //case TTParser.ON :             (MA)
 		  //case TTParser.BREAK :            (MA)
 		  //case TTParser.EXIT :             (MA)
@@ -270,8 +272,33 @@ public class Interpreter {
 		symbolTable.removeScope();
 	}
 	
+	public void ifStatement(CommonTree t){
+		System.out.println("IF" + t.getChildCount());
+		// 0th Child is the expr to evaluate
+		if((Boolean)exec((CommonTree)t.getChild(0)))
+		{
+			System.out.println("HERE");
+			// 1st Child is the block
+			exec((CommonTree)t.getChild(0));
+		}
+		else if(t.getChildCount() >= 3)
+		{
+			System.out.println("HERE");
+			exec((CommonTree)t.getChild(2));
+			System.out.println(((CommonTree)t.getChild(2)).getText());
+		}
+		
+	}
+	
+	public void elseStatement(CommonTree t){
+		for (int i = 0; i < t.getChildCount(); i++)  
+		{
+			exec((CommonTree)t.getChild(i));
+		}
+	}
+	
 	public void everyDate(CommonTree t){
-		System.out.println("every!");
+		System.out.println("everyDate!");
 		// First child is the Task/Date declaration -- TODO pass on as a declare statement?
 		Date itterDate = null;
 		String type = ((CommonTree)t.getChild(0)).getText();
@@ -299,22 +326,13 @@ public class Interpreter {
 			symbolTable.addSymbol(name, type, itterDate);
 		}
 	}
-	
-	public void everyTask(CommonTree t){
 		
-	}
-	
-	public Date from(CommonTree t){
+	public Date dateOrIdent(CommonTree t){
 		// This only handles DATE_CONSTANT
 		return new Date(((CommonTree)t.getChild(0)).getText());
 	}
-	
-	public Date to(CommonTree t){
-		// This only handles DATE_CONSTANT
-		return new Date(((CommonTree)t.getChild(0)).getText());
-	}
-	
-	public TimeFrame by(CommonTree t){
+		
+	public TimeFrame timeFrameOrIdent(CommonTree t){
 		// This only handles timeFrameConstant
 		String tf = "";
 		for (int i = 0; i < t.getChildCount(); i++)  
@@ -323,6 +341,19 @@ public class Interpreter {
 		}		
 		System.out.println("by: "+tf);
 		return new TimeFrame(tf);
+	}
+	
+	public void everyTask(CommonTree t){
+		System.out.println("everyTask!");
+		// First child is the Task/Date declaration -- TODO pass on as a declare statement?
+		/*Task itterTask = null;
+		String type = ((CommonTree)t.getChild(0)).getText();
+		String name = ((CommonTree)t.getChild(0)).getChild(0).getText();
+		symbolTable.addSymbol(name, type, itterTask);*/
+	}
+	
+	public Calendar in(CommonTree t){
+		return new Calendar("Temp");
 	}
 	
 	public void print(CommonTree t){

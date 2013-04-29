@@ -1,0 +1,10 @@
+main(){
+
+	if( c<d) {
+		print("if");
+	}
+	else
+	{
+		print("else");
+	}
+}
