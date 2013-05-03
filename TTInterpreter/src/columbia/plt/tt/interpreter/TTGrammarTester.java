@@ -57,7 +57,7 @@ public class TTGrammarTester {
 	
 	public static void main(String[] args) throws RecognitionException {
 		try {
-			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/Loops.tt");
+			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/declareanddefine.tt");
 			
 			Interpreter interpreter = new Interpreter();
 			interpreter.interp(fileStream);
