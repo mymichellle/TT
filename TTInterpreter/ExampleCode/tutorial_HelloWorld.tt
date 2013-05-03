@@ -1,0 +1,24 @@
+String username = "TT_user";
+String password = "1111";
+ 
+String calendarName = "my calendar";
+ 
+Date startDate = 2012.09.01;
+Date endDate = 2013.03.12;
+ 
+Calendar c = downloadCalendar(username, password, calendarName, startDate, endDate);
+print(“hello, this is ” + calendarName);
+
+every Task t in calendarName {
+print(t.name +”: from ”+ t.start +” to ”+ t.end ); 
+}
+
+Task t ;
+t.name = “Hello World!”
+t.start = 2012.03.15.08.24;
+t.end = 2012.03.15.09.35;
+t.location = “CS lounge”;
+ 
+ 
+addTask(c,t);
+print(t.title+”: from ”+ t.start + “ to ” + t.end);

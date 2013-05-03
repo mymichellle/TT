@@ -1,0 +1,37 @@
+// Create a calendar and add weekly tasks to the calendar
+ 
+Calendar myClasses;
+Timeframe tf = 1days;
+Timeframe classStart = 14hours + 40minutes;
+Timeframe classDuration = 1hours + 15minutes;
+ 
+every Date d from  2013.1.22.0  to  2013.5.6.0  by  tf
+{
+  	if ( d is Monday || d is Wednesday )
+  	{
+        	// Create the task with a name
+        	Task t;
+		t.name = "PLT";
+        	
+        	// Assign the start and end date
+        	t.start = d + classStart;
+        	t.end = d + classStart + classDuration;
+ 
+        	// Add the task to the calendar
+        	addTask(c, t);
+  	}
+ 
+  	if ( d is Tuesday || d is Wednesday )
+  	{
+        	// Create the task with a name
+        	Task t;
+		t.name = "AI";
+        	
+        	// Assign the start and end date
+        	t.start = d + classStart;
+        	t.end = d + classStart + classDuration;
+ 
+        	// Add the task to the calendar
+        	addTask(c, t);
+  	}
+}

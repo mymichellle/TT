@@ -1,0 +1,11 @@
+String username = "abc";
+String password = "1111";
+String calendarName = "my calendar";
+ 
+Calendar c = downloadCalendar(username, password, calendarName);
+Date today = getCurrentTime();
+every Task t in c
+{
+  if (t.start  >  today)
+	print(t.description  + " - Day Left: " + until t.start);
+}
