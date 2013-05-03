@@ -298,23 +298,54 @@ public class Interpreter {
 	}
 	
 	public void everyDate(CommonTree t){
-		System.out.println("everyDate!");
-		// First child is the Task/Date declaration -- TODO pass on as a declare statement?
+		System.out.println("\neveryDate!");
+		// Declare variables
+		Date start = null;
+		Date end = null;
+		TimeFrame inc = null;
+		CommonTree block = null;
 		Date itterDate = null;
-		String type = ((CommonTree)t.getChild(0)).getText();
-		String name = ((CommonTree)t.getChild(0)).getChild(0).getText();
+		String type = null;
+		String name = null;
 		symbolTable.addSymbol(name, type, itterDate);
 
-		// Handling from/to/by only for now
-		System.out.println("every! in symboltable");	
-		Date start = (Date)exec((CommonTree)t.getChild(1));
-		Date end = (Date)exec((CommonTree)t.getChild(2));
-		TimeFrame inc = (TimeFrame)exec((CommonTree)t.getChild(3));
+		
+		
+		for (int i = 0; i < t.getChildCount(); i++)  
+		{
+			switch ( t.getChild(i).getType() ) 
+			{
+			case TTParser.FROM:
+				start = (Date)exec((CommonTree)t.getChild(i));
+				break;
+			case TTParser.TO:
+				end = (Date)exec((CommonTree)t.getChild(i));
+				break;
+			case TTParser.BY:
+				inc = (TimeFrame)exec((CommonTree)t.getChild(i));
+				break;
+			case TTParser.SLIST:
+				block = (CommonTree)t.getChild(i);
+				break;
+			default:
+				// Handle "Date"	
+				type = ((CommonTree)t.getChild(i)).getText();
+				name = ((CommonTree)t.getChild(i)).getChild(0).getText();
+				symbolTable.addSymbol(name, type, itterDate);
+				System.out.println("Found task");
+				break;
+			}
+		}
+		
+
+		if( start == null || end == null)
+			return;
+		
 		// Define the itterDate
 		itterDate = start;
 		symbolTable.addSymbol(name, type, itterDate);
-
-		System.out.println("itterDate: "+itterDate.toString() + " end: "+end.toString() + "compare" + itterDate.compareTo(end));
+		
+		System.out.println("itterDate: "+itterDate.toString() + " end: "+end.toString() + "compare " + itterDate.compareTo(end));
 		while(itterDate.compareTo(end) <= 0)
 		{
 			System.out.println("LOOP: "+itterDate.toString());
@@ -329,11 +360,13 @@ public class Interpreter {
 		
 	public Date dateOrIdent(CommonTree t){
 		// This only handles DATE_CONSTANT
+		System.out.println("dateOrIdent");
 		return new Date(((CommonTree)t.getChild(0)).getText());
 	}
 		
 	public TimeFrame timeFrameOrIdent(CommonTree t){
 		// This only handles timeFrameConstant
+		System.out.println("timeFrameOrIdent");
 		String tf = "";
 		for (int i = 0; i < t.getChildCount(); i++)  
 		{
@@ -344,12 +377,73 @@ public class Interpreter {
 	}
 	
 	public void everyTask(CommonTree t){
-		System.out.println("everyTask!");
-		// First child is the Task/Date declaration -- TODO pass on as a declare statement?
-		/*Task itterTask = null;
-		String type = ((CommonTree)t.getChild(0)).getText();
-		String name = ((CommonTree)t.getChild(0)).getChild(0).getText();
-		symbolTable.addSymbol(name, type, itterTask);*/
+		System.out.println("\neveryTask!");
+		
+		String type = null;
+		String name = null;
+		
+		Date start = null;
+		Date end = null;
+		
+		CommonTree on = null;
+		Calendar c = null;
+		
+		CommonTree block = null;
+		Task itterTask = null;
+		
+		for (int i = 0; i < t.getChildCount(); i++)  
+		{
+			switch ( t.getChild(i).getType() ) 
+			{
+			case TTParser.IN:
+				c = (Calendar)exec((CommonTree)t.getChild(i));
+				break;
+			case TTParser.FROM:
+				start = (Date)exec((CommonTree)t.getChild(i));
+				break;
+			case TTParser.TO:
+				end = (Date)exec((CommonTree)t.getChild(i));
+				break;
+			case TTParser.ON:
+				on = (CommonTree)t.getChild(i);
+				break;
+			case TTParser.SLIST:
+				block = (CommonTree)t.getChild(i);
+				break;
+			default:
+				// Handle "Task"	
+				type = ((CommonTree)t.getChild(i)).getText();
+				name = ((CommonTree)t.getChild(i)).getChild(0).getText();
+				symbolTable.addSymbol(name, type, itterTask);
+				break;
+			}
+		}
+		
+		// Get the subset of tasks from Calendar
+		ArrayList<Task> taskList = null;
+		if(start != null && end != null)
+		{
+			taskList = c.getTasksWithinRange(start, end);
+		}
+		else
+		{
+			taskList = c;
+		}
+		
+		for(Task task :taskList)
+		{
+			// If there is an on expression evaluate it for each loop
+			if(on == null || (Boolean)exec(on))
+			{
+				// Update the symbol table
+				itterTask = task;
+				symbolTable.addSymbol(name, type, itterTask);
+				
+				// execute the block of code
+				exec(block);
+			}
+		}
+		
 	}
 	
 	public Calendar in(CommonTree t){
