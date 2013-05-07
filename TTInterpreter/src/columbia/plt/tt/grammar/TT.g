@@ -13,6 +13,9 @@ tokens {
 	CALL;
 	SLIST;
 	EMPTY;
+	IDENT_TOKEN;
+	DATE_CONSTANT_TOKEN;
+	TIMEFRAME_CONSTANT;
 	MAIN = 'main';
 	STRINGTYPE = 'String';
 	NUMBERTYPE = 'Number';
@@ -232,13 +235,13 @@ everyInStatement
 	;
 	
 dateOrIdent
-	: IDENT^
-	| DATE_CONSTANT^	
+	: IDENT -> ^(IDENT_TOKEN IDENT)
+	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)	
 	; 
 	
 timeframeOrIdent
-	: IDENT
-	| timeFrameConstant
+	: IDENT -> ^(IDENT_TOKEN IDENT)
+	| timeFrameConstant -> ^(TIMEFRAME_CONSTANT timeFrameConstant)
 	;
 
 breakStatement
