@@ -21,6 +21,9 @@ import columbia.plt.tt.datatype.Calendar;
 import columbia.plt.tt.datatype.Date;
 import columbia.plt.tt.datatype.Task;
 import columbia.plt.tt.datatype.TimeFrame;
+import columbia.plt.tt.typecheck.*;
+
+
 
 public class Interpreter {
 
@@ -31,6 +34,7 @@ public class Interpreter {
 	CommonTree root;
 	SymbolTable symbolTable = new SymbolTable();
 	ArrayList<String> errors = new ArrayList<String>();
+<<<<<<< HEAD
 
 	public enum TimeFrameConst {
 		YEAR, YEARS, MONTH, MONTHS, DAY, DAYS, HOUR, HOURS, MINUTE, MINUTES,
@@ -39,6 +43,25 @@ public class Interpreter {
 		WEEKEND, WEEKDAY
 	}
 
+=======
+    
+	public InterpreterListener listener = // default response to messages
+	        new InterpreterListener() {
+	            public void info(String msg) { System.out.println(msg); }
+	            public void error(String msg) { System.err.println(msg); }
+	            public void error(String msg, Exception e) {
+	                error(msg); e.printStackTrace(System.err);
+	            }
+	           
+				@Override
+				public void error(String msg, org.antlr.runtime.Token t) {
+	            error("line "+t.getLine()+": "+msg);
+					
+				}
+	        };
+	
+	
+>>>>>>> add interpreterListener to collect errors
 	public void interp(InputStream input) throws RecognitionException,
 			IOException, org.antlr.runtime.RecognitionException {
 		// Lexical and Syntax Analysis
@@ -233,13 +256,15 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
+			listener.error("problem executing "+t.toStringTree(), e);
 		}
 		return null;
 	}
 
 	public void tunit(CommonTree t) {
 		if (t.getType() != TTParser.TUNIT) {
-			System.out.println("NOT a TUNIT");
+			//System.out.println("NOT a TUNIT");
+			 listener.error("not a tunit: "+t.toStringTree());
 		}
 		// Execute code
 		List<CommonTree> stats = null;
@@ -259,7 +284,7 @@ public class Interpreter {
 
 		if (t.getType() != TTParser.MAIN) {
 			// Handle error
-			// listener.error("not a block: "+t.toStringTree());
+			 listener.error("not a mainblock: "+t.toStringTree());
 		}
 		// Execute code
 		List<CommonTree> stats = null;
@@ -285,6 +310,10 @@ public class Interpreter {
 	public void block(CommonTree t) {
 		// System.out.println("block");
 		// Execute code
+		if (t.getType() != TTParser.SLIST) {
+			// Handle error
+			 listener.error("not a block: "+t.toStringTree());
+		}
 		List<CommonTree> stats = null;
 		for (int i = 0; i < t.getChildCount(); i++) {
 			exec((CommonTree) t.getChild(i));
@@ -349,8 +378,13 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
+<<<<<<< HEAD
 		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
 		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
+=======
+		int a = Integer.parseInt(symbolTable.getValue(t.getChild(0).getText()).toString());
+		int b = Integer.parseInt(symbolTable.getValue(t.getChild(1).getText()).toString());
+>>>>>>> add interpreterListener to collect errors
 
 		switch (t.getType()) {
 
@@ -364,7 +398,13 @@ public class Interpreter {
 			return a * b;
 
 		case TTParser.DIV:
-			return a / b; // to do throw error on divide by zero
+			{	if (b == 0) {
+					listener.error("invalid operation:" + t.toStringTree());
+					}
+				return a / b;
+			
+			}
+			 // to do throw error on divide by zero
 
 		case TTParser.MOD:
 			return a % b;
@@ -382,8 +422,13 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
+<<<<<<< HEAD
 		boolean a = (Boolean) symbolTable.getValue(t.getChild(0).getText());
 		boolean b = (Boolean) symbolTable.getValue(t.getChild(1).getText());
+=======
+		boolean a = Boolean.parseBoolean(symbolTable.getValue(t.getChild(0).getText()).toString()) ;
+		boolean b = Boolean.parseBoolean(symbolTable.getValue(t.getChild(1).getText()).toString());
+>>>>>>> add interpreterListener to collect errors
 
 		switch (t.getType()) {
 		case TTParser.AND:
@@ -424,8 +469,13 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
+<<<<<<< HEAD
 		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
 		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
+=======
+		int a = Integer.parseInt(symbolTable.getValue(t.getChild(0).getText()).toString());
+		int b = Integer.parseInt(symbolTable.getValue(t.getChild(1).getText()).toString());
+>>>>>>> add interpreterListener to collect errors
 
 		switch (t.getType()) {
 
