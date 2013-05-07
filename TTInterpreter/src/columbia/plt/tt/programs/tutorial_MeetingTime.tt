@@ -1,0 +1,82 @@
+Date start = 2013.05.16;
+Date end = 2013.05.17;
+
+main() {
+
+	Calendar c1;
+	Calendar c2;
+	
+	c1.name = "Michelle's Day";
+	c1.start = start;
+	c1.end = end;
+	
+	Task t = "Team Meeting";
+	t.start = 2013.05.16.10;
+	t.end = 2013.05.16.12;
+	addTask(c1, t);
+	
+	
+	Task t2 = "Final Exam";
+	t2.start = 2013.05.16.14.30;
+	t2.end = 2013.05.16.16;
+	addTask(c1, t2);
+	
+	Task t3 = "Dinner with Friends";
+	t3.start = 2013.05.16.20;
+	t3.end = 2013.05.16.23;
+	addTask(c1, t3);
+	
+	c2.name = "Jason's Day";
+    
+    Task t4 = "Tennis Lesson";
+    t4.start = 2013.05.16.11;
+    t4.end = 2013.05.16.12;
+    addTask(c2, t4);
+    
+    Task t5 = "Movie Night";
+    t5.start = 2013.05.16.19.30;
+    t5.end = 2013.05.16.21;
+    addTask(c2, t5);
+    
+    Calendar c3 = getAvailableOneHourMeetingSlots(c1, c2);	
+ 
+    // loop through c3, and print out
+    every Task meeting in c3
+    {
+    	printing("Meeting option: ", meeting);
+    }
+ }
+ 
+ Boolean conflict(Calendar c, Task t)
+ {
+ 	every Task task in c{
+ 		if( task.end < t.start || t.end < task.start)
+ 		{
+ 			return false;
+ 		}
+ 	}
+ 	
+ 	return true;
+ }
+ 
+ Calendar getAvailableOneHourMeetingSlots(Calendar c1, Calendar c2) {
+ 	Calendar c;
+ 	c = "Meeting Calendar";
+ 
+ 	every Date d from start to end by 30 minutes {
+ 		Task t = "Meeting";
+ 		t.start = d;
+ 		t.end = d + 1 hour;
+ 		
+ 		Boolean con1 = conflict(c1, t);
+ 		Boolean con2 = conflict(c2, t);
+ 		
+ 		if(not con1 && not con2)
+ 		{
+ 			addTask(c, t);
+ 		}
+ 	}
+ 	
+ 	return c;
+ }
+ 

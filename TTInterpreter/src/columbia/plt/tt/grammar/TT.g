@@ -24,6 +24,7 @@ tokens {
 	TIMEFRAMETYPE = 'TimeFrame';
 	CALENDARTYPE = 'Calendar';
 	TIMETYPE = 'Time';
+	BOOLEAN = 'Boolean';
 	IF = 'if';
 	ELSE = 'else';
 	EVERYDATE;
@@ -187,6 +188,7 @@ type
 	| TIMEFRAMETYPE
 	| CALENDARTYPE
 	| TIMETYPE /* LRM was TimeEntity */
+	| BOOLEAN
 	;
 
 //Statement
@@ -215,11 +217,12 @@ block
 
 
 ifThenStatement
-	: IF '(' expr ')' block elseStatement? -> ^(IF expr block elseStatement)
+	: IF '(' expr ')' block elseStatement -> ^(IF expr block elseStatement)
 	;
 
 elseStatement
 	: ELSE block -> ^(ELSE block)
+	| -> ^(EMPTY)
 	;
 
 everyFromToByStatement
