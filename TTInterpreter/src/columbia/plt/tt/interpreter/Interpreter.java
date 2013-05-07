@@ -58,7 +58,7 @@ public class Interpreter {
 		System.out.println("tree: " + root.toStringTree());
 		
 		// Semantic Analysis
-		CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
+	/*	CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
 		nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
 		//nodes.setTreeAdaptor(TTAdaptor);
 		
@@ -73,7 +73,7 @@ public class Interpreter {
 
 //		if (errors)
 //			return;
-		
+		*/
 		// Run program it is correct
 		tunit(root);
 	}
@@ -102,6 +102,8 @@ public class Interpreter {
 			case TTParser.NUMBERTYPE:
 				numberType(t);
 				break; // (AA)
+			case TTParser.DATE_CONSTANT_TOKEN: return dateConstant(t);
+			case TTParser.TIMEFRAME_CONSTANT: return timeFrameConstant(t);
 			// case TTParser.DATETYPE : (AA)
 			// case TTParser.TASKTYPE : (AA)
 			// case TTParser.TIMEFRAMETYPE : (AA)
@@ -133,6 +135,7 @@ public class Interpreter {
 				// case TTParser.CONTINUE : (MA)
 				// case TTParser.TRUE : (JL)
 				// case TTParser.FALSE : (JL)
+			case TTParser.IDENT_TOKEN:
 			case TTParser.IDENT:
 				identity(t);
 				break; // (JL)
@@ -339,8 +342,8 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
-		int a = (int) symbolTable.getValue(t.getChild(0).getText());
-		int b = (int) symbolTable.getValue(t.getChild(1).getText());
+		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
+		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
@@ -372,8 +375,8 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
-		boolean a = (boolean) symbolTable.getValue(t.getChild(0).getText());
-		boolean b = (boolean) symbolTable.getValue(t.getChild(1).getText());
+		boolean a = (Boolean) symbolTable.getValue(t.getChild(0).getText());
+		boolean b = (Boolean) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 		case TTParser.AND:
@@ -414,8 +417,8 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
-		int a = (int) symbolTable.getValue(t.getChild(0).getText());
-		int b = (int) symbolTable.getValue(t.getChild(1).getText());
+		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
+		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
@@ -469,7 +472,7 @@ public class Interpreter {
 	}
 
 	public void everyDate(CommonTree t) {
-		System.out.println("\neveryDate!");
+		System.out.println("\neveryDate! ");
 		// Declare variables
 		Date start = null;
 		Date end = null;
@@ -478,6 +481,9 @@ public class Interpreter {
 		Date itterDate = null;
 		String type = null;
 		String name = null;
+		
+		// Create a new scope that is a child of parent scope
+		symbolTable.addScope(true);
 		symbolTable.addSymbol(name, type, itterDate);
 
 		for (int i = 0; i < t.getChildCount(); i++) {
@@ -499,48 +505,56 @@ public class Interpreter {
 				type = ((CommonTree) t.getChild(i)).getText();
 				name = ((CommonTree) t.getChild(i)).getChild(0).getText();
 				symbolTable.addSymbol(name, type, itterDate);
-				System.out.println("Found task");
 				break;
 			}
 		}
 
 		if (start == null || end == null)
+		{
+			// End of loop remove the scope
+			symbolTable.removeScope();
 			return;
+		}
 
 		// Define the itterDate
 		itterDate = start;
 		symbolTable.addSymbol(name, type, itterDate);
 
-		System.out.println("itterDate: " + itterDate.toString() + " end: "
-				+ end.toString() + "compare " + itterDate.compareTo(end));
 		while (itterDate.compareTo(end) <= 0) {
-			System.out.println("LOOP: " + itterDate.toString());
-			// nth Child is the Block to execute every loop
-			exec((CommonTree) t.getChild(4));
+			// Execute the block
+			exec(block);
 
 			// Increment the itterDate and update symbolTable
 			itterDate.add(inc);
 			symbolTable.addSymbol(name, type, itterDate);
 		}
+		
+		// End of loop remove the scope
+		symbolTable.removeScope();
 	}
 
-	public Date dateOrIdent(CommonTree t) {
-		// This only handles DATE_CONSTANT
-		System.out.println("dateOrIdent");
+	public Date dateConstant(CommonTree t) {
 		return new Date(((CommonTree) t.getChild(0)).getText());
 	}
 
+	public Date dateOrIdent(CommonTree t) {
+		return (Date)exec((CommonTree) t.getChild(0));
+	}
+	
 	public TimeFrame timeFrameOrIdent(CommonTree t) {
 		// This only handles timeFrameConstant
 		System.out.println("timeFrameOrIdent");
+		return (TimeFrame)exec((CommonTree)t.getChild(0));
+	}
+
+	public TimeFrame timeFrameConstant(CommonTree t) {
 		String tf = "";
 		for (int i = 0; i < t.getChildCount(); i++) {
 			tf = tf + " " + ((CommonTree) t.getChild(i)).getText();
 		}
-		System.out.println("by: " + tf);
 		return new TimeFrame(tf);
 	}
-
+	
 	public void everyTask(CommonTree t) {
 		System.out.println("\neveryTask!");
 

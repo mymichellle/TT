@@ -1,7 +1,9 @@
 package columbia.plt.tt.interpreter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.ANTLRStringStream;
@@ -24,15 +26,21 @@ public class InterpreterTest extends TestCase {
 	private TTParser parser;
 	private Interpreter interpreter;
 	
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		interpreter = new Interpreter();
+	  //  System.setOut(new PrintStream(outContent));
+	  //  System.setErr(new PrintStream(errContent));
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		interpreter = null;
+	    System.setOut(null);
+	    System.setErr(null);
 	}
 	
 	private void setParser(CharStream stream)
@@ -49,15 +57,16 @@ public class InterpreterTest extends TestCase {
 		setParser(stream);
 		
 		try {
-			TTParser.everyFromToByStatement_return r = parser.everyFromToByStatement();
+			TTParser.translationUnit_return r = parser.translationUnit();
 			tree = r.getTree();
+			System.out.println(tree);
 		}				
 		catch (RecognitionException e) {
 			e.printStackTrace();
 		}
 		
 		assertNotNull(tree);
-		interpreter.everyDate(tree);
+		interpreter.tunit(tree);
 	}
 
 	/*
@@ -89,7 +98,11 @@ public class InterpreterTest extends TestCase {
 	
 	public void testEveryCases()
 	{
-		CharStream stream = new ANTLRStringStream( "every Task t from 2013.01.20 to 2013.01.21 by tf {}");
+		CharStream stream = new ANTLRStringStream( "main(){every Task t from 2013.01.18 to 2013.01.21 by 1 days {print(\"hi\");}}");
+		testEveryDate(stream);
+	    //assertEquals("hello", outContent.toString());
+		
+		stream = new ANTLRStringStream( "main(){every Task t from 2013.01 to 2013.02 by 2 days{}}");
 		testEveryDate(stream);
 		
 	}
