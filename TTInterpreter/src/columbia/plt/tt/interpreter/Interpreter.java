@@ -97,15 +97,19 @@ public class Interpreter {
 			case TTParser.SLIST:
 				block(t);
 				break; // (PL)
-			// case TTParser.STRINGTYPE: (AA)
-			case TTParser.NUMBERTYPE:
-				numberType(t);
-				break; // (AA)
-			// case TTParser.DATETYPE : (AA)
-			// case TTParser.TASKTYPE : (AA)
-			// case TTParser.TIMEFRAMETYPE : (AA)
-			// case TTParser.CALENDARTYPE : (AA)
-			// case TTParser.TIMETYPE : (AA)
+				
+				
+			case TTParser.STRINGTYPE: 
+			case TTParser.NUMBERTYPE:	
+			case TTParser.DATETYPE : 
+			case TTParser.TASKTYPE : 
+			case TTParser.TIMEFRAMETYPE : 
+			case TTParser.CALENDARTYPE : 
+			case TTParser.TIMETYPE :
+			
+			case TTParser.DECLARE:	
+				declarationEval(t);
+				break;
 			case TTParser.IF:
 				ifStatement(t);
 				break;// (MA)
@@ -285,7 +289,9 @@ public class Interpreter {
 		}
 	}
 
-	public void numberType(CommonTree t) {
+
+	
+	/*public void numberType(CommonTree t) {
 		System.out.println("number");
 		System.out.println(t.getChild(0).getText());
 
@@ -295,6 +301,18 @@ public class Interpreter {
 			exec((CommonTree) t.getChild(i));
 		}
 
+	}
+	*/
+	public void declarationEval(CommonTree t){
+		
+		System.out.println("Type" + t.getChild(0).getText());
+		
+		String dataType = t.getChild(0).getText();
+		int rightChildCount = t.getChildCount() - 1;
+		
+		for (int i = 1 ; i <= rightChildCount ; i++ )
+			symbolTable.addSymbol(t.getChild(1).getText(), dataType, null); 
+		
 	}
 
 	public void identity(CommonTree t) {
