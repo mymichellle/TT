@@ -10,10 +10,13 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.CommonTreeNodeStream;
 
 import antlr.RecognitionException;
+import columbia.plt.tt.DefinitionAnalyzer;
 import columbia.plt.tt.TTLexer;
 import columbia.plt.tt.TTParser;
+import columbia.plt.tt.TypeAnalyzer;
 import columbia.plt.tt.datatype.Calendar;
 import columbia.plt.tt.datatype.Date;
 import columbia.plt.tt.datatype.Task;
@@ -31,6 +34,7 @@ public class Interpreter {
 
 	public void interp(InputStream input) throws RecognitionException,
 			IOException, org.antlr.runtime.RecognitionException {
+		// Lexical and Syntax Analysis
 		CharStream stream = new ANTLRInputStream(input);
 		lexer = new TTLexer(stream);
 		tokenStream = new CommonTokenStream(lexer);
@@ -42,17 +46,36 @@ public class Interpreter {
 		for (int i = 0; i < lexer.getErrors().size(); i++) {
 			System.out.println(lexer.getErrors().get(i));
 		}
-
 		for (int i = 0; i < parser.getErrors().size(); i++) {
 			System.out.println(parser.getErrors().get(i));
 		}
-
 		TTParser.translationUnit_return r = parser.translationUnit();
-		if (parser.getNumberOfSyntaxErrors() == 0) {
-			root = r.getTree();
-			System.out.println("tree: " + root.toStringTree());
-			tunit(root);
-		}
+		// If Syntax errors exit
+		if (parser.getNumberOfSyntaxErrors() != 0)
+			return;
+		
+		root = r.getTree();
+		System.out.println("tree: " + root.toStringTree());
+		
+		// Semantic Analysis
+		CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
+		nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
+		//nodes.setTreeAdaptor(TTAdaptor);
+		
+		// Phase 1 - Analyze all method and variable definitions and populate the SymbolTable
+		DefinitionAnalyzer def = new DefinitionAnalyzer(nodes, symbolTable);
+		def.downup(root); // trigger define actions upon certain subtrees
+		
+//		// Phase 2 - Analyze expression types and resolve symbols
+//		nodes.reset();
+//		TypeAnalyzer typeComp = new TypeAnalyzer(nodes, symbolTable);
+//		typeComp.downup(root); // trigger resolve/type computation actions
+
+//		if (errors)
+//			return;
+		
+		// Run program it is correct
+		tunit(root);
 	}
 
 	/** visitor dispatch according to node token type */
