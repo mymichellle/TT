@@ -164,11 +164,11 @@ argDeclaration
 //@Author : Athresh
 
 declarationStatement
-	: type^ (WS*)! IDENT ';'
+	: t = type (WS*)! IDENT ';'   -> ^(DECLARE $t IDENT)
 	;
 
 definitionStatement
-	: type (WS*)! assignmentStmt 
+	: t=type (WS*)! as=assignmentStmt  -> ^(DEFINE $t $as)
 	;
 
 assignmentStmt

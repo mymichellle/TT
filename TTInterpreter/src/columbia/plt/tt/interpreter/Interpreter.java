@@ -118,6 +118,11 @@ public class Interpreter {
 				break; // (JL)
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
+			case TTParser.STRING_CONSTANT:
+				return t.getText();
+			case TTParser.TRUE:
+			case TTParser.FALSE:
+				return Boolean.parseBoolean(t.getText());
 			case TTParser.PLUS:
 				return plusEval(t);
 
@@ -296,12 +301,10 @@ public class Interpreter {
 
 	public Object plusEval(CommonTree t) {
 
-		System.out.println("Plus Operator Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
-
-		Object a = symbolTable.getValue(t.getChild(0).getText());
-		Object b = symbolTable.getValue(t.getChild(1).getText());
+		System.out.println("" +
+				" Operator Evaluation");
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
 
 		if (a instanceof String && b instanceof String)
 			return a.toString() + b.toString();
@@ -313,15 +316,13 @@ public class Interpreter {
 
 	public int arithmeticEval(CommonTree t) {
 		System.out.println("Arithmetic Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
-
-		int a = (int) symbolTable.getValue(t.getChild(0).getText());
-		int b = (int) symbolTable.getValue(t.getChild(1).getText());
+		int a = (int) exec((CommonTree) t.getChild(0));
+		int b = (int) exec((CommonTree) t.getChild(1));
 
 		switch (t.getType()) {
 
 		case TTParser.PLUS:
+			System.out.println(a+b);
 			return a + b;
 
 		case TTParser.MINUS:
@@ -346,12 +347,10 @@ public class Interpreter {
 	public boolean logicalEval(CommonTree t) {
 
 		System.out.println("Logical Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
+		boolean a = (boolean)exec((CommonTree) t.getChild(0));
+		boolean b = (boolean)exec((CommonTree) t.getChild(1));
 
-		boolean a = (boolean) symbolTable.getValue(t.getChild(0).getText());
-		boolean b = (boolean) symbolTable.getValue(t.getChild(1).getText());
-
+	
 		switch (t.getType()) {
 		case TTParser.AND:
 			return a && b;
@@ -368,11 +367,9 @@ public class Interpreter {
 	public boolean equalityEval(CommonTree t) {
 
 		System.out.println("Equality Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
 
-		Object a = symbolTable.getValue(t.getChild(0).getText());
-		Object b = symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
@@ -388,11 +385,9 @@ public class Interpreter {
 	public boolean relationalEval(CommonTree t) {
 
 		System.out.println("Relational Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
+		int a = (int) exec((CommonTree) t.getChild(0));
+		int b = (int) exec((CommonTree) t.getChild(1));
 
-		int a = (int) symbolTable.getValue(t.getChild(0).getText());
-		int b = (int) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
