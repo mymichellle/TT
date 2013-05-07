@@ -32,6 +32,13 @@ public class Interpreter {
 	SymbolTable symbolTable = new SymbolTable();
 	ArrayList<String> errors = new ArrayList<String>();
 
+	public enum TimeFrameConst {
+		YEAR, YEARS, MONTH, MONTHS, DAY, DAYS, HOUR, HOURS, MINUTE, MINUTES,
+		MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY,
+		JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER,
+		WEEKEND, WEEKDAY
+	}
+
 	public void interp(InputStream input) throws RecognitionException,
 			IOException, org.antlr.runtime.RecognitionException {
 		// Lexical and Syntax Analysis
@@ -130,8 +137,8 @@ public class Interpreter {
 				// case TTParser.BREAK : (MA)
 				// case TTParser.EXIT : (MA)
 				// case TTParser.CONTINUE : (MA)
-				// case TTParser.TRUE : (JL)
-				// case TTParser.FALSE : (JL)
+			case TTParser.TRUE : return true;
+			case TTParser.FALSE : return false;
 			case TTParser.IDENT:
 				identity(t);
 				break; // (JL)
@@ -169,37 +176,38 @@ public class Interpreter {
 				print(t);
 				break; // (PL)
 
-			// case TTParser.TIMEFRAME_YEAR //(JL)
-			// case TTParser.TIMEFRAME_YEARS //(JL)
-			// case TTParser.TIMEFRAME_MONTH //(JL)
-			// case TTParser.TIMEFRAME_MONTHS //(JL)
-			// case TTParser.TIMEFRAME_DAY //(JL)
-			// case TTParser.TIMEFRAME_DAYS //(JL)
-			// case TTParser.TIMEFRAME_HOUR //(JL)
-			// case TTParser.TIMEFRAME_HOURS //(JL)
-			// case TTParser.TIMEFRAME_MINUTE //(JL)
-			// case TTParser.TIMEFRAME_MINUTES //(JL)
-			// case TTParser.TIMEFRAME_MONDAY //(JL)
-			// case TTParser.TIMEFRAME_TUESDAY //(JL)
-			// case TTParser.TIMEFRAME_WEDNESDAY //(JL)
-			// case TTParser.TIMEFRAME_THURSDAY //(JL)
-			// case TTParser.TIMEFRAME_FRIDAY //(JL)
-			// case TTParser.TIMEFRAME_SATURDAY //(JL)
-			// case TTParser.TIMEFRAME_SUNDAY //(JL)
-			// case TTParser.TIMEFRAME_JANUARY //(JL)
-			// case TTParser.TIMEFRAME_FEBRUARY //(JL)
-			// case TTParser.TIMEFRAME_MARCH //(JL)
-			// case TTParser.TIMEFRAME_APRIL //(JL)
-			// case TTParser.TIMEFRAME_MAY //(JL)
-			// case TTParser.TIMEFRAME_JUNE //(JL)
-			// case TTParser.TIMEFRAME_JULY //(JL)
-			// case TTParser.TIMEFRAME_AUGUST //(JL)
-			// case TTParser.TIMEFRAME_SEPTEMBER //(JL)
-			// case TTParser.TIMEFRAME_OCTOBER //(JL)
-			// case TTParser.TIMEFRAME_NOVEMBER //(JL)
-			// case TTParser.TIMEFRAME_DECEMBER //(JL)
-			// case TTParser.TIMEFRAME_WEEKEND //(JL)
-			// case TTParser.TIMEFRAME_WEEKDAY //(JL)
+			case TTParser.TIMEFRAME_YEAR : return TimeFrameConst.YEAR;
+			case TTParser.TIMEFRAME_YEARS : return TimeFrameConst.YEARS;
+			case TTParser.TIMEFRAME_MONTH : return TimeFrameConst.MONTH;
+			case TTParser.TIMEFRAME_MONTHS : return TimeFrameConst.MONTHS;
+			case TTParser.TIMEFRAME_DAY : return TimeFrameConst.DAY;
+			case TTParser.TIMEFRAME_DAYS : return TimeFrameConst.DAYS;
+			case TTParser.TIMEFRAME_HOUR : return TimeFrameConst.HOUR;
+			case TTParser.TIMEFRAME_HOURS : return TimeFrameConst.HOURS;
+			case TTParser.TIMEFRAME_MINUTE : return TimeFrameConst.MINUTE;
+			case TTParser.TIMEFRAME_MINUTES : return TimeFrameConst.MINUTES;
+			case TTParser.TIMEFRAME_MONDAY : return TimeFrameConst.MONDAY;
+			case TTParser.TIMEFRAME_TUESDAY : return TimeFrameConst.TUESDAY;
+			case TTParser.TIMEFRAME_WEDNESDAY : return TimeFrameConst.WEDNESDAY;
+			case TTParser.TIMEFRAME_THURSDAY : return TimeFrameConst.THURSDAY;
+			case TTParser.TIMEFRAME_FRIDAY : return TimeFrameConst.FRIDAY;
+			case TTParser.TIMEFRAME_SATURDAY : return TimeFrameConst.SATURDAY;
+			case TTParser.TIMEFRAME_SUNDAY : return TimeFrameConst.SUNDAY;
+			case TTParser.TIMEFRAME_JANUARY : return TimeFrameConst.JANUARY;
+			case TTParser.TIMEFRAME_FEBRUARY : return TimeFrameConst.FEBRUARY;
+			case TTParser.TIMEFRAME_MARCH : return TimeFrameConst.MARCH;
+			case TTParser.TIMEFRAME_APRIL : return TimeFrameConst.APRIL;
+			case TTParser.TIMEFRAME_MAY : return TimeFrameConst.MAY;
+			case TTParser.TIMEFRAME_JUNE : return TimeFrameConst.JUNE;
+			case TTParser.TIMEFRAME_JULY : return TimeFrameConst.JULY;
+			case TTParser.TIMEFRAME_AUGUST : return TimeFrameConst.AUGUST;
+			case TTParser.TIMEFRAME_SEPTEMBER : return TimeFrameConst.SEPTEMBER;
+			case TTParser.TIMEFRAME_OCTOBER : return TimeFrameConst.OCTOBER;
+			case TTParser.TIMEFRAME_NOVEMBER : return TimeFrameConst.NOVEMBER;
+			case TTParser.TIMEFRAME_DECEMBER : return TimeFrameConst.DECEMBER;
+			case TTParser.TIMEFRAME_WEEKEND : return TimeFrameConst.WEEKEND;
+			case TTParser.TIMEFRAME_WEEKDAY : return TimeFrameConst.WEEKDAY;
+			            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	
 
 			/*
 			 * case PieParser.BLOCK : block(t); break; case PieParser.ASSIGN :
