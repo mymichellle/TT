@@ -14,10 +14,10 @@ options {
 @members {
 	SymbolTable symtab;
 	Scope currentScope;
-	public DefinitionAbalyzer(TreeNodeStream input, SymbolTable symtab) {
+	public DefinitionAnalyzer(TreeNodeStream input, SymbolTable symtab) {
 		this(input);
 		this.symtab = symtab;
-		currentScope = symtab.globals;
+		//currentScope = symtab.globals;
 	}
 }
 
@@ -37,14 +37,14 @@ bottomup
 enterBlock
 	: SLIST 
 	{
-		currentScope = new LocalScope(currentScope);
+		//currentScope = new LocalScope(currentScope);
 	}
 	;
 exitBlock
 	: SLIST
 	{
 		System.out.println("locals: " + currentScope);
-		currentScope = currentScope.getEnclosingScope(); // pop scope
+//		currentScope = currentScope.getEnclosingScope(); // pop scope
 	}
 	;
 
@@ -52,19 +52,19 @@ enterMethod
 	: ^(METHOD type=. IDENT .*) // match method subtree with 0-or-more args
 	{
 		System.out.println("line " + $IDENT.getLine()+": def method " + $IDENT.text);
-		$type.scope = currentScope;
-		MethodSymbol ms = new MethodSymbol($IDENT.text, null, currentScope);
-		ms.def = $IDENT;            // track AST location of def's ID
-		$IDENT.symbol = ms;         // track in AST
-		currentScope.define(ms); // def method in globals
-		currentScope = ms;       // set current scope to method scope
+//		$type.scope = currentScope;
+//		MethodSymbol ms = new MethodSymbol($IDENT.text, null, currentScope);
+//		ms.def = $IDENT;            // track AST location of def's ID
+//		$IDENT.symbol = ms;         // track in AST
+//		currentScope.define(ms); // def method in globals
+//		currentScope = ms;       // set current scope to method scope
 	}
 	;
 exitMethod
 	: METHOD
 	{
 		System.out.println("args: "+currentScope);
-		currentScope = currentScope.getEnclosingScope();    // pop arg scope
+		//currentScope = currentScope.getEnclosingScope();    // pop arg scope
 	}
 	;
 enterMain
@@ -78,10 +78,10 @@ varDeclaration // parameter, or local
 	: ^(ARG type=. IDENT .?)
 	{
 		System.out.println("line " + $IDENT.getLine() + ": def " + $IDENT.text);
-		$type.scope = currentScope;
-		VariableSymbol vs = new VariableSymbol($IDENT.text,null);
-		vs.def = $IDENT;            // track AST location of def's ID
-		$IDENT.symbol = vs;         // track in AST
-		currentScope.define(vs);
+//		$type.scope = currentScope;
+//		VariableSymbol vs = new VariableSymbol($IDENT.text,null);
+//		vs.def = $IDENT;            // track AST location of def's ID
+//		$IDENT.symbol = vs;         // track in AST
+//		currentScope.define(vs);
 	}
 	;

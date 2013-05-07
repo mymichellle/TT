@@ -14,7 +14,7 @@ options {
 
 @members {
 	SymbolTable symtab;
-	public Types(TreeNodeStream input, SymbolTable symtab) {
+	public TypeAnalyzer(TreeNodeStream input, SymbolTable symtab) {
 		this(input);
 		this.symtab = symtab;
 	}
