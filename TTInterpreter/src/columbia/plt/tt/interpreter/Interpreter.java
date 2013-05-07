@@ -128,29 +128,27 @@ public class Interpreter {
 				block(t);
 				break; // (PL)
 				
-			case TTParser.STRINGTYPE: 
+			case TTParser.STRINGTYPE:
 			case TTParser.NUMBERTYPE:	
 			case TTParser.DATETYPE : 
 			case TTParser.TASKTYPE : 
 			case TTParser.TIMEFRAMETYPE : 
 			case TTParser.CALENDARTYPE : 
 			case TTParser.TIMETYPE :
+				return t.getText();
+				
+			case TTParser.DOT:
+				fieldAssign(t);
+				break;
 			
 			case TTParser.DECLARE:	
 				declarationEval(t);
 				break;
 
-			// case TTParser.STRINGTYPE: (AA)
-//			case TTParser.NUMBERTYPE:
-//				numberType(t);
-//				break; // (AA)
+	
 			case TTParser.DATE_CONSTANT_TOKEN: return dateConstant(t);
 			case TTParser.TIMEFRAME_CONSTANT: return timeFrameConstant(t);
-			// case TTParser.DATETYPE : (AA)
-			// case TTParser.TASKTYPE : (AA)
-			// case TTParser.TIMEFRAMETYPE : (AA)
-			// case TTParser.CALENDARTYPE : (AA)
-			// case TTParser.TIMETYPE : (AA)
+			
 			case TTParser.IF:
 				ifStatement(t);
 				break;// (MA)
@@ -284,7 +282,7 @@ public class Interpreter {
 			//System.out.println("NOT a TUNIT");
 			 listener.error("not a tunit: "+t.toStringTree());
 		}
-		// Execute code
+		// Execute codeObject
 		List<CommonTree> stats = null;
 		for (int i = 0; i < t.getChildCount(); i++) {
 			exec((CommonTree) t.getChild(i));
@@ -352,7 +350,24 @@ public class Interpreter {
 
 	}
 	*/
-	public void declarationEval(CommonTree t){
+	
+	public String fieldAssign(CommonTree t){
+		
+		System.out.println("Field Assign");
+		
+		String varName = t.getChild(0).getText();
+		String fieldName = t.getChild(1).getText();
+		
+		Symbol varSymbol =  symbolTable.getCurrentScope().get(varName); 
+		
+		if (varSymbol == null)
+			//error symbol has not been defined
+		
+		return varName + ":" + fieldName + ":" + varSymbol.getType();
+		
+		
+	}
+	public String declarationEval(CommonTree t){
 		
 		System.out.println("Type" + t.getChild(0).getText());
 		
@@ -360,7 +375,9 @@ public class Interpreter {
 		int rightChildCount = t.getChildCount() - 1;
 		
 		for (int i = 1 ; i <= rightChildCount ; i++ )
-			symbolTable.addSymbol(t.getChild(1).getText(), dataType, null); 
+			symbolTable.addSymbol(t.getChild(1).getText(), dataType, null);
+		
+		return exec((CommonTree) t.getChild(0));
 		
 	}
 
@@ -422,12 +439,13 @@ public class Interpreter {
 			return a * b;
 
 		case TTParser.DIV:
-			{	if (b == 0) {
-					listener.error("invalid operation:" + t.toStringTree());
-					}
-				return a / b;
-			
+		{
+			if (b == 0) {
+				listener.error("invalid operation:" + t.toStringTree());
 			}
+			return a / b;
+
+		}
 			 // to do throw error on divide by zero
 
 		case TTParser.MOD:
@@ -668,6 +686,152 @@ public class Interpreter {
 		} else {
 			taskList = c;
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		for (Task task : taskList) {
 			// If there is an on expression evaluate it for each loop
