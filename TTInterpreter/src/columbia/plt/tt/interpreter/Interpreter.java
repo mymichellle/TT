@@ -50,13 +50,12 @@ public class Interpreter {
 			System.out.println(parser.getErrors().get(i));
 		}
 		TTParser.translationUnit_return r = parser.translationUnit();
+		root = r.getTree();
+		System.out.println("tree: " + root.toStringTree());
 		// If Syntax errors exit
 		if (parser.getNumberOfSyntaxErrors() != 0)
 			return;
-		
-		root = r.getTree();
-		System.out.println("tree: " + root.toStringTree());
-		
+
 		// Semantic Analysis
 		CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
 		nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
