@@ -1,5 +1,3 @@
 main(){
-	Number n = 10;
-	Date d;
-	d = 2012.04.04;
+	Number n;
 }

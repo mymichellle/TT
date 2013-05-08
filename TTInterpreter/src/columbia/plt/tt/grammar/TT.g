@@ -13,6 +13,9 @@ tokens {
 	CALL;
 	SLIST;
 	EMPTY;
+	IDENT_TOKEN;
+	DATE_CONSTANT_TOKEN;
+	TIMEFRAME_CONSTANT;
 	MAIN = 'main';
 	STRINGTYPE = 'String';
 	NUMBERTYPE = 'Number';
@@ -21,6 +24,7 @@ tokens {
 	TIMEFRAMETYPE = 'TimeFrame';
 	CALENDARTYPE = 'Calendar';
 	TIMETYPE = 'Time';
+	BOOLEAN = 'Boolean';
 	IF = 'if';
 	ELSE = 'else';
 	EVERYDATE;
@@ -164,11 +168,11 @@ argDeclaration
 //@Author : Athresh
 
 declarationStatement
-	: type^ (WS*)! IDENT ';'
+	: t = type (WS*)! IDENT ';'   -> ^(DECLARE $t IDENT)
 	;
 
 definitionStatement
-	: type (WS*)! assignmentStmt 
+	: t=type (WS*)! as=assignmentStmt  -> ^(DEFINE $t $as)
 	;
 
 assignmentStmt
@@ -184,6 +188,7 @@ type
 	| TIMEFRAMETYPE
 	| CALENDARTYPE
 	| TIMETYPE /* LRM was TimeEntity */
+	| BOOLEAN
 	;
 
 //Statement
@@ -212,11 +217,12 @@ block
 
 
 ifThenStatement
-	: IF '(' expr ')' block elseStatement? -> ^(IF expr block elseStatement)
+	: IF '(' expr ')' block elseStatement -> ^(IF expr block elseStatement)
 	;
 
 elseStatement
 	: ELSE block -> ^(ELSE block)
+	| -> ^(EMPTY)
 	;
 
 everyFromToByStatement
@@ -232,21 +238,21 @@ everyInStatement
 	;
 	
 dateOrIdent
-	: IDENT^
-	| DATE_CONSTANT^	
+	: IDENT -> ^(IDENT_TOKEN IDENT)
+	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)	
 	; 
 	
 timeframeOrIdent
-	: IDENT
-	| timeFrameConstant
+	: IDENT -> ^(IDENT_TOKEN IDENT)
+	| timeFrameConstant -> ^(TIMEFRAME_CONSTANT timeFrameConstant)
 	;
 
 breakStatement
-	: BREAK ';'
+	: BREAK ';'!
 	;
 
 continueStatement
-	: CONTINUE ';'
+	: CONTINUE ';'!
 	;
 
 exitStatement
@@ -254,7 +260,7 @@ exitStatement
 	;
 
 returnStatement
-	: 'return' expr? ';'
+	: 'return' expr? ';' -> ^(RETURN expr?)
 	;
 
 functionInvocationStatement
@@ -278,7 +284,9 @@ expressionList
 readStatement
 	: READ '(' STRING_CONSTANT ')' ';'
 	;
-print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT); 
+print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
+      | PRINT '(' IDENT ')' ';' -> ^(PRINT ^(IDENT_TOKEN IDENT))
+      ; 
 
 timeFrameConstant
 	: NUMBER timeFrameSuffix

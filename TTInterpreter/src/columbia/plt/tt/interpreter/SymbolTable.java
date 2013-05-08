@@ -1,14 +1,10 @@
 package columbia.plt.tt.interpreter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Stack;
 
 public class SymbolTable extends Stack<Scope> {
 	
+	private static final long serialVersionUID = 1L;
 	private int nextScopeID;
 	  
 	public SymbolTable() {
@@ -62,7 +58,13 @@ public class SymbolTable extends Stack<Scope> {
 	}
 	                                                      
 	public void addSymbol(String name, String type, Object value) {
-		getCurrentScope().put(name, new Symbol(type, value));    	
+		getCurrentScope().put(name, new Symbol(type, value, name));
+		//we should throw exception when adding duplicate symbols
+	}
+	
+	public void addSymbol(String name, Symbol symbol) {
+		getCurrentScope().put(name, symbol);
+		//we should throw exception when adding duplicate symbols
 	}
 	                                                              
 	public Symbol getSymbol(String name) {

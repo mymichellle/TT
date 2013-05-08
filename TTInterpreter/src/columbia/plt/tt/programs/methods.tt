@@ -2,10 +2,13 @@ import "test.tt";
 import "test1.tt";
 import "test2.tt";
 
+Number t;
+Number v = (3+4)*(2-3);
 main() {
-	a = 1 + 2;
+	add(1, 2);
 }
 
 Number add(Number a, Number b) {
-	return a;
+	return 4*a + b * c;
 }
+
