@@ -21,6 +21,9 @@ import columbia.plt.tt.datatype.Calendar;
 import columbia.plt.tt.datatype.Date;
 import columbia.plt.tt.datatype.Task;
 import columbia.plt.tt.datatype.TimeFrame;
+import columbia.plt.tt.typecheck.*;
+
+
 
 public class Interpreter {
 
@@ -32,6 +35,7 @@ public class Interpreter {
 	SymbolTable symbolTable = new SymbolTable();
 	ArrayList<String> errors = new ArrayList<String>();
 
+
 	public enum TimeFrameConst {
 		YEAR, YEARS, MONTH, MONTHS, DAY, DAYS, HOUR, HOURS, MINUTE, MINUTES,
 		MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY,
@@ -39,6 +43,25 @@ public class Interpreter {
 		WEEKEND, WEEKDAY
 	}
 
+
+    
+	public InterpreterListener listener = // default response to messages
+	        new InterpreterListener() {
+	            public void info(String msg) { System.out.println(msg); }
+	            public void error(String msg) { System.err.println(msg); }
+	            public void error(String msg, Exception e) {
+	                error(msg); e.printStackTrace(System.err);
+	            }
+	           
+				@Override
+				public void error(String msg, org.antlr.runtime.Token t) {
+	            error("line "+t.getLine()+": "+msg);
+					
+				}
+	        };
+	
+	
+//add interpreterListener to collect errors
 	public void interp(InputStream input) throws RecognitionException,
 			IOException, org.antlr.runtime.RecognitionException {
 		// Lexical and Syntax Analysis
@@ -104,10 +127,23 @@ public class Interpreter {
 			case TTParser.SLIST:
 				block(t);
 				break; // (PL)
+				
+			case TTParser.STRINGTYPE: 
+			case TTParser.NUMBERTYPE:	
+			case TTParser.DATETYPE : 
+			case TTParser.TASKTYPE : 
+			case TTParser.TIMEFRAMETYPE : 
+			case TTParser.CALENDARTYPE : 
+			case TTParser.TIMETYPE :
+			
+			case TTParser.DECLARE:	
+				declarationEval(t);
+				break;
+
 			// case TTParser.STRINGTYPE: (AA)
-			case TTParser.NUMBERTYPE:
-				numberType(t);
-				break; // (AA)
+//			case TTParser.NUMBERTYPE:
+//				numberType(t);
+//				break; // (AA)
 			case TTParser.DATE_CONSTANT_TOKEN: return dateConstant(t);
 			case TTParser.TIMEFRAME_CONSTANT: return timeFrameConstant(t);
 			// case TTParser.DATETYPE : (AA)
@@ -139,8 +175,8 @@ public class Interpreter {
 				// case TTParser.BREAK : (MA)
 				// case TTParser.EXIT : (MA)
 				// case TTParser.CONTINUE : (MA)
-			case TTParser.TRUE : return true;
-			case TTParser.FALSE : return false;
+			/*case TTParser.TRUE : return true;
+			case TTParser.FALSE : return false;*/
 			case TTParser.IDENT_TOKEN:
 			case TTParser.IDENT:
 				return identity(t);
@@ -150,6 +186,11 @@ public class Interpreter {
 				break; // (JL)
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
+			case TTParser.STRING_CONSTANT:
+				return t.getText();
+			case TTParser.TRUE:
+			case TTParser.FALSE:
+				return Boolean.parseBoolean(t.getText());
 			case TTParser.PLUS:
 				return plusEval(t);
 
@@ -233,13 +274,15 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
+			listener.error("problem executing "+t.toStringTree(), e);
 		}
 		return null;
 	}
 
 	public void tunit(CommonTree t) {
 		if (t.getType() != TTParser.TUNIT) {
-			System.out.println("NOT a TUNIT");
+			//System.out.println("NOT a TUNIT");
+			 listener.error("not a tunit: "+t.toStringTree());
 		}
 		// Execute code
 		List<CommonTree> stats = null;
@@ -259,7 +302,7 @@ public class Interpreter {
 
 		if (t.getType() != TTParser.MAIN) {
 			// Handle error
-			// listener.error("not a block: "+t.toStringTree());
+			 listener.error("not a mainblock: "+t.toStringTree());
 		}
 		// Execute code
 		List<CommonTree> stats = null;
@@ -285,13 +328,19 @@ public class Interpreter {
 	public void block(CommonTree t) {
 		// System.out.println("block");
 		// Execute code
+		if (t.getType() != TTParser.SLIST) {
+			// Handle error
+			 listener.error("not a block: "+t.toStringTree());
+		}
 		List<CommonTree> stats = null;
 		for (int i = 0; i < t.getChildCount(); i++) {
 			exec((CommonTree) t.getChild(i));
 		}
 	}
 
-	public void numberType(CommonTree t) {
+
+	
+	/*public void numberType(CommonTree t) {
 		System.out.println("number");
 		System.out.println(t.getChild(0).getText());
 
@@ -301,6 +350,18 @@ public class Interpreter {
 			exec((CommonTree) t.getChild(i));
 		}
 
+	}
+	*/
+	public void declarationEval(CommonTree t){
+		
+		System.out.println("Type" + t.getChild(0).getText());
+		
+		String dataType = t.getChild(0).getText();
+		int rightChildCount = t.getChildCount() - 1;
+		
+		for (int i = 1 ; i <= rightChildCount ; i++ )
+			symbolTable.addSymbol(t.getChild(1).getText(), dataType, null); 
+		
 	}
 
 	public Symbol identity(CommonTree t) {
@@ -326,12 +387,10 @@ public class Interpreter {
 
 	public Object plusEval(CommonTree t) {
 
-		System.out.println("Plus Operator Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
-
-		Object a = symbolTable.getValue(t.getChild(0).getText());
-		Object b = symbolTable.getValue(t.getChild(1).getText());
+		System.out.println("" +
+				" Operator Evaluation");
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
 
 		if (a instanceof String && b instanceof String)
 			return a.toString() + b.toString();
@@ -343,15 +402,14 @@ public class Interpreter {
 
 	public int arithmeticEval(CommonTree t) {
 		System.out.println("Arithmetic Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
 
-		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
-		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
+		int a = (int) exec((CommonTree) t.getChild(0));
+		int b = (int) exec((CommonTree) t.getChild(1));
 
 		switch (t.getType()) {
 
 		case TTParser.PLUS:
+			System.out.println(a+b);
 			return a + b;
 
 		case TTParser.MINUS:
@@ -361,7 +419,13 @@ public class Interpreter {
 			return a * b;
 
 		case TTParser.DIV:
-			return a / b; // to do throw error on divide by zero
+			{	if (b == 0) {
+					listener.error("invalid operation:" + t.toStringTree());
+					}
+				return a / b;
+			
+			}
+			 // to do throw error on divide by zero
 
 		case TTParser.MOD:
 			return a % b;
@@ -376,11 +440,9 @@ public class Interpreter {
 	public boolean logicalEval(CommonTree t) {
 
 		System.out.println("Logical Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
 
-		boolean a = (Boolean) symbolTable.getValue(t.getChild(0).getText());
-		boolean b = (Boolean) symbolTable.getValue(t.getChild(1).getText());
+		boolean a = (boolean)exec((CommonTree) t.getChild(0));
+		boolean b = (boolean)exec((CommonTree) t.getChild(1));
 
 		switch (t.getType()) {
 		case TTParser.AND:
@@ -398,11 +460,9 @@ public class Interpreter {
 	public boolean equalityEval(CommonTree t) {
 
 		System.out.println("Equality Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
 
-		Object a = symbolTable.getValue(t.getChild(0).getText());
-		Object b = symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
@@ -418,11 +478,9 @@ public class Interpreter {
 	public boolean relationalEval(CommonTree t) {
 
 		System.out.println("Relational Evaluation");
-		exec((CommonTree) t.getChild(0));
-		exec((CommonTree) t.getChild(1));
+		int a = (int) exec((CommonTree) t.getChild(0));
+		int b = (int) exec((CommonTree) t.getChild(1));
 
-		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
-		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
