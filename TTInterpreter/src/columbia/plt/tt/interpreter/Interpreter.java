@@ -143,8 +143,8 @@ public class Interpreter {
 			case TTParser.FALSE : return false;
 			case TTParser.IDENT_TOKEN:
 			case TTParser.IDENT:
-				identity(t);
-				break; // (JL)
+				return identity(t);
+				// (JL)
 			case TTParser.ASSIGN:
 				assign(t);
 				break; // (JL)
@@ -303,14 +303,11 @@ public class Interpreter {
 
 	}
 
-	public void identity(CommonTree t) {
-		// System.out.println("identity");
-
-		for (int i = 0; i < t.getChildCount(); i++) {
-			// System.out.println(((CommonTree)t.getChild(i)).getText());
-			// System.out.println("here1 " + exec((CommonTree)t.getChild(i)));
-			exec((CommonTree) t.getChild(i));
-		}
+	public Symbol identity(CommonTree t) {
+		 System.out.println("identity" + t.getChild(0));
+		 
+		 Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
+		 return s;
 	}
 
 	public void assign(CommonTree t) {
@@ -526,12 +523,15 @@ public class Interpreter {
 		// Define the itterDate
 		itterDate = start;
 		symbolTable.addSymbol(name, type, itterDate);
+		
+		
 
 		while (itterDate.compareTo(end) <= 0) {
 			// Execute the block
 			exec(block);
 
 			// Increment the itterDate and update symbolTable
+			//itterDate = (Date)symbolTable.getSymbol(name);
 			itterDate.add(inc);
 			symbolTable.addSymbol(name, type, itterDate);
 		}
@@ -630,6 +630,13 @@ public class Interpreter {
 	}
 
 	public void print(CommonTree t) {
-		System.out.println(t.getChild(0).getText());
+		if(((CommonTree)t.getChild(0)).getType() == TTParser.IDENT_TOKEN)
+		{
+			System.out.println("in here");
+			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
+			System.out.println(s.getValue());
+		}
+		else
+			System.out.println(t.getChild(0).getText());
 	}
 }

@@ -43,7 +43,8 @@ main() {
     // loop through c3, and print out
     every Task meeting in c3
     {
-    	printing("Meeting option: ", meeting);
+    	String s = "Meeting option: " + meeting.start + " " + meeting.end;
+    	print(s);
     }
  }
  

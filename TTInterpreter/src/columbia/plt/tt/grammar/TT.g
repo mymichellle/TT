@@ -284,7 +284,9 @@ expressionList
 readStatement
 	: READ '(' STRING_CONSTANT ')' ';'
 	;
-print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT); 
+print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
+      | PRINT '(' IDENT ')' ';' -> ^(PRINT ^(IDENT_TOKEN IDENT))
+      ; 
 
 timeFrameConstant
 	: NUMBER timeFrameSuffix
