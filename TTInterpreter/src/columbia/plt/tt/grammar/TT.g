@@ -24,6 +24,7 @@ tokens {
 	TIMEFRAMETYPE = 'TimeFrame';
 	CALENDARTYPE = 'Calendar';
 	TIMETYPE = 'Time';
+	BOOLEAN = 'Boolean';
 	IF = 'if';
 	ELSE = 'else';
 	EVERYDATE;
@@ -187,6 +188,7 @@ type
 	| TIMEFRAMETYPE
 	| CALENDARTYPE
 	| TIMETYPE /* LRM was TimeEntity */
+	| BOOLEAN
 	;
 
 //Statement
@@ -215,11 +217,12 @@ block
 
 
 ifThenStatement
-	: IF '(' expr ')' block elseStatement? -> ^(IF expr block elseStatement)
+	: IF '(' expr ')' block elseStatement -> ^(IF expr block elseStatement)
 	;
 
 elseStatement
 	: ELSE block -> ^(ELSE block)
+	| -> ^(EMPTY)
 	;
 
 everyFromToByStatement
@@ -245,11 +248,11 @@ timeframeOrIdent
 	;
 
 breakStatement
-	: BREAK ';'
+	: BREAK ';'!
 	;
 
 continueStatement
-	: CONTINUE ';'
+	: CONTINUE ';'!
 	;
 
 exitStatement
@@ -257,7 +260,7 @@ exitStatement
 	;
 
 returnStatement
-	: 'return' expr? ';'
+	: 'return' expr? ';' -> ^(RETURN expr?)
 	;
 
 functionInvocationStatement
@@ -281,7 +284,9 @@ expressionList
 readStatement
 	: READ '(' STRING_CONSTANT ')' ';'
 	;
-print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT); 
+print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
+      | PRINT '(' IDENT ')' ';' -> ^(PRINT ^(IDENT_TOKEN IDENT))
+      ; 
 
 timeFrameConstant
 	: NUMBER timeFrameSuffix

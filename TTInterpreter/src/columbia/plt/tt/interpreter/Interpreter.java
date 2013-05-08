@@ -16,7 +16,6 @@ import antlr.RecognitionException;
 import columbia.plt.tt.DefinitionAnalyzer;
 import columbia.plt.tt.TTLexer;
 import columbia.plt.tt.TTParser;
-import columbia.plt.tt.TypeAnalyzer;
 import columbia.plt.tt.datatype.Calendar;
 import columbia.plt.tt.datatype.Date;
 import columbia.plt.tt.datatype.Task;
@@ -85,6 +84,7 @@ public class Interpreter {
 			return;
 
 		// Semantic Analysis
+
 		/*
 		 * CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
 		 * nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
@@ -102,6 +102,24 @@ public class Interpreter {
 		 * 
 		 * // if (errors) // return;
 		 */
+
+		CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
+		nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
+		//nodes.setTreeAdaptor(TTAdaptor);
+		
+		// Phase 1 - Analyze all method and variable definitions and populate the SymbolTable
+		DefinitionAnalyzer def = new DefinitionAnalyzer(nodes, symbolTable);
+		def.downup(root); // trigger define actions upon certain subtrees
+		
+//		// Phase 2 - Analyze expression types and resolve symbols
+//		nodes.reset();
+//		TypeAnalyzer typeComp = new TypeAnalyzer(nodes, symbolTable);
+//		typeComp.downup(root); // trigger resolve/type computation actions
+
+//		if (errors)
+//			return;
+		
+
 		// Run program it is correct
 		tunit(root);
 	}
@@ -123,6 +141,7 @@ public class Interpreter {
 			case TTParser.MAIN:
 				mainBlock(t);
 				break; // (PL)
+
 			case TTParser.SLIST:
 				block(t);
 				break; // (PL)
@@ -130,14 +149,14 @@ public class Interpreter {
 			case TTParser.STRINGTYPE:
 			case TTParser.NUMBERTYPE:
 			case TTParser.DATETYPE:
+			case TTParser.BOOLEAN:
 			case TTParser.TASKTYPE:
 			case TTParser.TIMEFRAMETYPE:
 			case TTParser.CALENDARTYPE:
 			case TTParser.TIMETYPE:
 				return t.getText();
-
-
-			case TTParser.DECLARE:
+	
+			case TTParser.DECLARE:	
 				declarationEval(t);
 				break;
 
@@ -176,8 +195,8 @@ public class Interpreter {
 				 */
 			case TTParser.IDENT_TOKEN:
 			case TTParser.IDENT:
-				identity(t);
-				break; // (JL)
+				return identity(t);
+				// (JL)
 			case TTParser.ASSIGN:
 				assign(t);
 				break; // (JL)
@@ -210,12 +229,13 @@ public class Interpreter {
 			case TTParser.EQUALS:
 			case TTParser.NOTEQUALS:
 				return equalityEval(t); // (AA)
-				// case TTParser.CALL : call(t); break; (PL)
-				// case TTParser.RETURN : (PL)
+			case TTParser.CALL : return call(t); 
+			case TTParser.RETURN : return returnStmt(t);
 				// case TTParser.READ : (PL)
 			case TTParser.PRINT:
 				print(t);
 				break; // (PL)
+
 
 			case TTParser.TIMEFRAME_YEAR:
 				return TimeFrameConst.YEAR;
@@ -280,22 +300,7 @@ public class Interpreter {
 			case TTParser.TIMEFRAME_WEEKDAY:
 				return TimeFrameConst.WEEKDAY;
 
-				/*
-				 * case PieParser.BLOCK : block(t); break; case PieParser.ASSIGN
-				 * : assign(t); break; case PieParser.RETURN : ret(t); break;
-				 * case PieParser.PRINT : print(t); break; case PieParser.IF :
-				 * ifstat(t); break; case PieParser.WHILE : whileloop(t); break;
-				 * case PieParser.CALL : return call(t); case PieParser.NEW :
-				 * return instance(t); case PieParser.ADD : return add(t); case
-				 * PieParser.SUB : return op(t); case PieParser.MUL : return
-				 * op(t); case PieParser.EQ : return eq(t); case PieParser.LT :
-				 * return lt(t); case PieParser.INT : return
-				 * Integer.parseInt(t.getText()); case PieParser.CHAR : return
-				 * new Character(t.getText().charAt(1)); case PieParser.FLOAT :
-				 * return Float.parseFloat(t.getText()); case PieParser.STRING :
-				 * String s = t.getText(); return s.substring(1,s.length()-1);
-				 * case PieParser.DOT : case PieParser.ID : return load(t);
-				 */
+
 			default: // catch unhandled node types
 				throw new UnsupportedOperationException("Node " + t.getText()
 						+ "<" + t.getType() + "> not handled");
@@ -308,6 +313,7 @@ public class Interpreter {
 
 	public void tunit(CommonTree t) {
 		if (t.getType() != TTParser.TUNIT) {
+
 			// System.out.println("NOT a TUNIT");
 			listener.error("not a tunit: " + t.toStringTree());
 		}
@@ -315,7 +321,19 @@ public class Interpreter {
 		List<CommonTree> stats = null;
 		for (int i = 0; i < t.getChildCount(); i++) {
 			exec((CommonTree) t.getChild(i));
+
+			listener.error("not a tunit: " + t.toStringTree());
+
 		}
+		MethodSymbol mainSymbol = (MethodSymbol) symbolTable.getSymbol("main");
+		if (mainSymbol == null) {
+			System.out.println("No main");
+			listener.error("no main method to execute: " + t.toStringTree());
+		} else
+			exec(mainSymbol.methodBody);
+
+		// Clear global scope
+		symbolTable.removeScope();
 	}
 
 	public void imports(CommonTree t) {
@@ -323,11 +341,11 @@ public class Interpreter {
 	}
 
 	public void mainBlock(CommonTree t) {
-		// System.out.println("main");
-
+		System.out.println("main");
 		symbolTable.addScope(); // add a scope for a main block
 
 		if (t.getType() != TTParser.MAIN) {
+
 			// Handle error
 			listener.error("not a mainblock: " + t.toStringTree());
 		}
@@ -336,45 +354,33 @@ public class Interpreter {
 		for (int i = 0; i < t.getChildCount(); i++) {
 			// exec((CommonTree)t.getChild(i));
 			exec((CommonTree) t.getChild(i));
-		}
 
-		System.out.println("a: "
-				+ symbolTable.getCurrentScope().get("a").getType() + ", "
-				+ symbolTable.getCurrentScope().get("a").getValue());
-		System.out.println("b: "
-				+ symbolTable.getCurrentScope().get("b").getType() + ", "
-				+ symbolTable.getCurrentScope().get("b").getValue());
-		System.out.println("c: "
-				+ symbolTable.getCurrentScope().get("c").getType() + ", "
-				+ symbolTable.getCurrentScope().get("c").getValue());
-		// System.out.println("d: " +
-		// symbolTable.getCurrentScope().get("d").getType() + ", " +
-		// symbolTable.getCurrentScope().get("d").getValue());
+			listener.error("not a mainblock: " + t.toStringTree());
+
+		}
+		CommonTree mainBody = (CommonTree) t.getChild(0);
+		exec((CommonTree) mainBody);
+		symbolTable.removeScope();
 	}
 
-	public void block(CommonTree t) {
-		// System.out.println("block");
+	public Object block(CommonTree t) {
+		System.out.println("block");
 		// Execute code
 		if (t.getType() != TTParser.SLIST) {
 			// Handle error
-			listener.error("not a block: " + t.toStringTree());
-		}
-		List<CommonTree> stats = null;
-		for (int i = 0; i < t.getChildCount(); i++) {
-			exec((CommonTree) t.getChild(i));
-		}
-	}
 
-	/*
-	 * public void numberType(CommonTree t) { System.out.println("number");
-	 * System.out.println(t.getChild(0).getText());
-	 * 
-	 * for (int i = 0; i < t.getChildCount(); i++) {
-	 * symbolTable.addSymbol(t.getChild(i).getText(), t.getText(), null); //
-	 * Number // a; exec((CommonTree) t.getChild(i)); }
-	 * 
-	 * }
-	 */
+			 listener.error("not a block: " + t.toStringTree());
+
+		}
+		int childrenCount = t.getChildCount();
+		for (int i = 0; i < childrenCount; i++) {
+			CommonTree childNode = (CommonTree)t.getChild(i);
+			Object rv = exec(childNode);
+			if (childNode.getType() == TTParser.RETURN)
+				return rv;
+		}
+		return null;
+	}
 
 	
 
@@ -390,14 +396,11 @@ public class Interpreter {
 
 	}
 
-	public void identity(CommonTree t) {
-		// System.out.println("identity");
-
-		for (int i = 0; i < t.getChildCount(); i++) {
-			// System.out.println(((CommonTree)t.getChild(i)).getText());
-			// System.out.println("here1 " + exec((CommonTree)t.getChild(i)));
-			exec((CommonTree) t.getChild(i));
-		}
+	public Symbol identity(CommonTree t) {
+		 System.out.println("identity" + t.getChild(0));
+		 
+		 Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
+		 return s;
 	}
 
 	public void assign(CommonTree t) {
@@ -544,8 +547,10 @@ public class Interpreter {
 	public Integer arithmeticEval(CommonTree t) {
 		System.out.println("Arithmetic Evaluation");
 
+
 		Integer a = (Integer)exec((CommonTree) t.getChild(0));
 		Integer b = (Integer) exec((CommonTree) t.getChild(1));
+
 
 		switch (t.getType()) {
 
@@ -585,6 +590,7 @@ public class Interpreter {
 		Boolean a = (Boolean) exec((CommonTree) t.getChild(0));
 		Boolean b = (Boolean) exec((CommonTree) t.getChild(1));
 
+
 		switch (t.getType()) {
 		case TTParser.AND:
 			return a && b;
@@ -618,8 +624,10 @@ public class Interpreter {
 	public Boolean relationalEval(CommonTree t) {
 
 		System.out.println("Relational Evaluation");
+
 		Integer a = (Integer) exec((CommonTree) t.getChild(0));
 		Integer b = (Integer) exec((CommonTree) t.getChild(1));
+
 
 		switch (t.getType()) {
 
@@ -638,17 +646,45 @@ public class Interpreter {
 
 	}
 
-	public void call(CommonTree t) {
+	public Object call(CommonTree t) {
 		System.out.println("call");
-		symbolTable.addScope();
 
-		for (int i = 0; i < t.getChildCount(); i++) {
-			System.out.println(((CommonTree) t.getChild(i)).getText());
-			// System.out.println("here2 " + exec((CommonTree)t.getChild(i)));
-			exec((CommonTree) t.getChild(i));
+		String methodName = t.getChild(0).getText();
+		MethodSymbol methodSymbol = (MethodSymbol) symbolTable
+				.getSymbol(methodName);
+		if (methodName == null) {
+			listener.error("no such method " + methodName, t.token);
+			return null;
 		}
 
+		int argCount = t.getChildCount() - 1;
+		// check for argument compatibility
+		ArrayList<Symbol> argsList = methodSymbol.getArgumentList();
+		if (argsList == null && argCount > 0 || argsList != null
+				&& argsList.size() != argCount) {
+			listener.error("method '" + methodName + "' argument list mismatch");
+			return null;
+		}
+		symbolTable.addScope(false);
+		int i = 0;
+		// evaluate and define arguments
+		for (Symbol arg : argsList) {
+			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
+			Object argValue = exec(ithArg);
+			symbolTable.addSymbol(arg.getName(), arg.getType(), argValue);
+			i++;
+		}
+
+		Object result = exec(methodSymbol.methodBody);
 		symbolTable.removeScope();
+		return result;
+	}
+
+	public Object returnStmt(CommonTree t) {
+		int childrenCount = t.getChildCount();
+		if (childrenCount == 0)
+			return null;
+		return exec((CommonTree) t.getChild(0));
 	}
 
 	public void ifStatement(CommonTree t) {
@@ -719,12 +755,15 @@ public class Interpreter {
 		// Define the itterDate
 		itterDate = start;
 		symbolTable.addSymbol(name, type, itterDate);
+		
+		
 
 		while (itterDate.compareTo(end) <= 0) {
 			// Execute the block
 			exec(block);
 
 			// Increment the itterDate and update symbolTable
+			//itterDate = (Date)symbolTable.getSymbol(name);
 			itterDate.add(inc);
 			symbolTable.addSymbol(name, type, itterDate);
 		}
@@ -823,6 +862,13 @@ public class Interpreter {
 	}
 
 	public void print(CommonTree t) {
-		System.out.println(t.getChild(0).getText());
+		if(((CommonTree)t.getChild(0)).getType() == TTParser.IDENT_TOKEN)
+		{
+			System.out.println("in here");
+			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
+			System.out.println(s.getValue());
+		}
+		else
+			System.out.println(t.getChild(0).getText());
 	}
 }

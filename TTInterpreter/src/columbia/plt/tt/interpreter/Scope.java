@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.lang.String; 
 
 public class Scope extends HashMap<String, Symbol> {
-  
-    private final int id;
+
+	private static final long serialVersionUID = -2125297736018102336L;
+	private final int id;
     private final boolean isChild;
     
     public Scope(final int id) {
