@@ -3,7 +3,6 @@ package columbia.plt.tt.interpreter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CharStream;
@@ -16,7 +15,6 @@ import antlr.RecognitionException;
 import columbia.plt.tt.DefinitionAnalyzer;
 import columbia.plt.tt.TTLexer;
 import columbia.plt.tt.TTParser;
-import columbia.plt.tt.TypeAnalyzer;
 import columbia.plt.tt.datatype.Calendar;
 import columbia.plt.tt.datatype.Date;
 import columbia.plt.tt.datatype.Task;
@@ -87,7 +85,7 @@ public class Interpreter {
 			return;
 
 		// Semantic Analysis
-	/*	CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
+		CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
 		nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
 		//nodes.setTreeAdaptor(TTAdaptor);
 		
@@ -102,7 +100,7 @@ public class Interpreter {
 
 //		if (errors)
 //			return;
-		*/
+		
 		// Run program it is correct
 		tunit(root);
 	}
@@ -124,9 +122,7 @@ public class Interpreter {
 			case TTParser.MAIN:
 				mainBlock(t);
 				break; // (PL)
-			case TTParser.SLIST:
-				block(t);
-				break; // (PL)
+			case TTParser.SLIST: return block(t);// (PL)
 				
 			case TTParser.STRINGTYPE: 
 			case TTParser.NUMBERTYPE:	
@@ -213,8 +209,8 @@ public class Interpreter {
 			case TTParser.EQUALS:
 			case TTParser.NOTEQUALS:
 				return equalityEval(t); // (AA)
-				// case TTParser.CALL : call(t); break; (PL)
-				// case TTParser.RETURN : (PL)
+			case TTParser.CALL : return call(t); 
+			case TTParser.RETURN : return returnStmt(t);
 				// case TTParser.READ : (PL)
 			case TTParser.PRINT:
 				print(t);
@@ -251,7 +247,6 @@ public class Interpreter {
 			case TTParser.TIMEFRAME_DECEMBER : return TimeFrameConst.DECEMBER;
 			case TTParser.TIMEFRAME_WEEKEND : return TimeFrameConst.WEEKEND;
 			case TTParser.TIMEFRAME_WEEKDAY : return TimeFrameConst.WEEKDAY;
-			            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	
 
 			/*
 			 * case PieParser.BLOCK : block(t); break; case PieParser.ASSIGN :
@@ -274,21 +269,24 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("problem executing "+t.toStringTree(), e);
+			listener.error("problem executing " + t.toStringTree(), e);
 		}
 		return null;
 	}
 
 	public void tunit(CommonTree t) {
 		if (t.getType() != TTParser.TUNIT) {
-			//System.out.println("NOT a TUNIT");
-			 listener.error("not a tunit: "+t.toStringTree());
+			listener.error("not a tunit: " + t.toStringTree());
 		}
-		// Execute code
-		List<CommonTree> stats = null;
-		for (int i = 0; i < t.getChildCount(); i++) {
-			exec((CommonTree) t.getChild(i));
-		}
+		MethodSymbol mainSymbol = (MethodSymbol) symbolTable.getSymbol("main");
+		if (mainSymbol == null) {
+			System.out.println("No main");
+			listener.error("no main method to execute: " + t.toStringTree());
+		} else
+			exec(mainSymbol.methodBody);
+
+		// Clear global scope
+		symbolTable.removeScope();
 	}
 
 	public void imports(CommonTree t) {
@@ -296,49 +294,33 @@ public class Interpreter {
 	}
 
 	public void mainBlock(CommonTree t) {
-		// System.out.println("main");
-
+		System.out.println("main");
 		symbolTable.addScope(); // add a scope for a main block
 
 		if (t.getType() != TTParser.MAIN) {
-			// Handle error
-			 listener.error("not a mainblock: "+t.toStringTree());
+			listener.error("not a mainblock: " + t.toStringTree());
 		}
-		// Execute code
-		List<CommonTree> stats = null;
-		for (int i = 0; i < t.getChildCount(); i++) {
-			// exec((CommonTree)t.getChild(i));
-			exec((CommonTree) t.getChild(i));
-		}
-
-		System.out.println("a: "
-				+ symbolTable.getCurrentScope().get("a").getType() + ", "
-				+ symbolTable.getCurrentScope().get("a").getValue());
-		System.out.println("b: "
-				+ symbolTable.getCurrentScope().get("b").getType() + ", "
-				+ symbolTable.getCurrentScope().get("b").getValue());
-		System.out.println("c: "
-				+ symbolTable.getCurrentScope().get("c").getType() + ", "
-				+ symbolTable.getCurrentScope().get("c").getValue());
-		// System.out.println("d: " +
-		// symbolTable.getCurrentScope().get("d").getType() + ", " +
-		// symbolTable.getCurrentScope().get("d").getValue());
+		CommonTree mainBody = (CommonTree) t.getChild(0);
+		exec((CommonTree) mainBody);
+		symbolTable.removeScope();
 	}
 
-	public void block(CommonTree t) {
-		// System.out.println("block");
+	public Object block(CommonTree t) {
+		System.out.println("block");
 		// Execute code
 		if (t.getType() != TTParser.SLIST) {
 			// Handle error
-			 listener.error("not a block: "+t.toStringTree());
+			 listener.error("not a block: " + t.toStringTree());
 		}
-		List<CommonTree> stats = null;
-		for (int i = 0; i < t.getChildCount(); i++) {
-			exec((CommonTree) t.getChild(i));
+		int childrenCount = t.getChildCount();
+		for (int i = 0; i < childrenCount; i++) {
+			CommonTree childNode = (CommonTree)t.getChild(i);
+			Object rv = exec(childNode);
+			if (childNode.getType() == TTParser.RETURN)
+				return rv;
 		}
+		return null;
 	}
-
-
 	
 	/*public void numberType(CommonTree t) {
 		System.out.println("number");
@@ -499,17 +481,45 @@ public class Interpreter {
 
 	}
 
-	public void call(CommonTree t) {
+	public Object call(CommonTree t) {
 		System.out.println("call");
-		symbolTable.addScope();
 
-		for (int i = 0; i < t.getChildCount(); i++) {
-			System.out.println(((CommonTree) t.getChild(i)).getText());
-			// System.out.println("here2 " + exec((CommonTree)t.getChild(i)));
-			exec((CommonTree) t.getChild(i));
+		String methodName = t.getChild(0).getText();
+		MethodSymbol methodSymbol = (MethodSymbol) symbolTable
+				.getSymbol(methodName);
+		if (methodName == null) {
+			listener.error("no such method " + methodName, t.token);
+			return null;
 		}
 
+		int argCount = t.getChildCount() - 1;
+		// check for argument compatibility
+		ArrayList<Symbol> argsList = methodSymbol.getArgumentList();
+		if (argsList == null && argCount > 0 || argsList != null
+				&& argsList.size() != argCount) {
+			listener.error("method '" + methodName + "' argument list mismatch");
+			return null;
+		}
+		symbolTable.addScope(false);
+		int i = 0;
+		// evaluate and define arguments
+		for (Symbol arg : argsList) {
+			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
+			Object argValue = exec(ithArg);
+			symbolTable.addSymbol(arg.getName(), arg.getType(), argValue);
+			i++;
+		}
+
+		Object result = exec(methodSymbol.methodBody);
 		symbolTable.removeScope();
+		return result;
+	}
+
+	public Object returnStmt(CommonTree t) {
+		int childrenCount = t.getChildCount();
+		if (childrenCount == 0)
+			return null;
+		return exec((CommonTree) t.getChild(0));
 	}
 
 	public void ifStatement(CommonTree t) {

@@ -3,10 +3,11 @@ import "test1.tt";
 import "test2.tt";
 
 main() {
-	Number a = add(1, 2);
+	add(1, 2);
 	print(" ");
 }
 
 Number add(Number a, Number b) {
 	return a + b;
 }
+

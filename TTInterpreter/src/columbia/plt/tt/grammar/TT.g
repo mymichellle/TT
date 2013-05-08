@@ -248,11 +248,11 @@ timeframeOrIdent
 	;
 
 breakStatement
-	: BREAK ';'
+	: BREAK ';'!
 	;
 
 continueStatement
-	: CONTINUE ';'
+	: CONTINUE ';'!
 	;
 
 exitStatement
@@ -260,7 +260,7 @@ exitStatement
 	;
 
 returnStatement
-	: 'return' expr? ';'
+	: 'return' expr? ';' -> ^(RETURN expr?)
 	;
 
 functionInvocationStatement

@@ -4,11 +4,17 @@ public class Symbol {
 
     private String type;	
     private Object value;
+    private String name;
 
     public Symbol(String type, Object value) {
         this.type = type;
         this.value = value;
     }
+
+	public Symbol(String type, Object value, String name) {
+		this(type,value);
+		this.name = name;
+	}
 
     public String getType() {
         return this.type;
@@ -22,5 +28,12 @@ public class Symbol {
 		this.value = value;
 		
 	}
-    
+
+	public String getName() {
+		return this.name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
 }

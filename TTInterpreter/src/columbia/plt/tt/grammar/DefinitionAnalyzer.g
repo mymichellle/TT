@@ -12,12 +12,12 @@ options {
 }
 
 @members {
-	SymbolTable symtab;
+	SymbolTable symbolTable;
 	Scope currentScope;
-	public DefinitionAnalyzer(TreeNodeStream input, SymbolTable symtab) {
+	public DefinitionAnalyzer(TreeNodeStream input, SymbolTable symbolTable) {
 		this(input);
-		this.symtab = symtab;
-		//currentScope = symtab.globals;
+		this.symbolTable = symbolTable;
+		currentScope = symbolTable.getScope(0);
 	}
 }
 
@@ -37,7 +37,8 @@ bottomup
 enterBlock
 	: SLIST 
 	{
-		//currentScope = new LocalScope(currentScope);
+//		symbolTable.addScope();
+		currentScope = symbolTable.getCurrentScope();
 	}
 	;
 exitBlock
@@ -51,31 +52,46 @@ exitBlock
 enterMethod
 	: ^(METHOD type=. IDENT .*) // match method subtree with 0-or-more args
 	{
-		System.out.println("line " + $IDENT.getLine()+": def method " + $IDENT.text);
-//		$type.scope = currentScope;
-//		MethodSymbol ms = new MethodSymbol($IDENT.text, null, currentScope);
-//		ms.def = $IDENT;            // track AST location of def's ID
-//		$IDENT.symbol = ms;         // track in AST
-//		currentScope.define(ms); // def method in globals
-//		currentScope = ms;       // set current scope to method scope
+		String methodName = $IDENT.text;
+		System.out.println("line " + $IDENT.getLine()+":  method " + methodName);
+		String typeString = ( $type != null ? $type.getText() : null );
+		MethodSymbol ms = new MethodSymbol(typeString, null, methodName);
+		
+		CommonTree t = $METHOD;
+		int childrenCount = t.getChildCount();
+		int argsCount = childrenCount - 1;
+		ms.methodBody = (CommonTree) t.getChild(childrenCount - 1);
+
+		int i = (typeString == null ? 1 : 2);
+		for (; i < argsCount; i++) {
+			CommonTree childNode = (CommonTree)t.getChild(i);
+			CommonTree argType = (CommonTree)childNode.getChild(0);
+			CommonTree argName = (CommonTree)childNode.getChild(1);
+			String aName = argName.getText();
+			Symbol argSym = new Symbol(argType.getText(), null, aName);
+			ms.addParameter(aName, argSym);
+		}
+		symbolTable.addSymbol(methodName, ms);
 	}
 	;
 exitMethod
 	: METHOD
-	{
-		System.out.println("args: "+currentScope);
-		//currentScope = currentScope.getEnclosingScope();    // pop arg scope
-	}
 	;
 enterMain
-	:
+	: ^(MAIN block=.) // match main
+	{
+		String methodName = "main";
+		MethodSymbol ms = new MethodSymbol(null, null, methodName);
+		ms.methodBody = $block;
+		symbolTable.addSymbol(methodName, ms);
+	}
 	;
 exitMain
-	:
+	: MAIN
 	;
 
 varDeclaration // parameter, or local
-	: ^(ARG type=. IDENT .?)
+	: ^((DECLARE | DEFINE) type=. IDENT .?)
 	{
 		System.out.println("line " + $IDENT.getLine() + ": def " + $IDENT.text);
 //		$type.scope = currentScope;
