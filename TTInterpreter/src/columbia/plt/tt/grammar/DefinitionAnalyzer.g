@@ -26,6 +26,7 @@ topdown
 	| enterMethod
 	| enterMain
 	| varDeclaration
+	| varDefinition
 	;
 
 bottomup
@@ -78,7 +79,7 @@ exitMethod
 	: METHOD
 	;
 enterMain
-	: ^(MAIN block=.) // match main
+	: ^(MAIN block=.) // match main	
 	{
 		String methodName = "main";
 		MethodSymbol ms = new MethodSymbol(null, null, methodName);
@@ -90,14 +91,28 @@ exitMain
 	: MAIN
 	;
 
-varDeclaration // parameter, or local
-	: ^((DECLARE | DEFINE) type=. IDENT .?)
+varDefinition // parameter, or local
+	: ^(DEFINE type=. assignmentStmt=.)
 	{
-		System.out.println("line " + $IDENT.getLine() + ": def " + $IDENT.text);
-//		$type.scope = currentScope;
-//		VariableSymbol vs = new VariableSymbol($IDENT.text,null);
-//		vs.def = $IDENT;            // track AST location of def's ID
-//		$IDENT.symbol = vs;         // track in AST
-//		currentScope.define(vs);
+		CommonTree id = (CommonTree)assignmentStmt.getChild(0);
+		String name = id.getText();
+		String typeText = $type.getText();
+		System.out.println("line " + id.getLine() + ": DEFINE " + name);
+		CommonTree assignmentExpression = (CommonTree)assignmentStmt.getChild(1);
+
+		VariableSymbol vs = new VariableSymbol(typeText, null, name);
+		vs.assignmentExpression = assignmentExpression;
+		symbolTable.addSymbol(name, vs);
+	}
+	;
+	
+varDeclaration // parameter, or local
+	: ^(DECLARE type=. IDENT)
+	{
+		System.out.println("line " + $IDENT.getLine() + ": DECLARE " + $IDENT.text);
+		String name = $IDENT.text;
+		String typeText = $type.getText();
+		VariableSymbol vs = new VariableSymbol(typeText, null, name);
+		symbolTable.addSymbol(name, vs);
 	}
 	;
