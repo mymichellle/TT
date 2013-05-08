@@ -3,7 +3,6 @@ package columbia.plt.tt.interpreter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CharStream;
@@ -317,17 +316,7 @@ public class Interpreter {
 
 	public void tunit(CommonTree t) {
 		if (t.getType() != TTParser.TUNIT) {
-
-			// System.out.println("NOT a TUNIT");
 			listener.error("not a tunit: " + t.toStringTree());
-		}
-		// Execute codeObject
-		List<CommonTree> stats = null;
-		for (int i = 0; i < t.getChildCount(); i++) {
-			exec((CommonTree) t.getChild(i));
-
-			listener.error("not a tunit: " + t.toStringTree());
-
 		}
 		MethodSymbol mainSymbol = (MethodSymbol) symbolTable.getSymbol("main");
 		if (mainSymbol == null) {
@@ -345,22 +334,10 @@ public class Interpreter {
 	}
 
 	public void mainBlock(CommonTree t) {
-		System.out.println("main");
 		symbolTable.addScope(); // add a scope for a main block
-
 		if (t.getType() != TTParser.MAIN) {
-
 			// Handle error
 			listener.error("not a mainblock: " + t.toStringTree());
-		}
-		// Execute code
-		List<CommonTree> stats = null;
-		for (int i = 0; i < t.getChildCount(); i++) {
-			// exec((CommonTree)t.getChild(i));
-			exec((CommonTree) t.getChild(i));
-
-			listener.error("not a mainblock: " + t.toStringTree());
-
 		}
 		CommonTree mainBody = (CommonTree) t.getChild(0);
 		exec((CommonTree) mainBody);
@@ -368,13 +345,10 @@ public class Interpreter {
 	}
 
 	public Object block(CommonTree t) {
-		System.out.println("block");
 		// Execute code
 		if (t.getType() != TTParser.SLIST) {
 			// Handle error
-
 			 listener.error("not a block: " + t.toStringTree());
-
 		}
 		int childrenCount = t.getChildCount();
 		for (int i = 0; i < childrenCount; i++) {

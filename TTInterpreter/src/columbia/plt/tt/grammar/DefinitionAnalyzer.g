@@ -38,15 +38,11 @@ bottomup
 enterBlock
 	: SLIST 
 	{
-//		symbolTable.addScope();
-		currentScope = symbolTable.getCurrentScope();
 	}
 	;
 exitBlock
 	: SLIST
 	{
-		System.out.println("locals: " + currentScope);
-//		currentScope = currentScope.getEnclosingScope(); // pop scope
 	}
 	;
 
