@@ -316,8 +316,8 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
-		int a = (int) symbolTable.getValue(t.getChild(0).getText());
-		int b = (int) symbolTable.getValue(t.getChild(1).getText());
+		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
+		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
@@ -349,8 +349,8 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
-		boolean a = (boolean) symbolTable.getValue(t.getChild(0).getText());
-		boolean b = (boolean) symbolTable.getValue(t.getChild(1).getText());
+		boolean a = (Boolean) symbolTable.getValue(t.getChild(0).getText());
+		boolean b = (Boolean) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 		case TTParser.AND:
@@ -391,8 +391,8 @@ public class Interpreter {
 		exec((CommonTree) t.getChild(0));
 		exec((CommonTree) t.getChild(1));
 
-		int a = (int) symbolTable.getValue(t.getChild(0).getText());
-		int b = (int) symbolTable.getValue(t.getChild(1).getText());
+		int a = (Integer) symbolTable.getValue(t.getChild(0).getText());
+		int b = (Integer) symbolTable.getValue(t.getChild(1).getText());
 
 		switch (t.getType()) {
 
