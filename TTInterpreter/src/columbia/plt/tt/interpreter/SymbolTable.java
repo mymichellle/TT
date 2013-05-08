@@ -1,10 +1,5 @@
 package columbia.plt.tt.interpreter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Stack;
 
 public class SymbolTable extends Stack<Scope> {

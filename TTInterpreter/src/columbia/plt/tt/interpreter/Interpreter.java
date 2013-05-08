@@ -23,8 +23,6 @@ import columbia.plt.tt.datatype.Task;
 import columbia.plt.tt.datatype.TimeFrame;
 import columbia.plt.tt.typecheck.*;
 
-
-
 public class Interpreter {
 
 	TTLexer lexer;
@@ -35,33 +33,33 @@ public class Interpreter {
 	SymbolTable symbolTable = new SymbolTable();
 	ArrayList<String> errors = new ArrayList<String>();
 
-
 	public enum TimeFrameConst {
-		YEAR, YEARS, MONTH, MONTHS, DAY, DAYS, HOUR, HOURS, MINUTE, MINUTES,
-		MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY,
-		JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER,
-		WEEKEND, WEEKDAY
+		YEAR, YEARS, MONTH, MONTHS, DAY, DAYS, HOUR, HOURS, MINUTE, MINUTES, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER, WEEKEND, WEEKDAY
 	}
 
-
-    
 	public InterpreterListener listener = // default response to messages
-	        new InterpreterListener() {
-	            public void info(String msg) { System.out.println(msg); }
-	            public void error(String msg) { System.err.println(msg); }
-	            public void error(String msg, Exception e) {
-	                error(msg); e.printStackTrace(System.err);
-	            }
-	           
-				@Override
-				public void error(String msg, org.antlr.runtime.Token t) {
-	            error("line "+t.getLine()+": "+msg);
-					
-				}
-	        };
-	
-	
-//add interpreterListener to collect errors
+	new InterpreterListener() {
+		public void info(String msg) {
+			System.out.println(msg);
+		}
+
+		public void error(String msg) {
+			System.err.println(msg);
+		}
+
+		public void error(String msg, Exception e) {
+			error(msg);
+			e.printStackTrace(System.err);
+		}
+
+		@Override
+		public void error(String msg, org.antlr.runtime.Token t) {
+			error("line " + t.getLine() + ": " + msg);
+
+		}
+	};
+
+	// add interpreterListener to collect errors
 	public void interp(InputStream input) throws RecognitionException,
 			IOException, org.antlr.runtime.RecognitionException {
 		// Lexical and Syntax Analysis
@@ -87,22 +85,23 @@ public class Interpreter {
 			return;
 
 		// Semantic Analysis
-	/*	CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
-		nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
-		//nodes.setTreeAdaptor(TTAdaptor);
-		
-		// Phase 1 - Analyze all method and variable definitions and populate the SymbolTable
-		DefinitionAnalyzer def = new DefinitionAnalyzer(nodes, symbolTable);
-		def.downup(root); // trigger define actions upon certain subtrees
-		
-//		// Phase 2 - Analyze expression types and resolve symbols
-//		nodes.reset();
-//		TypeAnalyzer typeComp = new TypeAnalyzer(nodes, symbolTable);
-//		typeComp.downup(root); // trigger resolve/type computation actions
-
-//		if (errors)
-//			return;
-		*/
+		/*
+		 * CommonTreeNodeStream nodes = new CommonTreeNodeStream(root);
+		 * nodes.setTokenStream(tokenStream); // pass the tokens from the lexer
+		 * //nodes.setTreeAdaptor(TTAdaptor);
+		 * 
+		 * // Phase 1 - Analyze all method and variable definitions and populate
+		 * the SymbolTable DefinitionAnalyzer def = new
+		 * DefinitionAnalyzer(nodes, symbolTable); def.downup(root); // trigger
+		 * define actions upon certain subtrees
+		 * 
+		 * // // Phase 2 - Analyze expression types and resolve symbols //
+		 * nodes.reset(); // TypeAnalyzer typeComp = new TypeAnalyzer(nodes,
+		 * symbolTable); // typeComp.downup(root); // trigger resolve/type
+		 * computation actions
+		 * 
+		 * // if (errors) // return;
+		 */
 		// Run program it is correct
 		tunit(root);
 	}
@@ -127,28 +126,26 @@ public class Interpreter {
 			case TTParser.SLIST:
 				block(t);
 				break; // (PL)
-				
+
 			case TTParser.STRINGTYPE:
-			case TTParser.NUMBERTYPE:	
-			case TTParser.DATETYPE : 
-			case TTParser.TASKTYPE : 
-			case TTParser.TIMEFRAMETYPE : 
-			case TTParser.CALENDARTYPE : 
-			case TTParser.TIMETYPE :
+			case TTParser.NUMBERTYPE:
+			case TTParser.DATETYPE:
+			case TTParser.TASKTYPE:
+			case TTParser.TIMEFRAMETYPE:
+			case TTParser.CALENDARTYPE:
+			case TTParser.TIMETYPE:
 				return t.getText();
-				
-			case TTParser.DOT:
-				fieldAssign(t);
-				break;
-			
-			case TTParser.DECLARE:	
+
+
+			case TTParser.DECLARE:
 				declarationEval(t);
 				break;
 
-	
-			case TTParser.DATE_CONSTANT_TOKEN: return dateConstant(t);
-			case TTParser.TIMEFRAME_CONSTANT: return timeFrameConstant(t);
-			
+			case TTParser.DATE_CONSTANT_TOKEN:
+				return dateConstant(t);
+			case TTParser.TIMEFRAME_CONSTANT:
+				return timeFrameConstant(t);
+
 			case TTParser.IF:
 				ifStatement(t);
 				break;// (MA)
@@ -173,8 +170,10 @@ public class Interpreter {
 				// case TTParser.BREAK : (MA)
 				// case TTParser.EXIT : (MA)
 				// case TTParser.CONTINUE : (MA)
-			/*case TTParser.TRUE : return true;
-			case TTParser.FALSE : return false;*/
+				/*
+				 * case TTParser.TRUE : return true; case TTParser.FALSE :
+				 * return false;
+				 */
 			case TTParser.IDENT_TOKEN:
 			case TTParser.IDENT:
 				identity(t);
@@ -218,69 +217,99 @@ public class Interpreter {
 				print(t);
 				break; // (PL)
 
-			case TTParser.TIMEFRAME_YEAR : return TimeFrameConst.YEAR;
-			case TTParser.TIMEFRAME_YEARS : return TimeFrameConst.YEARS;
-			case TTParser.TIMEFRAME_MONTH : return TimeFrameConst.MONTH;
-			case TTParser.TIMEFRAME_MONTHS : return TimeFrameConst.MONTHS;
-			case TTParser.TIMEFRAME_DAY : return TimeFrameConst.DAY;
-			case TTParser.TIMEFRAME_DAYS : return TimeFrameConst.DAYS;
-			case TTParser.TIMEFRAME_HOUR : return TimeFrameConst.HOUR;
-			case TTParser.TIMEFRAME_HOURS : return TimeFrameConst.HOURS;
-			case TTParser.TIMEFRAME_MINUTE : return TimeFrameConst.MINUTE;
-			case TTParser.TIMEFRAME_MINUTES : return TimeFrameConst.MINUTES;
-			case TTParser.TIMEFRAME_MONDAY : return TimeFrameConst.MONDAY;
-			case TTParser.TIMEFRAME_TUESDAY : return TimeFrameConst.TUESDAY;
-			case TTParser.TIMEFRAME_WEDNESDAY : return TimeFrameConst.WEDNESDAY;
-			case TTParser.TIMEFRAME_THURSDAY : return TimeFrameConst.THURSDAY;
-			case TTParser.TIMEFRAME_FRIDAY : return TimeFrameConst.FRIDAY;
-			case TTParser.TIMEFRAME_SATURDAY : return TimeFrameConst.SATURDAY;
-			case TTParser.TIMEFRAME_SUNDAY : return TimeFrameConst.SUNDAY;
-			case TTParser.TIMEFRAME_JANUARY : return TimeFrameConst.JANUARY;
-			case TTParser.TIMEFRAME_FEBRUARY : return TimeFrameConst.FEBRUARY;
-			case TTParser.TIMEFRAME_MARCH : return TimeFrameConst.MARCH;
-			case TTParser.TIMEFRAME_APRIL : return TimeFrameConst.APRIL;
-			case TTParser.TIMEFRAME_MAY : return TimeFrameConst.MAY;
-			case TTParser.TIMEFRAME_JUNE : return TimeFrameConst.JUNE;
-			case TTParser.TIMEFRAME_JULY : return TimeFrameConst.JULY;
-			case TTParser.TIMEFRAME_AUGUST : return TimeFrameConst.AUGUST;
-			case TTParser.TIMEFRAME_SEPTEMBER : return TimeFrameConst.SEPTEMBER;
-			case TTParser.TIMEFRAME_OCTOBER : return TimeFrameConst.OCTOBER;
-			case TTParser.TIMEFRAME_NOVEMBER : return TimeFrameConst.NOVEMBER;
-			case TTParser.TIMEFRAME_DECEMBER : return TimeFrameConst.DECEMBER;
-			case TTParser.TIMEFRAME_WEEKEND : return TimeFrameConst.WEEKEND;
-			case TTParser.TIMEFRAME_WEEKDAY : return TimeFrameConst.WEEKDAY;
-			            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	            	
+			case TTParser.TIMEFRAME_YEAR:
+				return TimeFrameConst.YEAR;
+			case TTParser.TIMEFRAME_YEARS:
+				return TimeFrameConst.YEARS;
+			case TTParser.TIMEFRAME_MONTH:
+				return TimeFrameConst.MONTH;
+			case TTParser.TIMEFRAME_MONTHS:
+				return TimeFrameConst.MONTHS;
+			case TTParser.TIMEFRAME_DAY:
+				return TimeFrameConst.DAY;
+			case TTParser.TIMEFRAME_DAYS:
+				return TimeFrameConst.DAYS;
+			case TTParser.TIMEFRAME_HOUR:
+				return TimeFrameConst.HOUR;
+			case TTParser.TIMEFRAME_HOURS:
+				return TimeFrameConst.HOURS;
+			case TTParser.TIMEFRAME_MINUTE:
+				return TimeFrameConst.MINUTE;
+			case TTParser.TIMEFRAME_MINUTES:
+				return TimeFrameConst.MINUTES;
+			case TTParser.TIMEFRAME_MONDAY:
+				return TimeFrameConst.MONDAY;
+			case TTParser.TIMEFRAME_TUESDAY:
+				return TimeFrameConst.TUESDAY;
+			case TTParser.TIMEFRAME_WEDNESDAY:
+				return TimeFrameConst.WEDNESDAY;
+			case TTParser.TIMEFRAME_THURSDAY:
+				return TimeFrameConst.THURSDAY;
+			case TTParser.TIMEFRAME_FRIDAY:
+				return TimeFrameConst.FRIDAY;
+			case TTParser.TIMEFRAME_SATURDAY:
+				return TimeFrameConst.SATURDAY;
+			case TTParser.TIMEFRAME_SUNDAY:
+				return TimeFrameConst.SUNDAY;
+			case TTParser.TIMEFRAME_JANUARY:
+				return TimeFrameConst.JANUARY;
+			case TTParser.TIMEFRAME_FEBRUARY:
+				return TimeFrameConst.FEBRUARY;
+			case TTParser.TIMEFRAME_MARCH:
+				return TimeFrameConst.MARCH;
+			case TTParser.TIMEFRAME_APRIL:
+				return TimeFrameConst.APRIL;
+			case TTParser.TIMEFRAME_MAY:
+				return TimeFrameConst.MAY;
+			case TTParser.TIMEFRAME_JUNE:
+				return TimeFrameConst.JUNE;
+			case TTParser.TIMEFRAME_JULY:
+				return TimeFrameConst.JULY;
+			case TTParser.TIMEFRAME_AUGUST:
+				return TimeFrameConst.AUGUST;
+			case TTParser.TIMEFRAME_SEPTEMBER:
+				return TimeFrameConst.SEPTEMBER;
+			case TTParser.TIMEFRAME_OCTOBER:
+				return TimeFrameConst.OCTOBER;
+			case TTParser.TIMEFRAME_NOVEMBER:
+				return TimeFrameConst.NOVEMBER;
+			case TTParser.TIMEFRAME_DECEMBER:
+				return TimeFrameConst.DECEMBER;
+			case TTParser.TIMEFRAME_WEEKEND:
+				return TimeFrameConst.WEEKEND;
+			case TTParser.TIMEFRAME_WEEKDAY:
+				return TimeFrameConst.WEEKDAY;
 
-			/*
-			 * case PieParser.BLOCK : block(t); break; case PieParser.ASSIGN :
-			 * assign(t); break; case PieParser.RETURN : ret(t); break; case
-			 * PieParser.PRINT : print(t); break; case PieParser.IF : ifstat(t);
-			 * break; case PieParser.WHILE : whileloop(t); break; case
-			 * PieParser.CALL : return call(t); case PieParser.NEW : return
-			 * instance(t); case PieParser.ADD : return add(t); case
-			 * PieParser.SUB : return op(t); case PieParser.MUL : return op(t);
-			 * case PieParser.EQ : return eq(t); case PieParser.LT : return
-			 * lt(t); case PieParser.INT : return Integer.parseInt(t.getText());
-			 * case PieParser.CHAR : return new
-			 * Character(t.getText().charAt(1)); case PieParser.FLOAT : return
-			 * Float.parseFloat(t.getText()); case PieParser.STRING : String s =
-			 * t.getText(); return s.substring(1,s.length()-1); case
-			 * PieParser.DOT : case PieParser.ID : return load(t);
-			 */
+				/*
+				 * case PieParser.BLOCK : block(t); break; case PieParser.ASSIGN
+				 * : assign(t); break; case PieParser.RETURN : ret(t); break;
+				 * case PieParser.PRINT : print(t); break; case PieParser.IF :
+				 * ifstat(t); break; case PieParser.WHILE : whileloop(t); break;
+				 * case PieParser.CALL : return call(t); case PieParser.NEW :
+				 * return instance(t); case PieParser.ADD : return add(t); case
+				 * PieParser.SUB : return op(t); case PieParser.MUL : return
+				 * op(t); case PieParser.EQ : return eq(t); case PieParser.LT :
+				 * return lt(t); case PieParser.INT : return
+				 * Integer.parseInt(t.getText()); case PieParser.CHAR : return
+				 * new Character(t.getText().charAt(1)); case PieParser.FLOAT :
+				 * return Float.parseFloat(t.getText()); case PieParser.STRING :
+				 * String s = t.getText(); return s.substring(1,s.length()-1);
+				 * case PieParser.DOT : case PieParser.ID : return load(t);
+				 */
 			default: // catch unhandled node types
 				throw new UnsupportedOperationException("Node " + t.getText()
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("problem executing "+t.toStringTree(), e);
+			listener.error("problem executing " + t.toStringTree(), e);
 		}
 		return null;
 	}
 
 	public void tunit(CommonTree t) {
 		if (t.getType() != TTParser.TUNIT) {
-			//System.out.println("NOT a TUNIT");
-			 listener.error("not a tunit: "+t.toStringTree());
+			// System.out.println("NOT a TUNIT");
+			listener.error("not a tunit: " + t.toStringTree());
 		}
 		// Execute codeObject
 		List<CommonTree> stats = null;
@@ -300,7 +329,7 @@ public class Interpreter {
 
 		if (t.getType() != TTParser.MAIN) {
 			// Handle error
-			 listener.error("not a mainblock: "+t.toStringTree());
+			listener.error("not a mainblock: " + t.toStringTree());
 		}
 		// Execute code
 		List<CommonTree> stats = null;
@@ -328,7 +357,7 @@ public class Interpreter {
 		// Execute code
 		if (t.getType() != TTParser.SLIST) {
 			// Handle error
-			 listener.error("not a block: "+t.toStringTree());
+			listener.error("not a block: " + t.toStringTree());
 		}
 		List<CommonTree> stats = null;
 		for (int i = 0; i < t.getChildCount(); i++) {
@@ -336,49 +365,29 @@ public class Interpreter {
 		}
 	}
 
+	/*
+	 * public void numberType(CommonTree t) { System.out.println("number");
+	 * System.out.println(t.getChild(0).getText());
+	 * 
+	 * for (int i = 0; i < t.getChildCount(); i++) {
+	 * symbolTable.addSymbol(t.getChild(i).getText(), t.getText(), null); //
+	 * Number // a; exec((CommonTree) t.getChild(i)); }
+	 * 
+	 * }
+	 */
 
 	
-	/*public void numberType(CommonTree t) {
-		System.out.println("number");
-		System.out.println(t.getChild(0).getText());
 
-		for (int i = 0; i < t.getChildCount(); i++) {
-			symbolTable.addSymbol(t.getChild(i).getText(), t.getText(), null); // Number
-																				// a;
-			exec((CommonTree) t.getChild(i));
-		}
+	public String declarationEval(CommonTree t) {
 
-	}
-	*/
-	
-	public String fieldAssign(CommonTree t){
-		
-		System.out.println("Field Assign");
-		
-		String varName = t.getChild(0).getText();
-		String fieldName = t.getChild(1).getText();
-		
-		Symbol varSymbol =  symbolTable.getCurrentScope().get(varName); 
-		
-		if (varSymbol == null)
-			//error symbol has not been defined
-		
-		return varName + ":" + fieldName + ":" + varSymbol.getType();
-		
-		
-	}
-	public String declarationEval(CommonTree t){
-		
 		System.out.println("Type" + t.getChild(0).getText());
-		
-		String dataType = t.getChild(0).getText();
-		int rightChildCount = t.getChildCount() - 1;
-		
-		for (int i = 1 ; i <= rightChildCount ; i++ )
-			symbolTable.addSymbol(t.getChild(1).getText(), dataType, null);
-		
-		return exec((CommonTree) t.getChild(0));
-		
+
+		String dataType = (String) exec((CommonTree) t.getChild(0));
+		String ident = t.getChild(1).getText();
+
+		symbolTable.addSymbol(ident, dataType, null);
+		return ident;
+
 	}
 
 	public void identity(CommonTree t) {
@@ -392,23 +401,135 @@ public class Interpreter {
 	}
 
 	public void assign(CommonTree t) {
-		System.out.println("assign");
-		// System.out.println(t.getChild(0).getText());
-		symbolTable.setValue(t.getChild(0).getText(),
-				exec((CommonTree) t.getChild(1)));
 
-		/*
-		 * for (int i = 0; i < t.getChildCount(); i++) {
-		 * System.out.println(((CommonTree)t.getChild(i)).getText());
-		 * //System.out.println("here2 " + exec((CommonTree)t.getChild(i)));
-		 * Object o = exec((CommonTree)t.getChild(i)); }
-		 */
+		CommonTree lhs = (CommonTree) t.getChild(0);
+		CommonTree expr = (CommonTree) t.getChild(1);
+
+		Object value = exec(expr);
+		if (lhs.getType() == TTParser.DOT) {
+			fieldassign(lhs, value);
+			return;
+		}
+		Symbol s = symbolTable.getSymbol(lhs.getText());
+		if (s == null) {
+			// throw error variable not defined
+		}
+		s.setValue(value);
+
+	}
+
+	private void fieldassign(CommonTree lhs, Object value) {
+
+		CommonTree o = (CommonTree) lhs.getChild(0);
+		CommonTree f = (CommonTree) lhs.getChild(1);
+
+		String fieldname = f.getText();
+
+		Symbol symbol = symbolTable.getSymbol(o.getText());
+		if (symbol == null) {
+			// throw error tht object has no been defined
+		}
+
+		if (symbol.getType() == "Calendar") {
+
+			Calendar c = (Calendar) symbol.getValue();
+			if (fieldname == "name")
+				c.setName((String) value);
+			if (fieldname == "start")
+				c.setStart((Date) value);
+			if (fieldname == "end")
+				c.setEnd((Date) value);
+			else {
+				// throw error unknown field for this datatype
+			}
+
+		}
+
+		else if (symbol.getType() == "Date") {
+
+			Date d = (Date) symbol.getValue();
+			int val = (Integer) value;
+
+			if (fieldname == "year")
+				d.setYear(val);
+			if (fieldname == "month")
+				d.setMonth(val);
+			if (fieldname == "day")
+				d.setDay(val);
+			if (fieldname == "hour")
+				d.setHour(val);
+			if (fieldname == "minute")
+				d.setMinute(val);
+			else {
+				// throw error unknown field for this datatype
+			}
+
+		}
+
+		else if (symbol.getType() == "Task") {
+
+			Task t = (Task) symbol.getValue();
+
+			if (fieldname == "name")
+				t.setName((String) value);
+
+			if (fieldname == "start")
+				t.setStart((Date) value);
+
+			if (fieldname == "end")
+				t.setEnd((Date) value);
+
+			if (fieldname == "description")
+				t.setDescription((String) value);
+
+			if (fieldname == "location")
+				t.setLocation((String) value);
+
+			else {
+				// throw error unknown field for this datatype
+			}
+
+		}
+
+		else if (symbol.getType() == "TimeFrame") {
+
+			TimeFrame tf = (TimeFrame) symbol.getValue();
+			int val = (Integer) value;
+
+			if (fieldname == "years")
+				tf.setYears(val);
+
+			if (fieldname == "months")
+				tf.setMonths(val);
+
+			if (fieldname == "weeks")
+				tf.setWeeks(val);
+
+			if (fieldname == "days")
+				tf.setDays(val);
+
+			if (fieldname == "hours")
+				tf.setHours(val);
+
+			if (fieldname == "minutes")
+				tf.setMinutes(val);
+
+			else {
+
+				// throw error unknown field for this datatype
+			}
+
+		}
+
+		else {
+			// throw error, fields cannot be associated with primitive types
+		}
+
 	}
 
 	public Object plusEval(CommonTree t) {
 
-		System.out.println("" +
-				" Operator Evaluation");
+		System.out.println("" + " Operator Evaluation");
 		Object a = exec((CommonTree) t.getChild(0));
 		Object b = exec((CommonTree) t.getChild(1));
 
@@ -420,16 +541,16 @@ public class Interpreter {
 
 	}
 
-	public int arithmeticEval(CommonTree t) {
+	public Integer arithmeticEval(CommonTree t) {
 		System.out.println("Arithmetic Evaluation");
 
-		int a = (int) exec((CommonTree) t.getChild(0));
-		int b = (int) exec((CommonTree) t.getChild(1));
+		Integer a = (Integer)exec((CommonTree) t.getChild(0));
+		Integer b = (Integer) exec((CommonTree) t.getChild(1));
 
 		switch (t.getType()) {
 
 		case TTParser.PLUS:
-			System.out.println(a+b);
+			System.out.println(a + b);
 			return a + b;
 
 		case TTParser.MINUS:
@@ -438,15 +559,14 @@ public class Interpreter {
 		case TTParser.MULT:
 			return a * b;
 
-		case TTParser.DIV:
-		{
+		case TTParser.DIV: {
 			if (b == 0) {
 				listener.error("invalid operation:" + t.toStringTree());
 			}
 			return a / b;
 
 		}
-			 // to do throw error on divide by zero
+		// to do throw error on divide by zero
 
 		case TTParser.MOD:
 			return a % b;
@@ -458,12 +578,12 @@ public class Interpreter {
 
 	}
 
-	public boolean logicalEval(CommonTree t) {
+	public Boolean logicalEval(CommonTree t) {
 
 		System.out.println("Logical Evaluation");
 
-		boolean a = (boolean)exec((CommonTree) t.getChild(0));
-		boolean b = (boolean)exec((CommonTree) t.getChild(1));
+		Boolean a = (Boolean) exec((CommonTree) t.getChild(0));
+		Boolean b = (Boolean) exec((CommonTree) t.getChild(1));
 
 		switch (t.getType()) {
 		case TTParser.AND:
@@ -478,12 +598,11 @@ public class Interpreter {
 
 	}
 
-	public boolean equalityEval(CommonTree t) {
+	public Boolean equalityEval(CommonTree t) {
 
 		System.out.println("Equality Evaluation");
 		Object a = exec((CommonTree) t.getChild(0));
 		Object b = exec((CommonTree) t.getChild(1));
-
 
 		switch (t.getType()) {
 
@@ -496,12 +615,11 @@ public class Interpreter {
 		}
 	}
 
-	public boolean relationalEval(CommonTree t) {
+	public Boolean relationalEval(CommonTree t) {
 
 		System.out.println("Relational Evaluation");
-		int a = (int) exec((CommonTree) t.getChild(0));
-		int b = (int) exec((CommonTree) t.getChild(1));
-
+		Integer a = (Integer) exec((CommonTree) t.getChild(0));
+		Integer b = (Integer) exec((CommonTree) t.getChild(1));
 
 		switch (t.getType()) {
 
@@ -564,7 +682,7 @@ public class Interpreter {
 		Date itterDate = null;
 		String type = null;
 		String name = null;
-		
+
 		// Create a new scope that is a child of parent scope
 		symbolTable.addScope(true);
 		symbolTable.addSymbol(name, type, itterDate);
@@ -592,8 +710,7 @@ public class Interpreter {
 			}
 		}
 
-		if (start == null || end == null)
-		{
+		if (start == null || end == null) {
 			// End of loop remove the scope
 			symbolTable.removeScope();
 			return;
@@ -611,7 +728,7 @@ public class Interpreter {
 			itterDate.add(inc);
 			symbolTable.addSymbol(name, type, itterDate);
 		}
-		
+
 		// End of loop remove the scope
 		symbolTable.removeScope();
 	}
@@ -621,13 +738,13 @@ public class Interpreter {
 	}
 
 	public Date dateOrIdent(CommonTree t) {
-		return (Date)exec((CommonTree) t.getChild(0));
+		return (Date) exec((CommonTree) t.getChild(0));
 	}
-	
+
 	public TimeFrame timeFrameOrIdent(CommonTree t) {
 		// This only handles timeFrameConstant
 		System.out.println("timeFrameOrIdent");
-		return (TimeFrame)exec((CommonTree)t.getChild(0));
+		return (TimeFrame) exec((CommonTree) t.getChild(0));
 	}
 
 	public TimeFrame timeFrameConstant(CommonTree t) {
@@ -637,7 +754,7 @@ public class Interpreter {
 		}
 		return new TimeFrame(tf);
 	}
-	
+
 	public void everyTask(CommonTree t) {
 		System.out.println("\neveryTask!");
 
@@ -686,152 +803,6 @@ public class Interpreter {
 		} else {
 			taskList = c;
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		for (Task task : taskList) {
 			// If there is an on expression evaluate it for each loop

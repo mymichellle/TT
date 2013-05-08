@@ -4,22 +4,33 @@ public class TimeFrame {
 
   private int years;
   private int months;
+  private int weeks;
   private int days;
   private int hours;
   private int minutes;
   
   
-  public TimeFrame() {
+  public int getWeeks() {
+	return weeks;
+}
+
+public void setWeeks(int weeks) {
+	this.weeks = weeks;
+}
+
+public TimeFrame() {
   	this.years = 0;
   	this.months = 0;
+  	this.weeks = 0;
   	this.days = 0;
   	this.hours = 0;
   	this.minutes = 0;
   }
   
-  public TimeFrame(int years, int months, int days, int hours, int minutes) {
+  public TimeFrame(int years, int months,int weeks, int days, int hours, int minutes) {
   	this.years = years;
   	this.months = months;
+  	this.weeks = weeks;
   	this.days = days;
   	this.hours = hours;
   	this.minutes = minutes;
@@ -28,6 +39,7 @@ public class TimeFrame {
   public TimeFrame(String timeFrameConst) {
     this.years = 0;
     this.months = 0;
+    this.weeks = 0;
     this.days = 0;
     this.hours = 0;
     this.minutes = 0;  	
@@ -41,7 +53,11 @@ public class TimeFrame {
       index = timeFrameParts[i].toLowerCase().indexOf("months");
       if (index >= 0)
         this.months += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
-                                                                		
+       
+      index = timeFrameParts[i].toLowerCase().indexOf("weeks");
+      if (index >= 0)
+        this.weeks += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
+      
       index = timeFrameParts[i].toLowerCase().indexOf("days");
       if (index >= 0)
         this.days += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
@@ -77,6 +93,7 @@ public class TimeFrame {
   public void setYears(int years) { this.years = years; }
   public int getMonths() { return this.months; }
   public void setMonths(int months) { this.months = months; }
+
   public int getDays() { return this.days; }
   public void setDays(int days) { this.days = days; }
   public int getHours() { return this.hours; }
@@ -88,6 +105,7 @@ public class TimeFrame {
   private void initialize(Date start, Date end) {
   	this.years = end.getYear() - start.getYear();
   	this.months = end.getMonth() - start.getMonth();
+  	//logic needed for weeks
   	this.days = end.getDay() - start.getDay();
   	this.hours = end.getHour() - start.getHour();
   	this.minutes = end.getMinute() - start.getMinute();
@@ -95,6 +113,7 @@ public class TimeFrame {
   
   @Override
   public String toString() {
-  	return "Years: " + Integer.toString(years) + ", Months: " + Integer.toString(months) + ", Days: " + Integer.toString(days) + ", Hours: " + Integer.toString(hours) + ", Minutes: " + Integer.toString(minutes);
+  	return "Years: " + Integer.toString(years) + ", Months: " + Integer.toString(months) + ", Weeks: " + Integer.toString(weeks)+  ", Days: " + Integer.toString(days) + ", " +
+  			"Hours: " + Integer.toString(hours) + ", Minutes: " + Integer.toString(minutes);
   }
 }
