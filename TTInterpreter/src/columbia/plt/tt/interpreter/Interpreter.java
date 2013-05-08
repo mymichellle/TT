@@ -197,6 +197,9 @@ public class Interpreter {
 			case TTParser.IDENT:
 				return identity(t);
 				// (JL)
+			case TTParser.DEFINE :
+				defineEval(t);
+				break;
 			case TTParser.ASSIGN:
 				assign(t);
 				break; // (JL)
@@ -235,6 +238,7 @@ public class Interpreter {
 			case TTParser.PRINT:
 				print(t);
 				break; // (PL)
+				
 
 
 			case TTParser.TIMEFRAME_YEAR:
@@ -382,7 +386,11 @@ public class Interpreter {
 		return null;
 	}
 
-	
+	public void defineEval(CommonTree t){
+		
+		System.out.println("here");
+		
+	}
 
 	public String declarationEval(CommonTree t) {
 
@@ -413,9 +421,15 @@ public class Interpreter {
 			fieldassign(lhs, value);
 			return;
 		}
-		Symbol s = symbolTable.getSymbol(lhs.getText());
+		String ident= null;
+		if(lhs.getType() == TTParser.DECLARE)
+			ident = declarationEval(t);
+		else
+			ident = lhs.getText();
+		Symbol s = symbolTable.getSymbol(ident);
+		
 		if (s == null) {
-			// throw error variable not defined
+			
 		}
 		s.setValue(value);
 
@@ -571,7 +585,6 @@ public class Interpreter {
 			return a / b;
 
 		}
-		// to do throw error on divide by zero
 
 		case TTParser.MOD:
 			return a % b;

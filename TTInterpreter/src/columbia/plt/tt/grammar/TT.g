@@ -176,8 +176,9 @@ definitionStatement
 	;
 
 assignmentStmt
-	: IDENT ASSIGN^ expr ';'!
-	| memberAccessExpr ^ASSIGN expr ';'!
+	: id=IDENT ASSIGN e = expr ';'  -> ^(ASSIGN $id  $e )
+	| mae =memberAccessExpr ASSIGN e =expr ';' -> ^(ASSIGN $mae $e)
+	| declarationStatement expr ';'
 	;
 
 type
