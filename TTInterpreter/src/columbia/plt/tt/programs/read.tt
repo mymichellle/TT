@@ -1,0 +1,13 @@
+
+Number a = 2+3;
+Number b;
+Calendar c;
+main(){
+	Number t = read("Enter Something:");
+	
+	print(t);
+}
+
+
+
+Number d = 2+3*4;
