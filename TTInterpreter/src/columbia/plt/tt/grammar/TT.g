@@ -380,7 +380,7 @@ COMMENT
 		{ $channel = HIDDEN; }
 	;
 
-constant 
+constant
 	: STRING_CONSTANT
 	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)  
 	| NUMBER

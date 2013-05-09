@@ -1,8 +1,7 @@
 main(){
 	
 	Calendar c;
-	c.name = "MyCalendar";
 	c.start = 2013.01.01;
-	c.end = 2013.01.02;
+
 	
 }
