@@ -171,16 +171,16 @@ argDeclaration
 //@Author : Athresh
 
 declarationStatement
-	: t=type (WS*)! IDENT ';'   -> ^(DECLARE $t IDENT)
+	: t=type (WS*)! IDENT (WS*)! ';'   -> ^(DECLARE $t IDENT)
 	;
 
 definitionStatement
-	: t=type (WS*)! IDENT (WS*)! ASSIGN  (WS*)! e=expr ';' -> ^(DEFINE ^(DECLARE $t IDENT) $e)
+	: t=type (WS*)! IDENT (WS*)! ASSIGN  e=expr  ';' -> ^(DEFINE ^(DECLARE $t IDENT) $e)
 	;
 
 assignmentStmt
-	: id=IDENT ASSIGN e = expr ';'  -> ^(ASSIGN $id  $e )
-	| mae = memberAccessExpr ASSIGN e =expr ';' -> ^(ASSIGN $mae $e)
+	: id=IDENT (WS*)! ASSIGN  e = expr  ';'  -> ^(ASSIGN $id  $e )
+	| mae = memberAccessExpr (WS*)!  ASSIGN  e =expr ';' -> ^(ASSIGN $mae $e)
 	;
 
 type
@@ -332,11 +332,11 @@ multExpr
 	;
 
 memberAccessExpr
-	:	IDENT op=DOT IDENT 		 -> ^(DOT IDENT IDENT)
+	:	IDENT (WS*)! DOT (WS*)! IDENT 		 -> ^(DOT IDENT IDENT)
 	;
 
 unaryExpr 
-	: op=NOT? primaryExpr    -> ^(UNARY NOT? primaryExpr)
+	: NOT? (WS*)! primaryExpr    -> ^(UNARY NOT? primaryExpr)
 	;
 
 primaryExpr  			

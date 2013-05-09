@@ -547,7 +547,8 @@ public class Interpreter {
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
-			// throw error tht object has no been defined
+			listener.error("No symbol in table for "+o.getText()+"."+f.getText());
+			return;
 		}
 
 		String dataType = symbol.getType();
@@ -563,7 +564,8 @@ public class Interpreter {
 			if (fieldname.equals("end"))
 				c.setEnd((Date) value);
 			else {
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Calendar");
+				return;
 			}
 
 		}
@@ -585,7 +587,8 @@ public class Interpreter {
 			if (fieldname.equals("minute"))
 				d.setMinute(val);
 			else {
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Date");
+				return;
 			}
 
 		}
@@ -611,7 +614,8 @@ public class Interpreter {
 				t.setLocation((String) value);
 
 			else {
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Task");
+				return;
 			}
 
 		}
@@ -642,13 +646,15 @@ public class Interpreter {
 
 			else {
 
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in TimeFrame");
+				return;
 			}
 
 		}
 
 		else {
-			// throw error, fields cannot be associated with primitive types
+			listener.error("Fields cannot be accessed on primitive types");
+			return;
 		}
 
 	}
@@ -662,7 +668,6 @@ public class Interpreter {
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
-			// throw error tht object has no been defined
 			listener.error("No symbol in table for "+o.getText()+"."+f.getText());
 		}
 		
@@ -679,7 +684,7 @@ public class Interpreter {
 			if (fieldname.equals("end"))
 				return c.getEnd();
 			else {
-				// throw error unknown field for this datatype
+				
 				listener.error("No field "+fieldname+" in Calendar");
 				return null;
 			}
@@ -702,7 +707,7 @@ public class Interpreter {
 			if (fieldname.equals("minute"))
 				return d.getMinute();
 			else {
-				// throw error unknown field for this datatype
+				
 				listener.error("No field "+fieldname+" in Date");
 				return null;
 			}
@@ -730,7 +735,7 @@ public class Interpreter {
 				return task.getLocation();
 
 			else {
-				// throw error unknown field for this datatype
+				
 				listener.error("No field "+fieldname+" in Task");
 				return null;
 			}
@@ -761,17 +766,18 @@ public class Interpreter {
 				return tf.getMinutes();
 
 			else {
-				// throw error unknown field for this datatype
+			
 				listener.error("No field "+fieldname+" in TimeFrame");
 				return null;
 			}
 		}
+		
 		else {
-			// throw error, fields cannot be associated with primitive types
-			listener.error("No fields in primative types");
+			listener.error("No fields in primitive types");
 			return null;
 		}
 	}
+
 	
 	public Object plusEval(CommonTree t) {
 
@@ -898,24 +904,26 @@ public class Interpreter {
 	public Object unaryExprEval(CommonTree t) {
 
 		System.out.println("UNARY: "+t.getChild(0).getType());
-
 		Object a = null;
+		
+		
 		if(t.getChild(0).getType() == TTParser.DOT)
 			a = fieldAccess((CommonTree)t.getChild(0));
 		else
 			a = exec((CommonTree) t.getChild(0));
 		
 		Object value = a;
+		
 		if (a == "not") {
-			System.out.println("a == not");
+		
 			Object b = null;
+			
 			if(t.getChild(0).getType() == TTParser.DOT)
 				b = fieldAccess((CommonTree)t.getChild(1));
 			else
 				b = exec((CommonTree) t.getChild(1));
-			System.out.println("b: "+b);
-			value = !(Boolean) b;
 
+			value = !(Boolean) b;
 		}
 		return value;
 	}
