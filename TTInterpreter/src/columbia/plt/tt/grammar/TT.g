@@ -4,6 +4,7 @@ options {
 	language = Java;
 	output=AST;
 	ASTLabelType =  CommonTree;
+
 }
 tokens {
 	TUNIT;
@@ -79,6 +80,8 @@ tokens {
 	DECLARE;
 	DEFINE;
 	UNARY;
+	ASSIGN;
+	
 }
 @header{
 	package columbia.plt.tt;
@@ -168,17 +171,16 @@ argDeclaration
 //@Author : Athresh
 
 declarationStatement
-	: t = type (WS*)! IDENT ';'   -> ^(DECLARE $t IDENT)
+	: t=type (WS*)! IDENT ';'   -> ^(DECLARE $t IDENT)
 	;
 
 definitionStatement
-	: t=type (WS*)! as=assignmentStmt  -> ^(DEFINE $t $as)
+	: t=type (WS*)! IDENT (WS*)! ASSIGN  (WS*)! e=expr ';' -> ^(DEFINE ^(DECLARE $t IDENT) $e)
 	;
 
 assignmentStmt
 	: id=IDENT ASSIGN e = expr ';'  -> ^(ASSIGN $id  $e )
-	| mae =memberAccessExpr ASSIGN e =expr ';' -> ^(ASSIGN $mae $e)
-	| declarationStatement expr ';'
+	| mae = memberAccessExpr ASSIGN e =expr ';' -> ^(ASSIGN $mae $e)
 	;
 
 type
@@ -301,42 +303,41 @@ expr
 	;
 
 logicalExpr
-	: booleanAndExpr (op=OR booleanAndExpr)*   -> ^(OP["booleanOrExpr"] booleanAndExpr+)
+	: booleanAndExpr (OR^ booleanAndExpr)*   
 	;
 
 booleanAndExpr
-	: equalityExpr (op=AND equalityExpr)*   -> ^(OP["booleanAndExpr"] equalityExpr+)
+	: equalityExpr (AND^ equalityExpr)*   
 	;
 
 equalityExpr
-	: relationalExpr (op=(EQUALS|NOTEQUALS) relationalExpr)*  -> ^(OP["equalityExpr"] relationalExpr+)
-	
+	: relationalExpr ((EQUALS^|NOTEQUALS^) relationalExpr)* 
 	;
 
 relationalExpr
-	: additiveExpr (op=(LT | LTEQ | GT | GTEQ) additiveExpr)* -> ^(OP["relationalExpr"] additiveExpr+)
+	: additiveExpr ((LT^|LTEQ^|GT^|GTEQ^) additiveExpr)* 
 	;
 
 additiveExpr
-	: multExpr (op=(PLUS | MINUS) multExpr)* -> ^(OP["additiveExpr"] multExpr+)
+	: multExpr ((PLUS^|MINUS^) multExpr)* 
 	;
 
 multExpr
-	: unaryExpr (op=(MULT | DIV | MOD) unaryExpr)* -> ^(OP["multExpr"] unaryExpr+)
+	: unaryExpr ((MULT^|DIV^|MOD^) unaryExpr)* 
 	;
 
 memberAccessExpr
-	:	IDENT DOT IDENT 		 -> ^(DOT IDENT IDENT)
+	:	IDENT op=DOT IDENT 		 -> ^(DOT IDENT IDENT)
 	;
 
 unaryExpr 
-	: NOT? primaryExpr    -> ^(UNARY NOT? primaryExpr)
+	: op=NOT? primaryExpr    -> ^(UNARY NOT? primaryExpr)
 	;
 
 primaryExpr  			
 	: exprInParentheses  			
-	| constant				
-	| IDENT
+	| constant				 
+	| IDENT						
 	| memberAccessExpr
 	|	assignmentStmt
 	;

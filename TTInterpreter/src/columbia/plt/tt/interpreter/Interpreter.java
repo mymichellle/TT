@@ -144,7 +144,46 @@ public class Interpreter {
 			case TTParser.SLIST:
 				block(t);
 				break; // (PL)
+				
+			case TTParser.DECLARE:	
+				return declarationEval(t);
+	
+			
+			case TTParser.DEFINE:
+					defineEval(t);
+			
 
+			case TTParser.ASSIGN:
+				assign(t);
+				break; // (JL)
+			
+			case TTParser.PLUS:
+				return plusEval(t);
+		
+			case TTParser.MINUS:
+			case TTParser.DIV:
+			case TTParser.MULT:
+			case TTParser.MOD:
+				return arithmeticEval(t);
+				
+			case TTParser.AND:
+			case TTParser.OR:
+			case TTParser.NOT:
+				return logicalEval(t);
+		
+			case TTParser.GT:
+			case TTParser.GTEQ:
+			case TTParser.LT:
+			case TTParser.LTEQ:
+				return relationalEval(t);
+		
+			case TTParser.EQUALS:
+			case TTParser.NOTEQUALS:
+				return equalityEval(t);
+			
+			case TTParser.UNARY:
+				return unaryExprEval(t);
+				
 			case TTParser.STRINGTYPE:
 			case TTParser.NUMBERTYPE:
 			case TTParser.DATETYPE:
@@ -154,10 +193,8 @@ public class Interpreter {
 			case TTParser.CALENDARTYPE:
 			case TTParser.TIMETYPE:
 				return t.getText();
-	
-			case TTParser.DECLARE:	
-				declarationEval(t);
-				break;
+				
+		
 
 			case TTParser.DATE_CONSTANT_TOKEN:
 				return dateConstant(t);
@@ -174,7 +211,7 @@ public class Interpreter {
 				everyDate(t);
 				break; // (MA)
 			case TTParser.EVERYTASK:
-				everyTask(t);
+				everyTask(t); 
 				break; // (MA)
 			case TTParser.FROM:
 				return dateOrIdent(t); // (MA)
@@ -196,41 +233,21 @@ public class Interpreter {
 			case TTParser.IDENT:
 				return identity(t);
 				// (JL)
-			case TTParser.DEFINE :
-				defineEval(t);
-				break;
-			case TTParser.ASSIGN:
-				assign(t);
-				break; // (JL)
+		
+			
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
 			case TTParser.STRING_CONSTANT:
 				return t.getText();
+			
 			case TTParser.TRUE:
 			case TTParser.FALSE:
 				return Boolean.parseBoolean(t.getText());
-			case TTParser.PLUS:
-				return plusEval(t);
+			
 
-			case TTParser.MINUS:
-			case TTParser.DIV:
-			case TTParser.MULT:
-			case TTParser.MOD:
-				return arithmeticEval(t);
-			case TTParser.AND:
-			case TTParser.OR:
-			case TTParser.NOT:
-				return logicalEval(t);
 
-			case TTParser.GT:
-			case TTParser.GTEQ:
-			case TTParser.LT:
-			case TTParser.LTEQ:
-				return relationalEval(t);
-
-			case TTParser.EQUALS:
-			case TTParser.NOTEQUALS:
-				return equalityEval(t); // (AA)
+		
+			
 			case TTParser.CALL : return call(t); 
 			case TTParser.RETURN : return returnStmt(t);
 				// case TTParser.READ : (PL)
@@ -359,13 +376,29 @@ public class Interpreter {
 		}
 		return null;
 	}
-
+	
 	public void defineEval(CommonTree t){
 		
-		System.out.println("here");
+		CommonTree lhs = (CommonTree) t.getChild(0);
+		CommonTree expr = (CommonTree) t.getChild(1);
+		
+		Object value = exec(expr);
+		
+		String ident= null;
+		if(lhs.getType() == TTParser.DECLARE)
+			ident = declarationEval(t);
+		else{
+			//throw error 
+		}
+		Symbol s = symbolTable.getSymbol(ident);
+		
+		if (s == null) {
+			// throw error;
+		}
+		s.setValue(value);
 		
 	}
-
+	
 	public String declarationEval(CommonTree t) {
 
 		System.out.println("Type" + t.getChild(0).getText());
@@ -379,8 +412,7 @@ public class Interpreter {
 	}
 
 	public Symbol identity(CommonTree t) {
-		 System.out.println("identity" + t.getChild(0));
-		 
+		 System.out.println("identity" + t.getChild(0)); 
 		 Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
 		 return s;
 	}
@@ -391,10 +423,12 @@ public class Interpreter {
 		CommonTree expr = (CommonTree) t.getChild(1);
 
 		Object value = exec(expr);
+		
 		if (lhs.getType() == TTParser.DOT) {
 			fieldassign(lhs, value);
 			return;
 		}
+		
 		String ident= null;
 		if(lhs.getType() == TTParser.DECLARE)
 			ident = declarationEval(t);
@@ -403,7 +437,7 @@ public class Interpreter {
 		Symbol s = symbolTable.getSymbol(ident);
 		
 		if (s == null) {
-			
+			// throw error;
 		}
 		s.setValue(value);
 
@@ -483,7 +517,7 @@ public class Interpreter {
 		}
 
 		else if (symbol.getType() == "TimeFrame") {
-
+		
 			TimeFrame tf = (TimeFrame) symbol.getValue();
 			int val = (Integer) value;
 
@@ -518,6 +552,7 @@ public class Interpreter {
 
 	}
 
+	
 	public Object plusEval(CommonTree t) {
 
 		System.out.println("" + " Operator Evaluation");
@@ -631,6 +666,15 @@ public class Interpreter {
 			return false;
 		}
 
+	}
+	
+	public Object unaryExprEval(CommonTree t){
+		
+		
+		System.out.println(t.getChild(0).getType());
+		Object a = exec((CommonTree) t.getChild(0));
+
+		return a;
 	}
 
 	public Object call(CommonTree t) {
