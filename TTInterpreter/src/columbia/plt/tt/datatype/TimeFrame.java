@@ -46,27 +46,27 @@ public TimeFrame() {
     String[] timeFrameParts = timeFrameConst.split("\\+");
                   	
     for (int i = 0; i < timeFrameParts.length; i++) {
-      int index = timeFrameParts[i].toLowerCase().indexOf("years");
+      int index = timeFrameParts[i].toLowerCase().indexOf("year");
       if (index >= 0)
         this.years += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
                                         		
-      index = timeFrameParts[i].toLowerCase().indexOf("months");
+      index = timeFrameParts[i].toLowerCase().indexOf("month");
       if (index >= 0)
         this.months += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
        
-      index = timeFrameParts[i].toLowerCase().indexOf("weeks");
+      index = timeFrameParts[i].toLowerCase().indexOf("week");
       if (index >= 0)
         this.weeks += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
       
-      index = timeFrameParts[i].toLowerCase().indexOf("days");
+      index = timeFrameParts[i].toLowerCase().indexOf("day");
       if (index >= 0)
         this.days += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
                                                                                       		
-      index = timeFrameParts[i].toLowerCase().indexOf("hours");
+      index = timeFrameParts[i].toLowerCase().indexOf("hour");
       if (index >= 0)
         this.hours += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
                                                                                                             		
-      index = timeFrameParts[i].toLowerCase().indexOf("minutes");
+      index = timeFrameParts[i].toLowerCase().indexOf("minute");
       if (index >= 0)
         this.minutes += Integer.parseInt(timeFrameParts[i].substring(0, index - 1).trim());
     }
