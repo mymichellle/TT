@@ -664,7 +664,7 @@ public class Interpreter {
 		CommonTree o = (CommonTree) t.getChild(0);
 		CommonTree f = (CommonTree) t.getChild(1);
 		
-		String fieldname = f.getText();
+		String fieldname = f.getText().trim();
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
