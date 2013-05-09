@@ -229,15 +229,15 @@ elseStatement
 	;
 
 everyFromToByStatement
-	: EVERY 'Date' IDENT FROM dateOrIdent TO dateOrIdent BY timeframeOrIdent block -> ^(EVERYDATE ^('Date' IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(BY timeframeOrIdent) block)
+	: EVERY 'Date' IDENT FROM dateOrIdent TO dateOrIdent BY timeframeOrIdent block -> ^(EVERYDATE ^(DECLARE 'Date' IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(BY timeframeOrIdent) block)
 	;
 
 everyInStatement
 	//: EVERY 'Task' IDENT IN IDENT constraintOptions  block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(constraintOptions) block)
-	: EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(ON expr) block)
-	| EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) block)
-	| EVERY 'Task' IDENT IN IDENT ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(ON expr) block)
-	| EVERY 'Task' IDENT IN IDENT block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) block)
+	: EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent ON expr block -> ^(EVERYTASK ^(DECLARE 'Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent block -> ^(EVERYTASK ^(DECLARE 'Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) block)
+	| EVERY 'Task' IDENT IN IDENT ON expr block -> ^(EVERYTASK ^(DECLARE 'Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT block -> ^(EVERYTASK ^(DECLARE 'Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) block)
 	;
 	
 dateOrIdent

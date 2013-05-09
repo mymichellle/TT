@@ -915,14 +915,13 @@ public class Interpreter {
 		Object value = a;
 		
 		if (a == "not") {
-		
+			System.out.println("a == not");
 			Object b = null;
-			
 			if(t.getChild(0).getType() == TTParser.DOT)
 				b = fieldAccess((CommonTree)t.getChild(1));
 			else
 				b = exec((CommonTree) t.getChild(1));
-
+			System.out.println("b: "+b);
 			value = !(Boolean) b;
 		}
 		return value;
