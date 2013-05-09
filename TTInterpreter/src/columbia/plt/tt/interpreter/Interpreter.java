@@ -382,7 +382,7 @@ public class Interpreter {
 		}
 		return null;
 	}
-
+	
 	public void defineEval(CommonTree t) {
 
 		CommonTree lhs = (CommonTree) t.getChild(0);
