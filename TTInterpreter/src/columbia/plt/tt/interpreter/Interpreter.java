@@ -185,7 +185,7 @@ public class Interpreter {
 				return timeFrameOrIdent(t); // (MA)
 			case TTParser.IN:
 				return in(t);// (MA)
-				// case TTParser.ON : (MA)
+			case TTParser.ON : return on(t);//(MA)
 				// case TTParser.BREAK : (MA)
 				// case TTParser.EXIT : (MA)
 				// case TTParser.CONTINUE : (MA)
@@ -347,7 +347,8 @@ public class Interpreter {
 		if (t.getType() != TTParser.MAIN) {
 
 			// Handle error
-			listener.error("not a mainblock: " + t.toStringTree());
+			listener.error("not a mainblock: "+t.getType()+ " "+ t.toStringTree());
+			
 		}
 		// Execute code
 		List<CommonTree> stats = null;
@@ -397,7 +398,7 @@ public class Interpreter {
 	}
 
 	public Symbol identity(CommonTree t) {
-		 System.out.println("identity" + t.getChild(0));
+		 System.out.println("identity " + t.getChild(0));
 		 
 		 Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
 		 return s;
@@ -856,9 +857,17 @@ public class Interpreter {
 		}
 
 	}
+	
+	public Boolean on(CommonTree t) {
+		System.out.println("ON "+t.getChild(0));
+		return (Boolean)exec((CommonTree)t.getChild(0));
+	}
 
 	public Calendar in(CommonTree t) {
-		return new Calendar("Temp");
+		System.out.println("IN "+t.getChild(0));
+		Symbol s = identity((CommonTree)t.getChild(0));
+		
+		return (Calendar)s.getValue();
 	}
 
 	public void print(CommonTree t) {
@@ -866,7 +875,7 @@ public class Interpreter {
 		{
 			System.out.println("in here");
 			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
-			System.out.println(s.getValue());
+			System.out.println("VALUE: "+s.getValue());
 		}
 		else
 			System.out.println(t.getChild(0).getText());
