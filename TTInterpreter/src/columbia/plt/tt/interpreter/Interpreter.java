@@ -543,7 +543,7 @@ public class Interpreter {
 		CommonTree o = (CommonTree) lhs.getChild(0);
 		CommonTree f = (CommonTree) lhs.getChild(1);
 		
-		String fieldname = f.getText();
+		String fieldname = f.getText().trim();
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
@@ -559,9 +559,9 @@ public class Interpreter {
 			Calendar c = (Calendar) symbol.getValue();
 			if (fieldname.equals("name"))
 				c.setName((String) value);
-			if (fieldname.equals("start"))
+			else if (fieldname.equals("start"))
 				c.setStart((Date) value);
-			if (fieldname.equals("end"))
+			else if (fieldname.equals("end"))
 				c.setEnd((Date) value);
 			else {
 				listener.error("No field "+fieldname+" in Calendar");

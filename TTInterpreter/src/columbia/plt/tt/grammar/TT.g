@@ -332,7 +332,7 @@ multExpr
 	;
 
 memberAccessExpr
-	:	IDENT (WS*)! DOT (WS*)! IDENT 		 -> ^(DOT IDENT IDENT)
+	:	IDENT (WS*)! DOT (WS*)! IDENT 	 -> ^(DOT IDENT IDENT)
 	;
 
 unaryExpr 

@@ -4,6 +4,6 @@ main(){
 	c.start = 2013.01.01;
 	
 
-	Boolean b = true&&false||false;
+	Boolean b = true && false || false;
 
 }
