@@ -382,7 +382,7 @@ public class Interpreter {
 		}
 		return null;
 	}
-	
+
 	public void defineEval(CommonTree t) {
 
 		CommonTree lhs = (CommonTree) t.getChild(0);
@@ -390,9 +390,9 @@ public class Interpreter {
 
 		Object value = exec(expr);
 
-		String ident= null;
+		String ident = null;
 
-		if(lhs.getType() == TTParser.DECLARE)
+		if (lhs.getType() == TTParser.DECLARE)
 			ident = declarationEval(lhs);
 		else {
 			// throw error
@@ -427,14 +427,16 @@ public class Interpreter {
 
 			symbolTable.addSymbol(ident, dataType, object);
 
-		/*System.out.println("Type: " + t.getChild(0).getText() + " "+ t.toString());
-		
-		String dataType = (String) exec((CommonTree) t.getChild(0));
-		String ident = t.getChild(1).getText();
-		System.out.println("T: "+dataType+" i: "+ident);
-		symbolTable.addSymbol(ident, dataType, null);*/
-		return ident;
-
+			/*
+			 * System.out.println("Type: " + t.getChild(0).getText() + " "+
+			 * t.toString());
+			 * 
+			 * String dataType = (String) exec((CommonTree) t.getChild(0));
+			 * String ident = t.getChild(1).getText();
+			 * System.out.println("T: "+dataType+" i: "+ident);
+			 * symbolTable.addSymbol(ident, dataType, null);
+			 */
+			return ident;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -485,11 +487,11 @@ public class Interpreter {
 		if (symbol == null) {
 			// throw error tht object has no been defined
 		}
-		
+
 		String dataType = symbol.getType();
 
-		if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.CALENDAR_CLASS)) {
+		if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.CALENDAR_CLASS)) {
 
 			Calendar c = (Calendar) symbol.getValue();
 			if (fieldname.equals("name"))
@@ -504,8 +506,8 @@ public class Interpreter {
 
 		}
 
-		else if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.DATE_CLASS)) {
+		else if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.DATE_CLASS)) {
 
 			Date d = (Date) symbol.getValue();
 			int val = (Integer) value;
@@ -526,8 +528,8 @@ public class Interpreter {
 
 		}
 
-		else if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
+		else if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.TASK_CLASS)) {
 
 			Task t = (Task) symbol.getValue();
 
@@ -552,8 +554,8 @@ public class Interpreter {
 
 		}
 
-		else if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.TIMEFRAME_CLASS)) {
+		else if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.TIMEFRAME_CLASS)) {
 
 			TimeFrame tf = (TimeFrame) symbol.getValue();
 			int val = (Integer) value;
@@ -959,10 +961,10 @@ public class Interpreter {
 
 	public Calendar in(CommonTree t) {
 
-		System.out.println("IN "+t.getChild(0)+ " "+t.toString());
-		Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
-		System.out.println("Calendar: "+ s.getType()+ " "+s.getValue());
-		return (Calendar)s.getValue();
+		System.out.println("IN " + t.getChild(0) + " " + t.toString());
+		Symbol s = (Symbol) exec((CommonTree) t.getChild(0));
+		System.out.println("Calendar: " + s.getType() + " " + s.getValue());
+		return (Calendar) s.getValue();
 
 	}
 
