@@ -2,13 +2,20 @@
 main()
 {
 	Calendar c;
+	c.name = "myCal";
+	Task t1;
+	t1.name = "myname";
+	t1.start = 2013.01.01.02;
+	t1.end = 2013.01.01.03;
+	
 	String st;
+	st = "hello";
 	
 	every Date d from 2013.01.01 to 2013.01.02 by 1 days { 
-		print("test");
+		print(st);
 		print("second line");
 	}
-	exit;
+	//exit;
 	every Task t in c {
 		print(t);
 		continue;
