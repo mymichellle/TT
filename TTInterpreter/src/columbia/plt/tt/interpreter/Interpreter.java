@@ -170,8 +170,10 @@ public class Interpreter {
 				
 			case TTParser.AND:
 			case TTParser.OR:
-			case TTParser.NOT:
 				return logicalEval(t);
+			case TTParser.NOT:
+				return "not";
+				
 		
 			case TTParser.GT:
 			case TTParser.GTEQ:
@@ -682,11 +684,16 @@ public class Interpreter {
 	
 	public Object unaryExprEval(CommonTree t){
 		
-		
 		System.out.println(t.getChild(0).getType());
+		
 		Object a = exec((CommonTree) t.getChild(0));
-
-		return a;
+		Object  value = a;
+		if (a == "not"){
+			Object b = exec((CommonTree) t.getChild(1));
+			value = !(Boolean)b;
+		
+		}
+		return value;
 	}
 
 	public Object call(CommonTree t) {
