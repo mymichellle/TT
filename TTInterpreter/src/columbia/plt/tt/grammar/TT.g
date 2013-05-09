@@ -291,9 +291,10 @@ readInvocation
 	: READ '(' STRING_CONSTANT ')' -> ^(READ STRING_CONSTANT)
 	;
 
-print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
-      | PRINT '(' IDENT ')' ';' -> ^(PRINT ^(IDENT_TOKEN IDENT))
-      ; 
+print // PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
+      // PRINT '(' IDENT ')' ';' -> ^(PRINT ^(IDENT_TOKEN IDENT))
+      : PRINT '(' expr ')' ';' -> ^(PRINT expr)
+      ;
 
 timeFrameConstant
 	: NUMBER timeFrameSuffix ('+' NUMBER timeFrameSuffix)*
