@@ -439,60 +439,57 @@ public class Interpreter {
 
 	}
 
+
+
 	public String declarationEval(CommonTree t, boolean isGlobal) {
-
-		String ident = null;
-		try {
-
-			System.out.println("Type" + t.getChild(0).getText());
-
-			String dataType = (String) exec((CommonTree) t.getChild(0));
-			ident = t.getChild(1).getText();
-			Object object = null;
-			if (dataType.equals("Calendar") || dataType.equals("Task")
-					|| dataType.equals("TimeFrame")
-					|| dataType.equals("Date")) {
-				dataType = TTConstants.PACKAGE_PREFIX + dataType;
-
-				Class<?> dataTypeClass = Class.forName(dataType);
-				object = dataTypeClass.newInstance();
-			}
-			else if (dataType.equals("Number")){
-				object = new Integer(0);
-			}
-			else if (dataType.equals("String")){
-				object = new String();
-			}
-			else{
-				listener.error("Unsupported data type");
-				return null;
-			}
-
-			
-			if (isGlobal) {
-				Symbol s = symbolTable.getSymbol(ident);
-				s.setValue(object);
-				s.setType(dataType);
-				
-			} else {
-				symbolTable.addSymbol(ident, dataType, object);
-			}
-
-			/*
-			 * System.out.println("Type: " + t.getChild(0).getText() + " "+
-			 * t.toString());
-			 * 
-			 * String dataType = (String) exec((CommonTree) t.getChild(0));
-			 * String ident = t.getChild(1).getText();
-			 * System.out.println("T: "+dataType+" i: "+ident);
-			 * symbolTable.addSymbol(ident, dataType, null);
-			 */
-			return ident;
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		
+		if (t.getType() != TTParser.DECLARE) {
+			listener.error("not a declarition: " + t.toStringTree());
+			return null;
 		}
-		return ident;
+
+		else {
+			String ident = null;
+			try {
+
+				System.out.println("Type" + t.getChild(0).getText());
+
+				String dataType = (String) exec((CommonTree) t.getChild(0));
+				ident = t.getChild(1).getText();
+				Object object = null;
+				if (dataType.equals("Calendar") || dataType.equals("Task")
+						|| dataType.equals("TimeFrame")
+						|| dataType.equals("Date")) {
+					dataType = TTConstants.PACKAGE_PREFIX + dataType;
+
+					Class<?> dataTypeClass = Class.forName(dataType);
+					object = dataTypeClass.newInstance();
+				} else if (dataType.equals("Number")) {
+					object = new Integer(0);
+				} else if (dataType.equals("String")) {
+					object = new String();
+				} else {
+					listener.error("Unsupported data type");
+					return null;
+				}
+
+				if (isGlobal) {
+					Symbol s = symbolTable.getSymbol(ident);
+					s.setValue(object);
+					s.setType(dataType);
+
+				} else {
+					symbolTable.addSymbol(ident, dataType, object);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return ident;
+		}
+
 	}
 
 	public Symbol identity(CommonTree t) {
