@@ -1,7 +1,6 @@
 main(){
 	
-	Boolean n;
-	n = not(false && true);
+	Boolean n= not(false && true);
 	print (n);
 	
 }

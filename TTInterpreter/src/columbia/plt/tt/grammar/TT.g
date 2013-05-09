@@ -335,9 +335,9 @@ unaryExpr
 	;
 
 primaryExpr  			
-	: exprInParentheses  			
-	| constant				 
-	| IDENT						
+	: exprInParentheses 		
+	| constant				
+	| IDENT
 	| memberAccessExpr
 	|	assignmentStmt
 	;

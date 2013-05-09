@@ -153,6 +153,7 @@ public class Interpreter {
 			
 			case TTParser.DEFINE:
 					defineEval(t);
+					break;
 			
 
 			case TTParser.ASSIGN:
@@ -398,7 +399,7 @@ public class Interpreter {
 		
 		String ident= null;
 		if(lhs.getType() == TTParser.DECLARE)
-			ident = declarationEval(t);
+			ident = declarationEval(lhs);
 		else{
 			//throw error 
 		}
