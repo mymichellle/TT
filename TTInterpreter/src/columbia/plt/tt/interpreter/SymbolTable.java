@@ -81,7 +81,10 @@ public class SymbolTable extends Stack<Scope> {
 	  }
 	  while (scope != null);
 	  
-	 	return null;
+	  if (getScope(0).get(name) != null)
+	      	return getScope(0).get(name);
+	 
+	  return null;
 	}
 	                                                                      
 	public String getType(String name) {
