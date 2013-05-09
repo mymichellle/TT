@@ -3,7 +3,6 @@ package columbia.plt.tt.interpreter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CharStream;
@@ -342,7 +341,6 @@ public class Interpreter {
 	}
 
 	public Object block(CommonTree t) {
-		System.out.println("block");
 		// Execute code
 		if (t.getType() != TTParser.SLIST) {
 			// Handle error
