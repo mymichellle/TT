@@ -776,15 +776,24 @@ public class Interpreter {
 	public Object plusEval(CommonTree t) {
 
 		System.out.println("" + " Operator Evaluation");
+				
 		Object a = exec((CommonTree) t.getChild(0));
 		Object b = exec((CommonTree) t.getChild(1));
-
+		
+		
 		if (a instanceof String && b instanceof String)
 			return a.toString() + b.toString();
+		else if (a instanceof Date && b instanceof TimeFrame) {
+			((Date)a).add((TimeFrame)b);
+			return a;
+		}
+		else if (a instanceof TimeFrame && b instanceof Date) {
+			((Date)b).add((TimeFrame)a);
+			return b;
+		}
 		else {
 			return arithmeticEval(t);
 		}
-
 	}
 
 	public Integer arithmeticEval(CommonTree t) {
