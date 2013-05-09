@@ -469,7 +469,10 @@ public class Interpreter {
 					object = new Integer(0);
 				} else if (dataType.equals("String")) {
 					object = new String();
-				} else {
+				}else if(dataType.equals("Boolean")){
+					object = new Boolean(false);
+				}
+				else {
 					listener.error("Unsupported data type");
 					return null;
 				}
@@ -820,6 +823,7 @@ public class Interpreter {
 		case TTParser.DIV: {
 			if (b == 0) {
 				listener.error("invalid operation:" + t.toStringTree());
+			
 			}
 			return a / b;
 
