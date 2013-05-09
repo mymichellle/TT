@@ -35,6 +35,8 @@ public class Interpreter {
 		YEAR, YEARS, MONTH, MONTHS, DAY, DAYS, HOUR, HOURS, MINUTE, MINUTES, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER, WEEKEND, WEEKDAY
 	}
 
+	private Boolean breakCalled = false;
+	
 	public InterpreterListener listener = // default response to messages
 	new InterpreterListener() {
 		public void info(String msg) {
@@ -221,10 +223,15 @@ public class Interpreter {
 				return timeFrameOrIdent(t); // (MA)
 			case TTParser.IN:
 				return in(t);// (MA)
-				// case TTParser.ON : (MA)
-				// case TTParser.BREAK : (MA)
-				// case TTParser.EXIT : (MA)
-				// case TTParser.CONTINUE : (MA)
+			case TTParser.ON : return on(t);//(MA)
+			case TTParser.BREAK : // (MA)
+				breakFunc(t); 
+				break;
+			case TTParser.EXIT : //(MA)
+				exitFunc(t);
+				break;
+			case TTParser.CONTINUE : //(MA)
+				break;
 				/*
 				 * case TTParser.TRUE : return true; case TTParser.FALSE :
 				 * return false;
@@ -354,7 +361,8 @@ public class Interpreter {
 		symbolTable.addScope(); // add a scope for a main block
 		if (t.getType() != TTParser.MAIN) {
 			// Handle error
-			listener.error("not a mainblock: " + t.toStringTree());
+			listener.error("not a mainblock: "+t.getType()+ " "+ t.toStringTree());
+			
 		}
 		CommonTree mainBody = (CommonTree) t.getChild(0);
 		exec((CommonTree) mainBody);
@@ -371,6 +379,8 @@ public class Interpreter {
 		for (int i = 0; i < childrenCount; i++) {
 			CommonTree childNode = (CommonTree)t.getChild(i);
 			Object rv = exec(childNode);
+			if (childNode.getType() == TTParser.BREAK || childNode.getType() == TTParser.CONTINUE)
+				return null;
 			if (childNode.getType() == TTParser.RETURN)
 				return rv;
 		}
@@ -412,7 +422,9 @@ public class Interpreter {
 	}
 
 	public Symbol identity(CommonTree t) {
-		 System.out.println("identity" + t.getChild(0)); 
+
+		 //System.out.println("identity " + t.getChild(0));
+
 		 Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
 		 return s;
 	}
@@ -724,7 +736,7 @@ public class Interpreter {
 		if ((Boolean) exec((CommonTree) t.getChild(0))) {
 			System.out.println("HERE");
 			// 1st Child is the block
-			exec((CommonTree) t.getChild(0));
+			exec((CommonTree) t.getChild(1));
 		} else if (t.getChildCount() >= 3) {
 			System.out.println("HERE");
 			exec((CommonTree) t.getChild(2));
@@ -793,6 +805,12 @@ public class Interpreter {
 			// Execute the block
 			exec(block);
 
+			// Check if a break was called in the block
+			if (breakCalled) {
+				breakCalled = false;
+				break;
+			}
+			
 			// Increment the itterDate and update symbolTable
 			//itterDate = (Date)symbolTable.getSymbol(name);
 			itterDate.add(inc);
@@ -844,6 +862,12 @@ public class Interpreter {
 			switch (t.getChild(i).getType()) {
 			case TTParser.IN:
 				c = (Calendar) exec((CommonTree) t.getChild(i));
+				/*c = new Calendar("Temp");
+				c.add(new Task("one", new Date("2013.01.01.10"), new Date("2013.01.01.12"), "here", 0, "desc"));
+				c.add(new Task("two", new Date("2013.01.01.13"), new Date("2013.01.01.13.50"), "here", 0, "desc"));
+				c.add(new Task("three", new Date("2013.01.01.14"), new Date("2013.01.01.14.10"), "here", 0, "desc"));
+				c.add(new Task("four", new Date("2013.01.01.20"), new Date("2013.01.01.21"), "here", 0, "desc"));
+				*/
 				break;
 			case TTParser.FROM:
 				start = (Date) exec((CommonTree) t.getChild(i));
@@ -883,19 +907,41 @@ public class Interpreter {
 
 				// execute the block of code
 				exec(block);
+				if (breakCalled) {
+					breakCalled = false;
+					break;
+				}
+					
 			}
 		}
 
 	}
+	
+	public void breakFunc(CommonTree t)
+	{
+		breakCalled = true;
+	}
+	
+	public void exitFunc(CommonTree t)
+	{
+		System.exit(0);
+	}
+	
+	public Boolean on(CommonTree t) {
+		System.out.println("ON "+t.getChild(0));
+		return (Boolean)exec((CommonTree)t.getChild(0));
+	}
 
 	public Calendar in(CommonTree t) {
-		return new Calendar("Temp");
+		System.out.println("IN "+t.getChild(0));
+		Symbol s = identity((CommonTree)t.getChild(0));
+		
+		return (Calendar)s.getValue();
 	}
 
 	public void print(CommonTree t) {
 		if(((CommonTree)t.getChild(0)).getType() == TTParser.IDENT_TOKEN)
 		{
-			System.out.println("in here");
 			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
 			System.out.println(s.getValue());
 		}

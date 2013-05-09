@@ -1,24 +1,30 @@
 
 main()
 {
-	every Date d from 2013.01.01 to 2013.01.03 by 1 days { 
+	Calendar c;
+	String st;
+	
+	every Date d from 2013.01.01 to 2013.01.02 by 1 days { 
 		print("test");
 		print("second line");
 	}
-	
+	exit;
 	every Task t in c {
-		print("task");
+		print(t);
+		continue;
+		print("Hello");
 	}
 	
-	every Task t in c from 2013.02.01 to 2013.02.04{
-		print("task 2");
+	every Task t in c from 2013.01.01.12 to 2013.02.04{
+		print(t);
+		break;
 	}
 	
-	every Task t in c on (a == 5) {
-		print("task 3");
-	}
+//	every Task t in c on (a == 5) {
+//		print(t);
+//	}
 	
-	every Task t in c from 2013.02.01 to 2013.02.05 on ( 7 == 7) {
-		print("task 4");
-	} 
+//	every Task t in c from 2013.01.01 to 2013.02.05 on ( 7 == 7) {
+//		print(t);
+//	} 
 }
