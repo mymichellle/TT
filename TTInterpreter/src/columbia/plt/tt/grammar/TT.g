@@ -234,10 +234,10 @@ everyFromToByStatement
 
 everyInStatement
 	//: EVERY 'Task' IDENT IN IDENT constraintOptions  block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(constraintOptions) block)
-	: EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(ON expr) block)
-	| EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) block)
-	| EVERY 'Task' IDENT IN IDENT ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(ON expr) block)
-	| EVERY 'Task' IDENT IN IDENT block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN IDENT) block)
+	: EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) block)
+	| EVERY 'Task' IDENT IN IDENT ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) block)
 	;
 	
 dateOrIdent
@@ -382,7 +382,7 @@ COMMENT
 
 constant 
 	: STRING_CONSTANT
-	| DATE_CONSTANT
+	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)  
 	| NUMBER
 	| timeFrameConstant
 	| timeEntityConstant

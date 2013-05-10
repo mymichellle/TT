@@ -395,8 +395,10 @@ public class Interpreter {
 		Object value = exec(expr);
 		
 		String ident= null;
-		if(lhs.getType() == TTParser.DECLARE)
+		if(lhs.getType() == TTParser.DECLARE){
 			ident = declarationEval(t);
+			System.out.println("defineEval-ident: "+ident);
+		}
 		else{
 			//throw error 
 		}
@@ -411,11 +413,11 @@ public class Interpreter {
 	
 	public String declarationEval(CommonTree t) {
 
-		System.out.println("Type" + t.getChild(0).getText());
-
+		System.out.println("Type: " + t.getChild(0).getText() + " "+ t.toString());
+		
 		String dataType = (String) exec((CommonTree) t.getChild(0));
 		String ident = t.getChild(1).getText();
-
+		System.out.println("T: "+dataType+" i: "+ident);
 		symbolTable.addSymbol(ident, dataType, null);
 		return ident;
 
@@ -423,7 +425,7 @@ public class Interpreter {
 
 	public Symbol identity(CommonTree t) {
 
-		 //System.out.println("identity " + t.getChild(0));
+		 System.out.println("identity " + t.getChild(0));
 
 		 Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
 		 return s;
@@ -933,9 +935,9 @@ public class Interpreter {
 	}
 
 	public Calendar in(CommonTree t) {
-		System.out.println("IN "+t.getChild(0));
-		Symbol s = identity((CommonTree)t.getChild(0));
-		
+		System.out.println("IN "+t.getChild(0)+ " "+t.toString());
+		Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
+		System.out.println("Calendar: "+ s.getType()+ " "+s.getValue());
 		return (Calendar)s.getValue();
 	}
 
