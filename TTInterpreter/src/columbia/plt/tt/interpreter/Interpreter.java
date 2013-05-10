@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CharStream;
@@ -151,10 +153,10 @@ public class Interpreter {
 				break; // (PL)
 
 			case TTParser.DECLARE:
-				return declarationEval(t);
+				return declarationEval(t, false);
 
 			case TTParser.DEFINE:
-				defineEval(t);
+				defineEval(t, false);
 				break;
 
 			case TTParser.ASSIGN:
@@ -345,13 +347,35 @@ public class Interpreter {
 		if (mainSymbol == null) {
 			System.out.println("No main");
 			listener.error("no main method to execute: " + t.toStringTree());
-		} else
+		} else {
 			exec(mainSymbol.methodBody);
+		}
 
 		// Clear global scope
 		symbolTable.removeScope();
 	}
 
+	public void evalGlobals() {
+		/* eval all global variables */
+		Scope globalScope = symbolTable.getScope(0);
+		for (Iterator<Map.Entry<String, Symbol>> it = globalScope.entrySet().iterator(); 
+				it.hasNext();) {
+			try {
+				Map.Entry<String, Symbol> symbolEntry = it.next();
+				VariableSymbol vs = (VariableSymbol)symbolEntry.getValue();
+				if (vs != null) {
+					if (vs.assignmentExpression == null) {
+						declarationEval(vs.declaration, true);
+					} else {
+						defineEval(vs.assignmentExpression, true);
+					}
+				}
+			} catch (Exception e) {
+				
+			}
+		}
+	}
+	
 	public void imports(CommonTree t) {
 		// System.out.println("Imports");
 	}
@@ -388,7 +412,7 @@ public class Interpreter {
 		return null;
 	}
 	
-	public void defineEval(CommonTree t) {
+	public void defineEval(CommonTree t, boolean isGlobal) {
 
 		CommonTree lhs = (CommonTree) t.getChild(0);
 		CommonTree expr = (CommonTree) t.getChild(1);
@@ -398,7 +422,7 @@ public class Interpreter {
 		String ident= null;
 
 		if(lhs.getType() == TTParser.DECLARE)
-			ident = declarationEval(lhs);
+			ident = declarationEval(lhs, isGlobal);
 		else {
 			// throw error
 		}
@@ -411,7 +435,7 @@ public class Interpreter {
 
 	}
 
-	public String declarationEval(CommonTree t) {
+	public String declarationEval(CommonTree t, boolean isGlobal) {
 
 		String ident = null;
 		try {
@@ -441,8 +465,14 @@ public class Interpreter {
 			}
 
 			
-
-			symbolTable.addSymbol(ident, dataType, object);
+			if (isGlobal) {
+				Symbol s = symbolTable.getSymbol(ident);
+				s.setValue(object);
+				s.setType(dataType);
+				
+			} else {
+				symbolTable.addSymbol(ident, dataType, object);
+			}
 
 		/*System.out.println("Type: " + t.getChild(0).getText() + " "+ t.toString());
 		
@@ -490,7 +520,7 @@ public class Interpreter {
 
 		String ident = null;
 		if (lhs.getType() == TTParser.DECLARE)
-			ident = declarationEval(t);
+			ident = declarationEval(t, false);
 		else
 			ident = lhs.getText();
 		Symbol s = symbolTable.getSymbol(ident);

@@ -88,27 +88,30 @@ exitMain
 	;
 
 varDefinition // parameter, or local
-	: ^(DEFINE type=. assignmentStmt=.)
+	: ^(DEFINE ^(DECLARE type=. IDENT) expr=.)
 	{
-		CommonTree id = (CommonTree)assignmentStmt.getChild(0);
-		String name = id.getText();
-		String typeText = $type.getText();
-		System.out.println("line " + id.getLine() + ": DEFINE " + name);
-		CommonTree assignmentExpression = (CommonTree)assignmentStmt.getChild(1);
-
-		VariableSymbol vs = new VariableSymbol(typeText, null, name);
-		vs.assignmentExpression = assignmentExpression;
-		symbolTable.addSymbol(name, vs);
+		System.out.println("DEFINE");
+		if ($DEFINE.getParent().getType() == TTParser.TUNIT) {
+			String name = $IDENT.getText();
+			System.out.println("line " + $IDENT.getLine() + ": DEFINE " + name);
+			
+			VariableSymbol vs = new VariableSymbol(null, null, name);
+			vs.assignmentExpression = $DEFINE;
+			symbolTable.addSymbol(name, vs);
+		}
 	}
 	;
 	
 varDeclaration // parameter, or local
 	: ^(DECLARE type=. IDENT)
 	{
-		System.out.println("line " + $IDENT.getLine() + ": DECLARE " + $IDENT.text);
-		String name = $IDENT.text;
-		String typeText = $type.getText();
-		VariableSymbol vs = new VariableSymbol(typeText, null, name);
-		symbolTable.addSymbol(name, vs);
+		if ($DECLARE.getParent().getType() == TTParser.TUNIT) {
+			System.out.println("line " + $IDENT.getLine() + ": DECLARE " + $IDENT.text);
+			String name = $IDENT.text;
+			String typeText = $type.getText();
+			VariableSymbol vs = new VariableSymbol(typeText, null, name);
+			vs.declaration = $DECLARE;
+			symbolTable.addSymbol(name, vs);
+		}
 	}
 	;

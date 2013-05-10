@@ -1,14 +1,16 @@
+Calendar p;
 
 main()
 {
+	
 	Calendar c;// = "myCal";
 	c.name = "myCal";
 	Task t1;
+	addTask(p, t1);
 	t1.name = "myname";
 	t1.start = 2013.01.01.02;
 	t1.end = 2013.01.01.03;
 	addTask(c, t1);
-	
 	//String st;
 	//st = "hello";
 	
