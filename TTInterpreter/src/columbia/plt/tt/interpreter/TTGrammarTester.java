@@ -12,10 +12,10 @@ import columbia.plt.tt.TTParser;
 
 public class TTGrammarTester {
 
-	public static final String pathSeparator = "/";
-	public static final String programsRoot = "src/columbia/plt/tt/";
-//	public static final String pathSeparator = "\\";
-//	public static final String programsRoot = "E:/peter/github/TT/TTInterpreter/src/columbia/plt/tt/programs/";
+//	public static final String pathSeparator = "/";
+//	public static final String programsRoot = "src/columbia/plt/tt/";
+	public static final String pathSeparator = "\\";
+	public static final String programsRoot = "E:/peter/github/TT/TTInterpreter/src/columbia/plt/tt/programs/";
 
 	/*
 	 * Returns CharStream from the specified .tt file.
@@ -58,7 +58,7 @@ public class TTGrammarTester {
 	
 	public static void main(String[] args) throws RecognitionException {
 		try {
-			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/Loops.tt");
+			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/read.tt");
 			
 			Interpreter interpreter = new Interpreter();
 			interpreter.interp(fileStream);

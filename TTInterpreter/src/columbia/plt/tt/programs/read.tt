@@ -1,0 +1,4 @@
+main(){
+	Number t = read("Enter Something:");
+	print(t);
+}

@@ -285,8 +285,12 @@ expressionList
 /* TODO: We should remove 'read' and 'print' they belong
  * to the [standard] library. */
 readStatement
-	: READ '(' STRING_CONSTANT ')' ';'
+	: readInvocation ';'! 
 	;
+readInvocation
+	: READ '(' STRING_CONSTANT ')' -> ^(READ STRING_CONSTANT)
+	;
+
 print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
       | PRINT '(' IDENT ')' ';' -> ^(PRINT ^(IDENT_TOKEN IDENT))
       ; 
@@ -300,6 +304,7 @@ timeFrameConstant
 expr
 	: logicalExpr
 	| functionInvocation
+	| readInvocation
 	;
 
 logicalExpr
