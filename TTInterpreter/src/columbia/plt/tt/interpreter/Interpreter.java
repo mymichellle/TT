@@ -65,6 +65,7 @@ public class Interpreter {
 	};
 
 	// add interpreterListener to collect errors
+	
 	public void interp(InputStream input) throws RecognitionException,
 			IOException, org.antlr.runtime.RecognitionException {
 		// Lexical and Syntax Analysis
@@ -424,12 +425,12 @@ public class Interpreter {
 		if(lhs.getType() == TTParser.DECLARE)
 			ident = declarationEval(lhs, isGlobal);
 		else {
-			// throw error
+			listener.error("not a valid declarition: " + t.toString());
 		}
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
-			// throw error;
+			listener.error("the symbol is not exsited: " + ident);
 		}
 		s.setValue(value);
 
@@ -793,13 +794,10 @@ public class Interpreter {
 	public Integer arithmeticEval(CommonTree t) {
 		System.out.println("Arithmetic Evaluation");
 
-<<<<<<< HEAD
-		Integer a = (Integer) exec((CommonTree) t.getChild(0));
-		Integer b = (Integer) exec((CommonTree) t.getChild(1));
-=======
+
 		int a = Integer.parseInt(exec((CommonTree) t.getChild(0)).toString() );
 		int b = Integer.parseInt(exec((CommonTree) t.getChild(1)).toString() );
->>>>>>> update
+
 
 		switch (t.getType()) {
 

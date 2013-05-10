@@ -1,4 +1,5 @@
 tree grammar DefinitionAnalyzer;
+//tree walker for anakyzing global scope variables and methods
 options {
 	tokenVocab = TT;
 	ASTLabelType = CommonTree;
