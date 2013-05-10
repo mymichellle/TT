@@ -793,8 +793,13 @@ public class Interpreter {
 	public Integer arithmeticEval(CommonTree t) {
 		System.out.println("Arithmetic Evaluation");
 
+<<<<<<< HEAD
 		Integer a = (Integer) exec((CommonTree) t.getChild(0));
 		Integer b = (Integer) exec((CommonTree) t.getChild(1));
+=======
+		int a = Integer.parseInt(exec((CommonTree) t.getChild(0)).toString() );
+		int b = Integer.parseInt(exec((CommonTree) t.getChild(1)).toString() );
+>>>>>>> update
 
 		switch (t.getType()) {
 
