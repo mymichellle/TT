@@ -18,6 +18,7 @@ tokens {
 	DATE_CONSTANT_TOKEN;
 	TIMEFRAME_CONSTANT;
 	MAIN = 'main';
+	PRINT = 'print';
 	STRINGTYPE = 'String';
 	NUMBERTYPE = 'Number';
 	DATETYPE = 'Date';
@@ -80,6 +81,7 @@ tokens {
 	DEFINE;
 	UNARY;
 	ASSIGN;
+
 	
 }
 @header{
