@@ -9,6 +9,9 @@ public class Calendar extends ArrayList<Task> {
   private Date start;
   private Date end;
   	
+  public Calendar(){
+	  
+  }
   
   public Calendar(String name) {
   	this.name = name;

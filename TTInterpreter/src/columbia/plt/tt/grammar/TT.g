@@ -4,6 +4,7 @@ options {
 	language = Java;
 	output=AST;
 	ASTLabelType =  CommonTree;
+
 }
 tokens {
 	TUNIT;
@@ -79,6 +80,8 @@ tokens {
 	DECLARE;
 	DEFINE;
 	UNARY;
+	ASSIGN;
+	
 }
 @header{
 	package columbia.plt.tt;
@@ -168,16 +171,16 @@ argDeclaration
 //@Author : Athresh
 
 declarationStatement
-	: t = type (WS*)! IDENT ';'   -> ^(DECLARE $t IDENT)
+	: t=type (WS*)! IDENT ';'   -> ^(DECLARE $t IDENT)
 	;
 
 definitionStatement
-	: t=type (WS*)! as=assignmentStmt  -> ^(DEFINE $t $as)
+	: t=type (WS*)! IDENT (WS*)! ASSIGN  (WS*)! e=expr ';' -> ^(DEFINE ^(DECLARE $t IDENT) $e)
 	;
 
 assignmentStmt
-	: IDENT ASSIGN^ expr ';'!
-	| memberAccessExpr ^ASSIGN expr ';'!
+	: id=IDENT ASSIGN e = expr ';'  -> ^(ASSIGN $id  $e )
+	| mae = memberAccessExpr ASSIGN e =expr ';' -> ^(ASSIGN $mae $e)
 	;
 
 type
@@ -231,10 +234,10 @@ everyFromToByStatement
 
 everyInStatement
 	//: EVERY 'Task' IDENT IN IDENT constraintOptions  block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(constraintOptions) block)
-	: EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(ON expr) block)
-	| EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN IDENT) ^(FROM dateOrIdent) ^(TO dateOrIdent) block)
-	| EVERY 'Task' IDENT IN IDENT ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN IDENT) ^(ON expr) block)
-	| EVERY 'Task' IDENT IN IDENT block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN IDENT) block)
+	: EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT FROM dateOrIdent TO dateOrIdent block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) ^(FROM dateOrIdent) ^(TO dateOrIdent) block)
+	| EVERY 'Task' IDENT IN IDENT ON expr block -> ^(EVERYTASK ^('Task' IDENT) ^(IN ^(IDENT_TOKEN IDENT)) ^(ON expr) block)
+	| EVERY 'Task' IDENT IN IDENT block -> ^(EVERYTASK ^('Task' IDENT)  ^(IN ^(IDENT_TOKEN IDENT)) block)
 	;
 	
 dateOrIdent
@@ -300,42 +303,41 @@ expr
 	;
 
 logicalExpr
-	: booleanAndExpr (op=OR booleanAndExpr)*   -> ^(OP["booleanOrExpr"] booleanAndExpr+)
+	: booleanAndExpr (OR^ booleanAndExpr)*   
 	;
 
 booleanAndExpr
-	: equalityExpr (op=AND equalityExpr)*   -> ^(OP["booleanAndExpr"] equalityExpr+)
+	: equalityExpr (AND^ equalityExpr)*   
 	;
 
 equalityExpr
-	: relationalExpr (op=(EQUALS|NOTEQUALS) relationalExpr)*  -> ^(OP["equalityExpr"] relationalExpr+)
-	
+	: relationalExpr ((EQUALS^|NOTEQUALS^) relationalExpr)* 
 	;
 
 relationalExpr
-	: additiveExpr (op=(LT | LTEQ | GT | GTEQ) additiveExpr)* -> ^(OP["relationalExpr"] additiveExpr+)
+	: additiveExpr ((LT^|LTEQ^|GT^|GTEQ^) additiveExpr)* 
 	;
 
 additiveExpr
-	: multExpr (op=(PLUS | MINUS) multExpr)* -> ^(OP["additiveExpr"] multExpr+)
+	: multExpr ((PLUS^|MINUS^) multExpr)* 
 	;
 
 multExpr
-	: unaryExpr (op=(MULT | DIV | MOD) unaryExpr)* -> ^(OP["multExpr"] unaryExpr+)
+	: unaryExpr ((MULT^|DIV^|MOD^) unaryExpr)* 
 	;
 
 memberAccessExpr
-	:	IDENT DOT IDENT 		 -> ^(DOT IDENT IDENT)
+	:	IDENT op=DOT IDENT 		 -> ^(DOT IDENT IDENT)
 	;
 
 unaryExpr 
-	: NOT? primaryExpr    -> ^(UNARY NOT? primaryExpr)
+	: op=NOT? primaryExpr    -> ^(UNARY NOT? primaryExpr)
 	;
 
 primaryExpr  			
-	: exprInParentheses  			
+	: exprInParentheses 		
 	| constant				
-	| IDENT
+	| IDENT //-> ^(IDENT_TOKEN IDENT)
 	| memberAccessExpr
 	|	assignmentStmt
 	;
@@ -378,9 +380,9 @@ COMMENT
 		{ $channel = HIDDEN; }
 	;
 
-constant 
+constant
 	: STRING_CONSTANT
-	| DATE_CONSTANT
+	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)  
 	| NUMBER
 	| timeFrameConstant
 	| timeEntityConstant

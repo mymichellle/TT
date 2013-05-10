@@ -95,7 +95,7 @@ public class InterpreterTest extends TestCase {
 	
 	public void testEveryCases()
 	{
-		CharStream stream = new ANTLRStringStream( "main(){every Task t from 2013.01.18 to 2013.01.21 by 1 days {print(\"hi\");}}");
+		CharStream stream = new ANTLRStringStream( "main(){Number n = 10;}");
 		testEveryDate(stream);
 	    //assertEquals("hello", outContent.toString());
 		

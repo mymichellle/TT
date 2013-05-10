@@ -1,3 +1,7 @@
 main(){
-	Number n;
+	
+	Calendar c;
+	c.start = 2013.01.01;
+
+	
 }
