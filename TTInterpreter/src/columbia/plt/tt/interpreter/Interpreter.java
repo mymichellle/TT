@@ -445,7 +445,7 @@ public class Interpreter {
 		return null;
 	}
 
-	// @Author : Akhila A @Reviewer Michelle A ,Jason L
+
 	public void defineEval(CommonTree t, boolean isGlobal) {
 
 		CommonTree lhs = (CommonTree) t.getChild(0);
@@ -1039,8 +1039,6 @@ public class Interpreter {
 
 	}
 
-	// End @Athresh
-	
 	public Object call(CommonTree t) {
 		String methodName = t.getChild(0).getText();
 		System.out.println("call " + methodName);
