@@ -237,8 +237,9 @@ public class Interpreter {
 			 * false;
 			 */
 			case TTParser.IDENT_TOKEN:
-			case TTParser.IDENT:
 				return identity(t);
+			case TTParser.IDENT:
+				return identityValue(t);
 				// (JL)
 
 			case TTParser.NUMBER:
@@ -455,9 +456,20 @@ public class Interpreter {
 	}
 
 	public Symbol identity(CommonTree t) {
-		System.out.println("identity: "+t.getChild(0));
-		Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
+		//System.out.println("identity: "+t+ " "+t.getChild(0));
+		
+		Symbol s;
+		if(t.getChild(0) == null)
+			s = symbolTable.getSymbol(t.getText());
+		else
+			s = symbolTable.getSymbol(t.getChild(0).getText());
+		
 		return s;
+	}
+	
+	public Object identityValue(CommonTree t) {
+		Symbol s = identity(t);
+		return s.getValue();
 	}
 
 	public void assign(CommonTree t) {
@@ -690,10 +702,12 @@ public class Interpreter {
 
 	public Boolean relationalEval(CommonTree t) {
 
-		System.out.println("Relational Evaluation");
+		System.out.println("Relational Evaluation " +t.getChild(0).getText()+" " +t.getChild(1));
 
 		Integer a = (Integer) exec((CommonTree) t.getChild(0));
+		System.out.println("a: "+a);
 		Integer b = (Integer) exec((CommonTree) t.getChild(1));
+		System.out.println("b: "+b);
 
 		switch (t.getType()) {
 
@@ -736,6 +750,9 @@ public class Interpreter {
 			//System.out.println("Calendar: " +c);
 			s = ((Symbol)identity((CommonTree)t.getChild(2)));
 			Task task = (Task)s.getValue();
+			
+			if(c == null)
+				System.out.println("C IS NULL");
 			c.add(task);
 			return null;
 		}
@@ -780,8 +797,12 @@ public class Interpreter {
 	}
 
 	public void ifStatement(CommonTree t) {
-		System.out.println("IF" + t.getChildCount());
+		System.out.println("IF " + t.getChildCount() + " "+ t.getChild(0).getText());
 		// 0th Child is the expr to evaluate
+		
+		Object o = exec((CommonTree) t.getChild(0));
+		System.out.println("OBJECT HERE: "+o);
+		
 		if ((Boolean) exec((CommonTree) t.getChild(0))) {
 			System.out.println("HERE");
 			// 1st Child is the block
