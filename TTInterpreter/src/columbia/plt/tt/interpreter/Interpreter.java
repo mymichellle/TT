@@ -458,13 +458,11 @@ public class Interpreter {
 		if(lhs.getType() == TTParser.DECLARE)
 			ident = declarationEval(lhs, isGlobal);
 
-		else {
-			// throw error
-		}
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
-			// throw error;
+			listener.error("variable " + ident + " not defined");
+			return;
 		}
 		
 		s.setValue(value);
