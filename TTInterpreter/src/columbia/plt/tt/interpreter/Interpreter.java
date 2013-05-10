@@ -334,7 +334,7 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("line: " + t.getLine() + " - problem executing " + t.toStringTree(), e);
+			listener.error("problem executing " + t.toStringTree(), e);
 		}
 		return null;
 	}
@@ -374,6 +374,7 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
+				listener.error("can not evaluate global variables", e);
 			}
 		}
 	}
@@ -402,7 +403,6 @@ public class Interpreter {
 			// Handle error
 			listener.error("not a mainblock: " + t.getType() + " "
 					+ t.toStringTree());
-			return;
 
 		}
 		CommonTree mainBody = (CommonTree) t.getChild(0);
@@ -551,8 +551,7 @@ public class Interpreter {
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
-			listener.error("Undefied varibles: " + lhs.getText());
-			return;
+			// throw error;
 		}
 		s.setValue(value);
 
@@ -855,10 +854,8 @@ public class Interpreter {
 		case TTParser.MOD:
 			return a % b;
 
-		default: {
-			listener.error("undifined arithmetic operators" + t.toString());
-			return null;
-		}
+		default:
+			return 0;
 
 		}
 
@@ -878,11 +875,8 @@ public class Interpreter {
 			return a || b;
 		case TTParser.NOT:
 			return !a;
-		default: {
-			listener.error("undifined logical operators" + t.toString());
-			return null;
-		}
-			
+		default:
+			return false;
 		}
 
 	}
@@ -897,30 +891,21 @@ public class Interpreter {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Date)a).compareTo((Date)b) == 0;
 				case TTParser.NOTEQUALS: return ((Date)a).compareTo((Date)b) != 0;
-				default: {
-					listener.error("undifined logical operators" + t.toString());
-					return null;
-				}
+				default: return false;
 			}
 		}
 		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) == 0;
 				case TTParser.NOTEQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) != 0;
-				default: {
-					listener.error("undifined logical operators" + t.toString());
-					return null;
-				}
+				default: return false;
 				}
 			}
 		else {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);
 				case TTParser.NOTEQUALS: return ((Integer)a) != ((Integer)b);
-				default: {
-					listener.error("undifined logical operators" + t.toString());
-					return null;
-				}
+				default: return false;
 			}
 		}
 	}
@@ -938,10 +923,7 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((Date)a).compareTo((Date)b) <= 0;
 				case TTParser.GT: return ((Date)a).compareTo((Date)b) > 0;
 				case TTParser.LT: return ((Date)a).compareTo((Date)b) < 0;
-				default: {
-					listener.error("undifined logical operators" + t.toString());
-					return null;
-				}				
+				default: return false;				
 			}
 		}
 		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
@@ -950,10 +932,7 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((TimeFrame)a).compareTo((TimeFrame)b) <= 0;
 				case TTParser.GT: return ((TimeFrame)a).compareTo((TimeFrame)b) > 0;
 				case TTParser.LT: return ((TimeFrame)a).compareTo((TimeFrame)b) < 0;
-				default: {
-					listener.error("undifined logical operators" + t.toString());
-					return null;
-				}				
+				default: return false;				
 			}
 		}
 		else {
@@ -962,10 +941,7 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((Integer)a) <= ((Integer)b);
 				case TTParser.GT: return ((Integer)a) > ((Integer)b);
 				case TTParser.LT: return ((Integer)a) < ((Integer)b);
-				default: {
-					listener.error("undifined logical operators" + t.toString());
-					return null;
-				}
+				default: return false;
 			}
 		}
 		
@@ -992,13 +968,8 @@ public class Interpreter {
 				b = exec((CommonTree) t.getChild(1));
 			System.out.println("b: "+b);
 			value = !(Boolean) b;
-			return value;
 		}
-		else {
-			listener.error("not a unaryExpression" + t.toString());
-			return null;
-		}
-		
+		return value;
 	}
 
 	public Object call(CommonTree t) {
@@ -1337,10 +1308,11 @@ public class Interpreter {
 	}
 	
 	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
-		
-		if (methodName.equals("addTask")) {
+		switch (methodName) {
+		case "addTask":
 			addTask(t);
-		} else {
+			break;
+		default:
 			return false;
 		}
 		return true;
