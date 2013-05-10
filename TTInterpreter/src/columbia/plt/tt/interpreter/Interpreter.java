@@ -243,7 +243,8 @@ public class Interpreter {
 			case TTParser.IDENT:
 				return identityValue(t);
 				// (JL)
-
+			//case TTParser.DOT:
+			//	return fieldAccess(t);
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
 			case TTParser.STRING_CONSTANT:
@@ -616,6 +617,126 @@ public class Interpreter {
 
 	}
 
+	public Object fieldAccess(CommonTree t) {
+
+		CommonTree o = (CommonTree) t.getChild(0);
+		CommonTree f = (CommonTree) t.getChild(1);
+		
+		String fieldname = f.getText();
+
+		Symbol symbol = symbolTable.getSymbol(o.getText());
+		if (symbol == null) {
+			// throw error tht object has no been defined
+			listener.error("No symbol in table for "+o.getText()+"."+f.getText());
+		}
+		
+		String dataType = symbol.getType();
+
+		if (dataType.equals(
+				TTConstants.PACKAGE_PREFIX + TTConstants.CALENDAR_CLASS)) {
+
+			Calendar c = (Calendar) symbol.getValue();
+			if (fieldname.equals("name"))
+				return c.getName();
+			if (fieldname.equals("start"))
+				return c.getStart();
+			if (fieldname.equals("end"))
+				return c.getEnd();
+			else {
+				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Calendar");
+				return null;
+			}
+
+		}
+
+		else if (dataType.equals(
+				TTConstants.PACKAGE_PREFIX + TTConstants.DATE_CLASS)) {
+
+			Date d = (Date) symbol.getValue();
+
+			if (fieldname.equals("year"))
+				return d.getYear();
+			if (fieldname.equals("month"))
+				return d.getMonth();
+			if (fieldname.equals("day"))
+				return d.getDay();
+			if (fieldname.equals("hour"))
+				return d.getHour();
+			if (fieldname.equals("minute"))
+				return d.getMinute();
+			else {
+				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Date");
+				return null;
+			}
+
+		}
+
+		else if (dataType.equals(
+				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
+
+			Task task = (Task) symbol.getValue();
+
+			if (fieldname.equals("name"))
+				return task.getName();
+
+			if (fieldname.equals("start"))
+				return task.getStart();
+
+			if (fieldname.equals("end"))
+				return task.getEnd();
+
+			if (fieldname.equals("description"))
+				return task.getDescription();
+
+			if (fieldname.equals("location"))
+				return task.getLocation();
+
+			else {
+				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Task");
+				return null;
+			}
+
+		}
+
+		else if (dataType.equals(
+				TTConstants.PACKAGE_PREFIX + TTConstants.TIMEFRAME_CLASS)) {
+
+			TimeFrame tf = (TimeFrame) symbol.getValue();
+
+			if (fieldname.equals("years"))
+				return tf.getYears();
+
+			if (fieldname.equals("months"))
+				return tf.getMonths();
+
+			if (fieldname.equals("weeks"))
+				return tf.getWeeks();
+
+			if (fieldname.equals("days"))
+				return tf.getDays();
+
+			if (fieldname.equals("hours"))
+				return tf.getHours();
+
+			if (fieldname.equals("minutes"))
+				return tf.getMinutes();
+
+			else {
+				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in TimeFrame");
+				return null;
+			}
+		}
+		else {
+			// throw error, fields cannot be associated with primitive types
+			listener.error("No fields in primative types");
+			return null;
+		}
+	}
+	
 	public Object plusEval(CommonTree t) {
 
 		System.out.println("" + " Operator Evaluation");
@@ -733,10 +854,21 @@ public class Interpreter {
 
 		System.out.println("UNARY: "+t.getChild(0).getType());
 
-		Object a = exec((CommonTree) t.getChild(0));
+		Object a = null;
+		if(t.getChild(0).getType() == TTParser.DOT)
+			a = fieldAccess((CommonTree)t.getChild(0));
+		else
+			a = exec((CommonTree) t.getChild(0));
+		
 		Object value = a;
 		if (a == "not") {
-			Object b = exec((CommonTree) t.getChild(1));
+			System.out.println("a == not");
+			Object b = null;
+			if(t.getChild(0).getType() == TTParser.DOT)
+				b = fieldAccess((CommonTree)t.getChild(1));
+			else
+				b = exec((CommonTree) t.getChild(1));
+			System.out.println("b: "+b);
 			value = !(Boolean) b;
 
 		}
