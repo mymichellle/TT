@@ -1,7 +1,9 @@
 package columbia.plt.tt.interpreter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.antlr.runtime.ANTLRInputStream;
@@ -254,7 +256,8 @@ public class Interpreter {
 				return call(t);
 			case TTParser.RETURN:
 				return returnStmt(t);
-				// case TTParser.READ : (PL)
+			case TTParser.READ :
+				return read(t);
 			case TTParser.PRINT:
 				print(t);
 				break; // (PL)
@@ -1003,7 +1006,20 @@ public class Interpreter {
 		return (Calendar)s.getValue();
 
 	}
-
+	public Object read(CommonTree t) {
+		Object result = exec((CommonTree) t.getChild(0));
+		System.out.print(result);
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		Object userInput = null;
+		try {
+			userInput = in.readLine();
+		} catch (IOException e) {
+			return userInput;
+		}
+		return userInput;
+	}
+	
 	public void print(CommonTree t) {
 		if (((CommonTree) t.getChild(0)).getType() == TTParser.IDENT_TOKEN) {
 			Symbol s = (Symbol) exec((CommonTree) t.getChild(0));
