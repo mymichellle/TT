@@ -478,7 +478,7 @@ public class Interpreter {
 
 		CommonTree o = (CommonTree) lhs.getChild(0);
 		CommonTree f = (CommonTree) lhs.getChild(1);
-
+		
 		String fieldname = f.getText();
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
@@ -530,7 +530,7 @@ public class Interpreter {
 				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
 
 			Task t = (Task) symbol.getValue();
-
+			System.out.println(value);
 			if (fieldname.equals("name"))
 				t.setName((String) value);
 
@@ -702,7 +702,7 @@ public class Interpreter {
 
 	public Object unaryExprEval(CommonTree t) {
 
-		System.out.println(t.getChild(0).getType());
+		System.out.println("UNARY: "+t.getChild(0).getType());
 
 		Object a = exec((CommonTree) t.getChild(0));
 		Object value = a;
@@ -715,14 +715,14 @@ public class Interpreter {
 	}
 
 	public Object call(CommonTree t) {
-		System.out.println("call");
+		System.out.println("call "+t.getChild(0));
 		
 		if (t.getChild(0).getText().equals("addTask")){
-			System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
-			Symbol s = (Symbol)exec((CommonTree)t.getChild(1));
+			//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
+			Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
 			Calendar c = (Calendar)s.getValue();
-			System.out.println("Calendar: " +c);
-			s = ((Symbol)exec((CommonTree)t.getChild(2)));
+			//System.out.println("Calendar: " +c);
+			s = ((Symbol)identity((CommonTree)t.getChild(2)));
 			Task task = (Task)s.getValue();
 			c.add(task);
 			return null;
@@ -806,15 +806,19 @@ public class Interpreter {
 		for (int i = 0; i < t.getChildCount(); i++) {
 			switch (t.getChild(i).getType()) {
 			case TTParser.FROM:
+				System.out.println("FROM: "+t.getChild(i).getChild(0));
 				start = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.TO:
+				System.out.println("TO: "+t.getChild(i).getChild(0));
 				end = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.BY:
+				System.out.println("BY: "+t.getChild(i).getChild(0));
 				inc = (TimeFrame) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.SLIST:
+				System.out.println("SLIST: "+t.getChild(i).getChild(0));
 				block = (CommonTree) t.getChild(i);
 				break;
 			default:
@@ -828,6 +832,7 @@ public class Interpreter {
 
 		if (start == null || end == null) {
 			// End of loop remove the scope
+			System.out.println("NO LOOP");
 			symbolTable.removeScope();
 			return;
 		}
@@ -835,7 +840,7 @@ public class Interpreter {
 		// Define the itterDate
 		itterDate = start;
 		symbolTable.addSymbol(name, type, itterDate);
-
+		System.out.println("loop from: "+start+" to "+end);
 		while (itterDate.compareTo(end) <= 0) {
 			// Execute the block
 			exec(block);
@@ -870,8 +875,11 @@ public class Interpreter {
 	}
 
 	public TimeFrame timeFrameOrIdent(CommonTree t) {
-		// This only handles timeFrameConstant
-		System.out.println("timeFrameOrIdent");
+		if (t.getChild(0).getType() == TTParser.IDENT_TOKEN)
+		{
+			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
+			return (TimeFrame)s.getValue();
+		}
 		return (TimeFrame) exec((CommonTree) t.getChild(0));
 	}
 
@@ -880,6 +888,7 @@ public class Interpreter {
 		for (int i = 0; i < t.getChildCount(); i++) {
 			tf = tf + " " + ((CommonTree) t.getChild(i)).getText();
 		}
+		System.out.println(tf);
 		return new TimeFrame(tf);
 	}
 
@@ -970,15 +979,15 @@ public class Interpreter {
 	}
 
 	public Boolean on(CommonTree t) {
-		System.out.println("ON " + t.getChild(0));
+		//System.out.println("ON " + t.getChild(0));
 		return (Boolean) exec((CommonTree) t.getChild(0));
 	}
 
 	public Calendar in(CommonTree t) {
 
-		System.out.println("IN "+t.getChild(0)+ " "+t.toString());
+		//System.out.println("IN "+t.getChild(0)+ " "+t.toString());
 		Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
-		System.out.println("Calendar: "+ s.getType()+ " "+s.getValue());
+		//System.out.println("Calendar: "+ s.getType()+ " "+s.getValue());
 		return (Calendar)s.getValue();
 
 	}
