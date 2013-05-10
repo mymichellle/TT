@@ -1,7 +1,6 @@
 main(){
 	
-	Number n;
-	n = 10 - 4 * 5;
+	Boolean n= not(false && true);
 	print (n);
 	
 }
