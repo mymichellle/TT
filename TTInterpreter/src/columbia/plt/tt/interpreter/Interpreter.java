@@ -273,11 +273,7 @@ public class Interpreter {
 				return call(t);
 			case TTParser.RETURN:
 				return returnStmt(t);
-			case TTParser.READ :
-				return read(t);
-			case TTParser.PRINT:
-				print(t);
-				break; // (PL)
+			
 
 
 			case TTParser.TIMEFRAME_YEAR:
