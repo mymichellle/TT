@@ -279,6 +279,7 @@ public class Interpreter {
 				print(t);
 				break; // (PL)
 
+
 			case TTParser.TIMEFRAME_YEAR:
 				return TimeFrameConst.YEAR;
 			case TTParser.TIMEFRAME_YEARS:
@@ -1045,8 +1046,8 @@ public class Interpreter {
 		System.out.println("call " + methodName);
 		
 		Object result = null;
-		if (callStandardLibrary(t, methodName, result)){
-			return result;
+		if (isStdLibraryFunction(methodName)){
+			return callStandardLibrary(t, methodName);
 		}
 		
 
@@ -1375,15 +1376,26 @@ public class Interpreter {
 		symbolTable.addSymbol("uploadCalendar", uploadCalendar);
 	}
 	
-	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
-		switch (methodName) {
-		case "addTask":
-			addTask(t);
-			break;
-		default:
-			return false;
+
+	public boolean isStdLibraryFunction(String methodName) {
+		if (methodName.equals("addTask") || 
+			methodName.equals("read") ||
+			methodName.equals("print")) {
+				return true;
 		}
-		return true;
+		return false;
+	}
+	
+	public Object callStandardLibrary(CommonTree t, String methodName) {
+		
+		if (methodName.equals("addTask")) {
+			addTask(t);
+		} else if (methodName.equals("read")) {
+			return read(t);
+		} else if (methodName.equals("print")) {
+			print(t);
+		}
+		return null;
 	}
 	
 	public void addTask(CommonTree t) {
@@ -1400,7 +1412,7 @@ public class Interpreter {
 	}
 	
 	public Object read(CommonTree t) {
-		Object result = exec((CommonTree) t.getChild(0));
+		Object result = exec((CommonTree) t.getChild(1));
 		System.out.print(result);
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
