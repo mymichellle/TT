@@ -861,6 +861,11 @@ public class Interpreter {
 	}
 
 	public Date dateOrIdent(CommonTree t) {
+		if (t.getChild(0).getType() == TTParser.IDENT_TOKEN)
+		{
+			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
+			return (Date)s.getValue();
+		}
 		return (Date) exec((CommonTree) t.getChild(0));
 	}
 
