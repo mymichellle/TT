@@ -1,6 +1,8 @@
 package columbia.plt.tt.interpreter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -69,21 +71,17 @@ public class InterpreterTest extends TestCase {
 		interpreter.tunit(tree);
 	}
 
-	/*
-	public void testIf()//CharStream stream)
+	
+	public void testIf(CharStream stream)
 	{
-		CharStream stream = new ANTLRStringStream( "if(a){print(\"hi\";}else{}");
 		
 		CommonTree tree = null;
-		
-		lexer = new TTLexer(stream);
-		tokenStream = new CommonTokenStream(lexer);
-		parser = new TTParser(tokenStream);
+		setParser(stream);
 		
 		try {
 			TTParser.ifThenStatement_return r = parser.ifThenStatement();
 			tree = r.getTree();
-			System.out.println("HERE");
+			System.out.println(tree);
 		}				
 		catch (RecognitionException e) {
 			// TODO Auto-generated catch block
@@ -91,9 +89,8 @@ public class InterpreterTest extends TestCase {
 		}
 				
 		assertNotNull(tree);
-		interpreter.ifStatement(tree);
+		interpreter.tunit(tree);
 	}
-	*/
 	
 	
 	public void testEveryCases()
@@ -106,12 +103,61 @@ public class InterpreterTest extends TestCase {
 		testEveryDate(stream);
 		
 	}
+
 	
-	
-	/*public void testIfElseCases()
+	public void testIfElseCases()
 	{
-		CharStream stream = new ANTLRStringStream( "if(3 == 5){print(\"hi\";}else{}");
+		CharStream stream = new ANTLRStringStream( "main(){if(3 == 5){print(\"hi\");}else{}}");
 		testIf(stream);
-	}*/
+	}
+	
+	
+	public void testPrograms()
+	{
+		try {
+
+			FileInputStream fileStream = null;
+			fileStream = new FileInputStream("src/columbia/plt/tt/programs/Loops.tt");
+			interpreter.interp(fileStream);
+			
+
+			fileStream = new FileInputStream("src/columbia/plt/tt/programs/ifelse.tt");
+			interpreter.interp(fileStream);
+			
+
+			fileStream = new FileInputStream("src/columbia/plt/tt/programs/declareanddefine.tt");
+			interpreter.interp(fileStream);
+			
+
+			fileStream = new FileInputStream("src/columbia/plt/tt/programs/methods.tt");
+			interpreter.interp(fileStream);
+			
+
+			fileStream = new FileInputStream("src/columbia/plt/tt/programs/operator.tt");
+			interpreter.interp(fileStream);
+
+			fileStream = new FileInputStream("src/columbia/plt/tt/programs/Program1.tt");
+			interpreter.interp(fileStream);
+			
+
+			fileStream = new FileInputStream("src/columbia/plt/tt/programs/tutorial_MeetingTime.tt");
+			interpreter.interp(fileStream);
+			
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (antlr.RecognitionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RecognitionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 }
