@@ -337,7 +337,7 @@ unaryExpr
 primaryExpr  			
 	: exprInParentheses 		
 	| constant				
-	| IDENT
+	| IDENT -> ^(IDENT_TOKEN IDENT)
 	| memberAccessExpr
 	|	assignmentStmt
 	;

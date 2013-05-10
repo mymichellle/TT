@@ -443,7 +443,7 @@ public class Interpreter {
 	}
 
 	public Symbol identity(CommonTree t) {
-
+		System.out.println("identity: "+t.getChild(0));
 		Symbol s = symbolTable.getSymbol(t.getChild(0).getText());
 		return s;
 	}
@@ -716,10 +716,22 @@ public class Interpreter {
 
 	public Object call(CommonTree t) {
 		System.out.println("call");
-
+		
+		if (t.getChild(0).getText().equals("addTask")){
+			System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
+			Symbol s = (Symbol)exec((CommonTree)t.getChild(1));
+			Calendar c = (Calendar)s.getValue();
+			System.out.println("Calendar: " +c);
+			s = ((Symbol)exec((CommonTree)t.getChild(2)));
+			Task task = (Task)s.getValue();
+			c.add(task);
+			return null;
+		}
+		
 		String methodName = t.getChild(0).getText();
 		MethodSymbol methodSymbol = (MethodSymbol) symbolTable
 				.getSymbol(methodName);
+		
 		if (methodName == null) {
 			listener.error("no such method " + methodName, t.token);
 			return null;
