@@ -897,6 +897,23 @@ public class Interpreter {
 
 				}
 			}
+		else if( a instanceof String && b instanceof String){
+			
+			a = (String)a;
+			b = (String)b;
+			
+			switch (t.getType()) {
+				case TTParser.EQUALS: return a.equals(b);
+				case TTParser.NOTEQUALS: return !a.equals(b);
+						
+			default: {
+				listener.error("undifined logical operators" + t.toString(), t);
+				return null;
+			}
+
+			}
+			
+		}
 		else {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);

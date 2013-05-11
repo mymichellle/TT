@@ -1,0 +1,14 @@
+import "<std>";
+
+main(){
+
+	String a = "Akhila";
+	String b = a;
+	
+	if ( a == b) {
+		print ("Here!");
+	}
+	
+}
+	
+		
