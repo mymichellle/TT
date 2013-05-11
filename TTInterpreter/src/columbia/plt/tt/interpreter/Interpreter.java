@@ -334,7 +334,7 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("problem executing " + t.toStringTree(), e);
+			listener.error("line: " + t.getLine() + " - problem executing " + t.toStringTree(), e);
 		}
 		return null;
 	}
@@ -374,7 +374,6 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
-				listener.error("can not evaluate global variables", e);
 			}
 		}
 	}
@@ -1306,6 +1305,7 @@ public class Interpreter {
 	}
 	
 	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
+		
 		if (methodName.equals("addTask")) {
 			addTask(t);
 		} else {
