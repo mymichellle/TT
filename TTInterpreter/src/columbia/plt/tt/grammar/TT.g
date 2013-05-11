@@ -42,7 +42,6 @@ tokens {
 	TRUE = 'true';
 	FALSE = 'false';
 	RETURN = 'return';
-	READ = 'read';
 	TIMEFRAME_YEAR = 'year';
 	TIMEFRAME_YEARS = 'years';
 	TIMEFRAME_MONTH = 'month';
@@ -208,7 +207,6 @@ statement_type
 	| exitStatement
 	| functionInvocationStatement
 	| returnStatement
-	| readStatement
 	;
 
 block
@@ -279,18 +277,9 @@ argumentList
 expressionList
 	: expr (','expr)* -> expr*
 	;
-
-/* TODO: We should remove 'read' and 'print' they belong
- * to the [standard] library. */
-readStatement
-	: readInvocation ';'! 
-	;
-readInvocation
-	: READ '(' STRING_CONSTANT ')' -> ^(READ STRING_CONSTANT)
-	;
 	
 timeFrameConstant
-	: NUMBER timeFrameSuffix ('+' NUMBER timeFrameSuffix)*
+	: NUMBER timeFrameSuffix ('+' NUMBER timeFrameSuffix)* 
 	;
 
 // Arithmetic Expressions .. Jason
@@ -298,7 +287,6 @@ timeFrameConstant
 expr
 	: logicalExpr
 	| functionInvocation
-	| readInvocation
 	;
 
 logicalExpr
