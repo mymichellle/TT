@@ -46,7 +46,7 @@ public class Interpreter {
 
 	public InterpreterListener listener = // default response to messages
 	new InterpreterListener() {
-		public void info(String msg) {
+		public void info(String msg) {			
 			System.out.println(msg);
 		}
 
@@ -58,7 +58,12 @@ public class Interpreter {
 			error(msg);
 			e.printStackTrace(System.err);
 		}
-
+		
+		public void error(String msg, CommonTree t) {
+			System.out.print("line: "+ t.getLine());
+			error(msg);
+			
+		}
 		@Override
 		public void error(String msg, org.antlr.runtime.Token t) {
 			error("line " + t.getLine() + ": " + msg);
