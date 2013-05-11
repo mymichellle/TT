@@ -1019,10 +1019,12 @@ public class Interpreter {
 				b = exec((CommonTree) t.getChild(1));
 			System.out.println("b: "+b);
 			value = !(Boolean) b;
+
 			
 		}
 		return value;
 		
+
 	}
 
 	public Object call(CommonTree t) {
