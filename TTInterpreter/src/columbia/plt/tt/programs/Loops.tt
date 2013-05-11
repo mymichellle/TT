@@ -1,25 +1,15 @@
-Calendar cal;
+
+Calendar p;
+
 main()
 {
-
-	every Date d from 2013.01.01 to 2013.01.02 by 1 days { 
-		print(d);
-		print("first");
-		
-	}
-	Calendar c;
-	c.name = "myCal";
-	cal.name = "yourCal";
 	
-	Task t1;
+	Calendar c;// = "myCal";
 	String s;
 	Number n = 4;
 	Date date = 2013.01.12;
 	
-	t1.name = "myname";
-	t1.start = 2013.01.01.02;
-	t1.end = 2013.01.01.03;
-	addTask(c, t1);
+	addTask(p, t1);
 	
 	Task t2;
 	t2.name = "two";
@@ -47,8 +37,6 @@ main()
 	}
 	
 	//addTask(cal, t1);
-	
-	
 	
 	every Date d from 2013.01.01 to 2013.01.02 by 1 days { 
 		print("first");

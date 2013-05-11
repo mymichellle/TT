@@ -296,7 +296,7 @@ print : PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
       ; 
 
 timeFrameConstant
-	: NUMBER timeFrameSuffix
+	: NUMBER timeFrameSuffix ('+' NUMBER timeFrameSuffix)*
 	;
 
 // Arithmetic Expressions .. Jason
