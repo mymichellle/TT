@@ -389,7 +389,7 @@ constant
 	: STRING_CONSTANT
 	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)  
 	| NUMBER
-	| timeFrameConstant
+	| timeFrameConstant -> ^(TIMEFRAME_CONSTANT timeFrameConstant)
 	| timeEntityConstant
 	| boolConstant
 	;
