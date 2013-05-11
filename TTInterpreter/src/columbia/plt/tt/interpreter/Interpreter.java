@@ -74,8 +74,6 @@ public class Interpreter {
 		lexer = new TTLexer(stream);
 		tokenStream = new CommonTokenStream(lexer);
 		parser = new TTParser(tokenStream);
-		// Do we have a tree adaptor??
-		// parser.setTreeAdaptor(InterPie.pieAdaptor);
 
 		// Show any lexer/parser errors
 		for (int i = 0; i < lexer.getErrors().size(); i++) {
@@ -87,6 +85,7 @@ public class Interpreter {
 		TTParser.translationUnit_return r = parser.translationUnit();
 		root = r.getTree();
 		System.out.println("tree: " + root.toStringTree());
+		
 		// If Syntax errors exit
 		if (parser.getNumberOfSyntaxErrors() != 0)
 			return;
@@ -383,7 +382,7 @@ public class Interpreter {
 	public void imports(CommonTree t) {
 		CommonTree importsTree = (CommonTree)t.getChild(0);
 		
-		if (importsTree.getType() == TTParser.IMPORTS && importsTree.getChildCount() > 0)
+		if (importsTree.getType() == TTParser.IMPORTS && importsTree.getChildCount() > 0){
 			List<? extends Object> importsList = importsTree.getChildren();
 			for(Object arg : importsList) {
 				CommonTree argImport = (CommonTree)arg;
@@ -731,6 +730,7 @@ public class Interpreter {
 		}
 		
 		String dataType = symbol.getType();
+		System.out.println("o: "+dataType +" "+fieldname);
 
 		if (dataType.equals(
 				TTConstants.PACKAGE_PREFIX + TTConstants.CALENDAR_CLASS)) {
@@ -775,7 +775,7 @@ public class Interpreter {
 
 		else if (dataType.equals(
 				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
-
+			System.out.println("TASKS: "+TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS);
 			Task task = (Task) symbol.getValue();
 			
 			if (fieldname.equals("name"))

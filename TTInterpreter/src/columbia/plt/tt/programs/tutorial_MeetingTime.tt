@@ -85,6 +85,13 @@ main() {
  	Calendar c;
  	c.name = "Meeting Calendar";
  	
+ 		Task t; 
+ 		t.name = "Meeting";
+ 		t.start = 2013.01.16.01;
+ 		t.end = 2013.01.16.02;
+ 		
+ 	Boolean con1 = conflict(cal1, t);
+ 	return c;
  	every Date d from start to end by 30 minutes {
  		Task t; 
  		t.name = "Meeting";
@@ -96,7 +103,7 @@ main() {
  		
  		//if(not con1 && not con2)
  		//{
- 			addTask(c, t);
+ 		//	addTask(c, t);
  		//}
  	}
  	print (c);
