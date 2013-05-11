@@ -18,7 +18,6 @@ tokens {
 	DATE_CONSTANT_TOKEN;
 	TIMEFRAME_CONSTANT;
 	MAIN = 'main';
-
 	STRINGTYPE = 'String';
 	NUMBERTYPE = 'Number';
 	DATETYPE = 'Date';
