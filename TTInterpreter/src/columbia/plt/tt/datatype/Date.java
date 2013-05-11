@@ -48,6 +48,13 @@ public class Date implements Comparable<Date> {
   	}			
   }
   
+  public Date(Date d) {
+  	this.year = d.year;
+  	this.month = d.month;
+  	this.day = d.day;
+  	this.hour = d.hour;
+  	this.minute = d.minute;
+  }
   
   public int getYear() { return this.year; }
   public void setYear(int year) { this.year = year; }
