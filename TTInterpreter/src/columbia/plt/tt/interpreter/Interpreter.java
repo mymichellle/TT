@@ -150,8 +150,7 @@ public class Interpreter {
 				break; // (PL)
 
 			case TTParser.SLIST:
-				block(t);
-				break; // (PL)
+				return block(t);
 
 			case TTParser.DECLARE:
 				return declarationEval(t, false);
@@ -359,6 +358,7 @@ public class Interpreter {
 	}
 
 	public void evalGlobals() {
+		
 		/* eval all global variables */
 		Scope globalScope = symbolTable.getScope(0);
 		for (Iterator<Map.Entry<String, Symbol>> it = globalScope.entrySet().iterator(); 
@@ -374,66 +374,27 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
-				
+				listener.error("can not evaluate global variables", e);
 			}
 		}
 	}
 	
 	public void imports(CommonTree t) {
-		CommonTree importsTree = (CommonTree)t.getChild(0);
-		
-		if (importsTree.getType() == TTParser.IMPORTS && importsTree.getChildCount() > 0){
+
+		CommonTree importsTree = (CommonTree) t.getChild(0);
+		if (importsTree.getType() == TTParser.IMPORTS
+				&& importsTree.getChildCount() > 0) {
 			List<? extends Object> importsList = importsTree.getChildren();
-			for(Object arg : importsList) {
-				CommonTree argImport = (CommonTree)arg;
+			for (Object arg : importsList) {
+				CommonTree argImport = (CommonTree) arg;
 				if (argImport.equals("<std>"))
 					useStandardLibrary = true;
 			}
 		}
-		if(!useStandardLibrary) return;
-		
-		/* addTask(Calendar c, Task t); */
-		MethodSymbol addTask = new MethodSymbol(null, null, "addTask");
-		addTask.addParameter("c", new Symbol("Calendar", null, "c"));
-		addTask.addParameter("t", new Symbol("Task", null, "t"));
-		symbolTable.addSymbol("addTask", addTask);
-		
-		/* removeTask(Calendar c, Task t); */
-		MethodSymbol removeTask = new MethodSymbol(null, null, "removeTask");
-		removeTask.addParameter("c", new Symbol("Calendar", null, "c"));
-		removeTask.addParameter("t", new Symbol("Task", null, "t"));
-		symbolTable.addSymbol("removeTask", removeTask);
-		
-		/* read(String s); */
-		MethodSymbol read = new MethodSymbol("String", null, "read");
-		read.addParameter("s", new Symbol("String", null, "s"));
-		symbolTable.addSymbol("read", read);
-		
-		/* print(String|Number|Date|Calendar|Task s); String|Number|Date|Calendar|Task == Object */
-		MethodSymbol print = new MethodSymbol(null, null, "print");
-		print.addParameter("s", new Symbol("Object", null, "s"));
-		symbolTable.addSymbol("print", print);
-		
-		/* getCurrentTime() */
-		MethodSymbol getCurrentTime = new MethodSymbol("Date", null, "getCurrentTime");
-		symbolTable.addSymbol("getCurrentTime", getCurrentTime);
-		
-		/* downloadCalendar(String username, String password, String calendarName, Date startDate, Date endDate); */
-		MethodSymbol downloadCalendar = new MethodSymbol("Calendar", null, "downloadCalendar");
-		downloadCalendar.addParameter("username", new Symbol("String", null, "username"));
-		downloadCalendar.addParameter("password", new Symbol("String", null, "password"));
-		downloadCalendar.addParameter("calendarName", new Symbol("String", null, "calendarName"));
-		downloadCalendar.addParameter("startDate", new Symbol("Date", null, "startDate"));
-		downloadCalendar.addParameter("endDate", new Symbol("Date", null, "endDate"));
-		symbolTable.addSymbol("downloadCalendar", downloadCalendar);
-		
-		/* uploadCalendar(String username, String password, String calendarName, Date startDate, Date endDate); */
-		MethodSymbol uploadCalendar = new MethodSymbol(null, null, "uploadCalendar");
-		uploadCalendar.addParameter("username", new Symbol("String", null, "username"));
-		uploadCalendar.addParameter("password", new Symbol("String", null, "password"));
-		uploadCalendar.addParameter("calendarName", new Symbol("String", null, "calendarName"));
-		uploadCalendar.addParameter("c", new Symbol("Calendar", null, "c"));
-		symbolTable.addSymbol("uploadCalendar", uploadCalendar);
+
+		if (!useStandardLibrary)
+			return;
+		processStandardLibrary();
 	}
 
 	public void mainBlock(CommonTree t) {
@@ -543,7 +504,7 @@ public class Interpreter {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				listener.error("not a valid declarition: ", e);
 			}
 
 			return ident;
@@ -1013,9 +974,9 @@ public class Interpreter {
 		String methodName = t.getChild(0).getText();
 		System.out.println("call " + methodName);
 		
-		if (methodName.equals("addTask")){
-			addTask(t);
-			return null;
+		Object result = null;
+		if (callStandardLibrary(t, methodName, result)){
+			return result;
 		}
 		
 
@@ -1043,7 +1004,7 @@ public class Interpreter {
 		for (Symbol arg : argsList) {
 			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
 			Object argValue = exec(ithArg);
-			newSymbols.add(new Symbol(arg.getType(), argValue, arg.getName()));
+			newSymbols.add(new Symbol(getDataType(arg.getType()), argValue, arg.getName()));
 			i++;
 		}
 		
@@ -1052,16 +1013,25 @@ public class Interpreter {
 			symbolTable.addSymbol(sym.getName(), sym);
 		}
 		
-		Object result = exec(methodSymbol.methodBody);
+		result = exec(methodSymbol.methodBody);
 		symbolTable.removeScope();
 		return result;
+	}
+	
+	private String getDataType(String dataType) {
+		if (dataType.equals("Calendar") || dataType.equals("Task")
+				|| dataType.equals("TimeFrame")
+				|| dataType.equals("Date")) 
+			return TTConstants.PACKAGE_PREFIX + dataType;
+		return dataType;
 	}
 	
 	public Object returnStmt(CommonTree t) {
 		int childrenCount = t.getChildCount();
 		if (childrenCount == 0)
 			return null;
-		return exec((CommonTree) t.getChild(0));
+		Object result = exec((CommonTree) t.getChild(0));
+		return result;
 	}
 
 	public void ifStatement(CommonTree t) {
@@ -1288,6 +1258,62 @@ public class Interpreter {
 		return (Calendar)s.getValue();
 
 
+	}
+	
+	public void processStandardLibrary() {
+		/* addTask(Calendar c, Task t); */
+		MethodSymbol addTask = new MethodSymbol(null, null, "addTask");
+		addTask.addParameter("c", new Symbol(getDataType("Calendar"), null, "c"));
+		addTask.addParameter("t", new Symbol(getDataType("Task"), null, "t"));
+		symbolTable.addSymbol("addTask", addTask);
+		
+		/* removeTask(Calendar c, Task t); */
+		MethodSymbol removeTask = new MethodSymbol(null, null, "removeTask");
+		removeTask.addParameter("c", new Symbol(getDataType("Calendar"), null, "c"));
+		removeTask.addParameter("t", new Symbol(getDataType("Task"), null, "t"));
+		symbolTable.addSymbol("removeTask", removeTask);
+		
+		/* read(String s); */
+		MethodSymbol read = new MethodSymbol(getDataType("String"), null, "read");
+		read.addParameter("s", new Symbol(getDataType("String"), null, "s"));
+		symbolTable.addSymbol("read", read);
+		
+		/* print(String|Number|Date|Calendar|Task s); String|Number|Date|Calendar|Task == Object */
+		MethodSymbol print = new MethodSymbol(null, null, "print");
+		print.addParameter("s", new Symbol(getDataType("Object"), null, "s"));
+		symbolTable.addSymbol("print", print);
+		
+		/* getCurrentTime() */
+		MethodSymbol getCurrentTime = new MethodSymbol(getDataType("Date"), null, "getCurrentTime");
+		symbolTable.addSymbol("getCurrentTime", getCurrentTime);
+		
+		/* downloadCalendar(String username, String password, String calendarName, Date startDate, Date endDate); */
+		MethodSymbol downloadCalendar = new MethodSymbol(getDataType("Calendar"), null, "downloadCalendar");
+		downloadCalendar.addParameter(getDataType("username"), new Symbol("String", null, "username"));
+		downloadCalendar.addParameter(getDataType("password"), new Symbol("String", null, "password"));
+		downloadCalendar.addParameter(getDataType("calendarName"), new Symbol("String", null, "calendarName"));
+		downloadCalendar.addParameter(getDataType("startDate"), new Symbol("Date", null, "startDate"));
+		downloadCalendar.addParameter(getDataType("endDate"), new Symbol("Date", null, "endDate"));
+		symbolTable.addSymbol("downloadCalendar", downloadCalendar);
+		
+		/* uploadCalendar(String username, String password, String calendarName, Date startDate, Date endDate); */
+		MethodSymbol uploadCalendar = new MethodSymbol(null, null, "uploadCalendar");
+		uploadCalendar.addParameter(getDataType("username"), new Symbol("String", null, "username"));
+		uploadCalendar.addParameter(getDataType("password"), new Symbol("String", null, "password"));
+		uploadCalendar.addParameter(getDataType("calendarName"), new Symbol("String", null, "calendarName"));
+		uploadCalendar.addParameter(getDataType("c"), new Symbol("Calendar", null, "c"));
+		symbolTable.addSymbol("uploadCalendar", uploadCalendar);
+	}
+	
+	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
+		switch (methodName) {
+		case "addTask":
+			addTask(t);
+			break;
+		default:
+			return false;
+		}
+		return true;
 	}
 	
 	public void addTask(CommonTree t) {
