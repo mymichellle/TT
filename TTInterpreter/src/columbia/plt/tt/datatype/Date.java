@@ -98,10 +98,45 @@ public class Date implements Comparable<Date> {
   
   public void add(TimeFrame tf) {
 	  // TODO - handle overflow ie 13 months = 1 year 1 month
-	  this.year = this.year + tf.getYears();
-	  this.month = this.month + tf.getMonths();
-	  this.day = this.day + tf.getDays();
-	  this.hour = this.hour + tf.getHours();
+	  int overflow = 0;
 	  this.minute = this.minute + tf.getMinutes();
+	  if (this.minute > 60) {
+		  overflow = this.minute/60;
+		  this.minute = this.minute - (60*overflow);
+	  }
+	  else {
+		  overflow = 0;
+	  }
+	  
+	  this.hour = this.hour + tf.getHours() + overflow;
+	  if (this.hour > 23) {
+		  overflow = this.hour/24;
+		  this.hour = this.hour - (24*overflow);
+	  }
+	  else {
+		  overflow = 0;
+	  }
+	  
+	  // TODO - check the month and find out how many days there should be in a month
+	  this.day = this.day + tf.getDays() + overflow;
+	  int monthDays = 30;
+	  if (this.day > monthDays) {
+		  overflow = this.day/monthDays;
+		  this.day = this.day - (monthDays*overflow);
+	  }
+	  else {
+		  overflow = 0;
+	  }
+
+	  this.month = this.month + tf.getMonths() + overflow;
+	  if (this.month > 12) {
+		  overflow = this.month/12;
+		  this.month = this.month - overflow;
+	  }
+	  else {
+		  overflow = 0;
+	  }
+	  
+	  this.year = this.year + tf.getYears() + overflow;
   }
 }
