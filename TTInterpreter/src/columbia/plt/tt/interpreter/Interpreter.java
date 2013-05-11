@@ -106,6 +106,10 @@ public class Interpreter {
 		if (parser.getNumberOfSyntaxErrors() != 0)
 		{
 			listener.error("SYNTAX ISSUES!");
+
+			for (int i = 0; i < parser.getErrors().size(); i++) {
+				listener.error(parser.getErrors().get(i));
+			}
 			return;
 		}
 
