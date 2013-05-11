@@ -60,7 +60,7 @@ public class TTGrammarTester {
 		try {
 
 
-			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/standard_library.tt");
+			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/tutorial_MeetingTime.tt");
 
 			Interpreter interpreter = new Interpreter();
 			interpreter.interp(fileStream);
