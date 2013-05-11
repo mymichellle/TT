@@ -1368,7 +1368,8 @@ public class Interpreter {
 	
 
 	public boolean isStdLibraryFunction(String methodName) {
-		if (methodName.equals("addTask") || 
+		if (methodName.equals("addTask") ||
+			methodName.equals("removeTask") ||
 			methodName.equals("read") ||
 			methodName.equals("print")) {
 				return true;
@@ -1380,6 +1381,8 @@ public class Interpreter {
 		
 		if (methodName.equals("addTask")) {
 			addTask(t);
+		} else if (methodName.equals("removeTask")) {
+			removeTask(t);
 		} else if (methodName.equals("read")) {
 			return read(t);
 		} else if (methodName.equals("print")) {
@@ -1389,16 +1392,27 @@ public class Interpreter {
 	}
 	
 	public void addTask(CommonTree t) {
-		//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
-		Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
-		Calendar c = (Calendar)s.getValue();
-		//System.out.println("Calendar: " +c);
-		s = ((Symbol)identity((CommonTree)t.getChild(2)));
-		Task task = (Task)s.getValue();
+		Object s = exec((CommonTree)t.getChild(1));
+		Calendar c = (Calendar)s;
+
+		s = exec((CommonTree)t.getChild(2));
+		Task task = (Task)s;
 		
 		if(c == null)
 			System.out.println("C IS NULL");
 		c.add(task);
+	}
+	
+	public void removeTask(CommonTree t) {
+		Object s = exec((CommonTree)t.getChild(1));
+		Calendar c = (Calendar)s;
+
+		s = exec((CommonTree)t.getChild(2));
+		Task task = (Task)s;
+		
+		if(c == null)
+			System.out.println("C IS NULL");
+		c.remove(task);
 	}
 	
 	public Object read(CommonTree t) {
