@@ -995,13 +995,9 @@ public class Interpreter {
 				b = exec((CommonTree) t.getChild(1));
 			System.out.println("b: "+b);
 			value = !(Boolean) b;
-			return value;
 		}
-		else {
-			listener.error("not a unaryExpression" + t.toString());
-			return null;
-		}
-		
+
+		return value;
 	}
 
 	public Object call(CommonTree t) {
