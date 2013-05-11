@@ -436,12 +436,10 @@ public class Interpreter {
 	
 	public void defineEval(CommonTree t, boolean isGlobal) {
 
-
 		CommonTree lhs = (CommonTree) t.getChild(0);
 		CommonTree expr = (CommonTree) t.getChild(1);
 
 		Object value = exec(expr);
-
 		String ident = null;
 
 
@@ -456,14 +454,16 @@ public class Interpreter {
 		if (s == null) {
 			// throw error;
 		}
+		
 		s.setValue(value);
+		
 
 	}
 
 
 
 	public String declarationEval(CommonTree t, boolean isGlobal) {
-		
+		System.out.println("DECLAREEVAL");
 		
 		if (t.getType() != TTParser.DECLARE) {
 			listener.error("not a declarition: " + t.toStringTree());
@@ -474,7 +474,7 @@ public class Interpreter {
 			String ident = null;
 			try {
 
-				System.out.println("Type" + t.getChild(0).getText());
+				System.out.println("Type: " + t.getChild(0).getText());
 
 				String dataType = (String) exec((CommonTree) t.getChild(0));
 				ident = t.getChild(1).getText();
@@ -537,6 +537,7 @@ public class Interpreter {
 
 	public void assign(CommonTree t) {
 
+		System.out.println("ASSIGN");
 		CommonTree lhs = (CommonTree) t.getChild(0);
 		CommonTree expr = (CommonTree) t.getChild(1);
 
@@ -584,9 +585,9 @@ public class Interpreter {
 			if (fieldname.equals("name"))
 				c.setName((String) value);
 			else if (fieldname.equals("start"))
-				c.setStart((Date) value);
+				c.setStart(new Date((Date) value));
 			else if (fieldname.equals("end"))
-				c.setEnd((Date) value);
+				c.setEnd(new Date((Date) value));
 			else {
 				listener.error("No field "+fieldname+" in Calendar");
 				return;
@@ -621,17 +622,15 @@ public class Interpreter {
 				+ TTConstants.TASK_CLASS)) {
 
 			Task t = (Task) symbol.getValue();
-			System.out.println(value);
-
-			System.out.println("TASK: "+ t.getName()+" "+fieldname);
+			
 			if (fieldname.equals("name"))
 				t.setName((String) value);
 
 			else if (fieldname.equals("start"))
-				t.setStart((Date) value);
+				t.setStart(new Date((Date)value));
 
 			else if (fieldname.equals("end"))
-				t.setEnd((Date) value);
+				t.setEnd(new Date((Date) value));
 
 			else if (fieldname.equals("description"))
 				t.setDescription((String) value);
@@ -989,7 +988,7 @@ public class Interpreter {
 	}
 	public Object unaryExprEval(CommonTree t) {
 
-		System.out.println("UNARY: "+t.getChild(0).getType());
+		//System.out.println("UNARY: "+t.getChild(0).getType());
 		Object a = null;
 		
 		
@@ -1123,19 +1122,19 @@ public class Interpreter {
 		for (int i = 0; i < t.getChildCount(); i++) {
 			switch (t.getChild(i).getType()) {
 			case TTParser.FROM:
-				System.out.println("FROM: "+t.getChild(i).getChild(0));
+				//System.out.println("FROM: "+t.getChild(i).getChild(0));
 				start = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.TO:
-				System.out.println("TO: "+t.getChild(i).getChild(0));
+				//System.out.println("TO: "+t.getChild(i).getChild(0));
 				end = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.BY:
-				System.out.println("BY: "+t.getChild(i).getChild(0));
+				//System.out.println("BY: "+t.getChild(i).getChild(0));
 				inc = (TimeFrame) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.SLIST:
-				System.out.println("SLIST: "+t.getChild(i).getChild(0));
+				//System.out.println("SLIST: "+t.getChild(i).getChild(0));
 				block = (CommonTree) t.getChild(i);
 				break;
 			default:
