@@ -360,6 +360,7 @@ public class Interpreter {
 	}
 
 	public void evalGlobals() {
+		
 		/* eval all global variables */
 		Scope globalScope = symbolTable.getScope(0);
 		for (Iterator<Map.Entry<String, Symbol>> it = globalScope.entrySet().iterator(); 
@@ -375,15 +376,17 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
-				
+				listener.error("can not evaluate global variables", e);
 			}
 		}
 	}
 	
 	public void imports(CommonTree t) {
 		CommonTree importsTree = (CommonTree)t.getChild(0);
-		
-		if (importsTree.getType() == TTParser.IMPORTS) {
+		if (importsTree.getType() != TTParser.IMPORTS) {
+			listener.error("not a valid imports: " + t.toStringTree());
+		}
+		else {
 			List<? extends Object> importsList = importsTree.getChildren();
 			for(Object arg : importsList) {
 				CommonTree argImport = (CommonTree)arg;
@@ -544,7 +547,7 @@ public class Interpreter {
 				}
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				listener.error("not a valid declarition: ", e);
 			}
 
 			return ident;
