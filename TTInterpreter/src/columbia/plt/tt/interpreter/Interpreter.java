@@ -172,6 +172,8 @@ public class Interpreter {
 				return plusEval(t);
 
 			case TTParser.MINUS:
+				return minusEval(t);
+				
 			case TTParser.DIV:
 			case TTParser.MULT:
 			case TTParser.MOD:
@@ -806,22 +808,37 @@ public class Interpreter {
 
 	
 	public Object plusEval(CommonTree t) {
-
+		
 		System.out.println("" + " Operator Evaluation");
-				
+		
 		Object a = exec((CommonTree) t.getChild(0));
 		Object b = exec((CommonTree) t.getChild(1));
-		
 		
 		if (a instanceof String && b instanceof String)
 			return a.toString() + b.toString();
 		else if (a instanceof Date && b instanceof TimeFrame) {
-			((Date)a).add((TimeFrame)b);
-			return a;
+			Date a1 = new Date((Date)a);
+			a1.add((TimeFrame)b);
+			return a1;
 		}
 		else if (a instanceof TimeFrame && b instanceof Date) {
-			((Date)b).add((TimeFrame)a);
+			Date b1 = new Date((Date)b);
+			b1.add((TimeFrame)a);
 			return b;
+		}
+		else {
+			return arithmeticEval(t);
+		}
+	}
+	
+	public Object minusEval(CommonTree t) {
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
+		
+		if (a instanceof Date && b instanceof TimeFrame) {
+			Date a1 = new Date((Date)a);
+			a1.substract((TimeFrame)b);
+			return a1;
 		}
 		else {
 			return arithmeticEval(t);
