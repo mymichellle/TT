@@ -139,4 +139,50 @@ public class Date implements Comparable<Date> {
 	  
 	  this.year = this.year + tf.getYears() + overflow;
   }
+  
+  public void substract(TimeFrame tf) {  
+  	int overflow = 0;
+  	this.minute = this.minute - tf.getMinutes();
+  	if (this.minute < 0) {
+  		this.minute = Math.abs(this.minute);
+  		overflow = this.minute/60;
+  		this.minute = this.minute - (60*overflow);
+  	}
+  	else {
+  		overflow = 0;
+  	}
+  	
+  	this.hour = this.hour - tf.getHours() - overflow;
+  	if (this.hour < 0) {
+  		this.hour = Math.abs(this.hour);
+  		overflow = this.hour/24;
+  		this.hour = this.hour - (24*overflow);
+  	}
+  	else {
+  		overflow = 0;
+  	}
+  		  	  	  	  	  	  	  	  	  
+  	this.day = this.day - tf.getDays() - overflow;
+  	int monthDays = 30;
+  	if (this.day < 0) {
+  		this.day = Math.abs(this.day);
+  		overflow = this.day/monthDays;
+  		this.day = this.day - (monthDays*overflow);
+  	}
+  	else {
+  		overflow = 0;
+  	}
+  		  	  	  	  	  	  	  	  	  	  	  	  	  
+  	this.month = this.month - tf.getMonths() - overflow;
+  	if (this.month > 12) {
+  		this.month = Math.abs(this.month);
+  		overflow = this.month/12;
+  		this.month = this.month - overflow;
+  	}
+  	else {
+  		overflow = 0;
+  	}
+  		  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  
+  	this.year = this.year - tf.getYears() - overflow;
+  }
 }
