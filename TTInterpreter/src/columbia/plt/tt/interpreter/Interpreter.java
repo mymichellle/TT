@@ -635,13 +635,13 @@ public class Interpreter {
 
 			if (fieldname.equals("year"))
 				d.setYear(val);
-			if (fieldname.equals("month"))
+			else if (fieldname.equals("month"))
 				d.setMonth(val);
-			if (fieldname.equals("day"))
+			else if (fieldname.equals("day"))
 				d.setDay(val);
-			if (fieldname.equals("hour"))
+			else if (fieldname.equals("hour"))
 				d.setHour(val);
-			if (fieldname.equals("minute"))
+			else if (fieldname.equals("minute"))
 				d.setMinute(val);
 			else {
 				listener.error("No field "+fieldname+" in Date");
@@ -655,19 +655,21 @@ public class Interpreter {
 
 			Task t = (Task) symbol.getValue();
 			System.out.println(value);
+
+			System.out.println("TASK: "+ t.getName()+" "+fieldname);
 			if (fieldname.equals("name"))
 				t.setName((String) value);
 
-			if (fieldname.equals("start"))
+			else if (fieldname.equals("start"))
 				t.setStart((Date) value);
 
-			if (fieldname.equals("end"))
+			else if (fieldname.equals("end"))
 				t.setEnd((Date) value);
 
-			if (fieldname.equals("description"))
+			else if (fieldname.equals("description"))
 				t.setDescription((String) value);
 
-			if (fieldname.equals("location"))
+			else if (fieldname.equals("location"))
 				t.setLocation((String) value);
 
 			else {
@@ -775,20 +777,20 @@ public class Interpreter {
 				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
 
 			Task task = (Task) symbol.getValue();
-
+			
 			if (fieldname.equals("name"))
 				return task.getName();
 
-			if (fieldname.equals("start"))
+			else if (fieldname.equals("start"))
 				return task.getStart();
 
-			if (fieldname.equals("end"))
+			else if (fieldname.equals("end"))
 				return task.getEnd();
 
-			if (fieldname.equals("description"))
+			else if (fieldname.equals("description"))
 				return task.getDescription();
 
-			if (fieldname.equals("location"))
+			else if (fieldname.equals("location"))
 				return task.getLocation();
 
 			else {
@@ -1101,10 +1103,12 @@ public class Interpreter {
 				block = (CommonTree) t.getChild(i);
 				break;
 			default:
-				// Handle "Date"
-				type = ((CommonTree) t.getChild(i)).getText();
-				name = ((CommonTree) t.getChild(i)).getChild(0).getText();
-				symbolTable.addSymbol(name, type, itterDate);
+				// Handle "Date" declaration
+				name = declarationEval((CommonTree)t.getChild(i), false);
+				
+				// Record type
+				Symbol s = symbolTable.getSymbol(name);
+				type = s.getType();
 				break;
 			}
 		}
@@ -1190,16 +1194,6 @@ public class Interpreter {
 			switch (t.getChild(i).getType()) {
 			case TTParser.IN:
 				c = (Calendar) exec((CommonTree) t.getChild(i));
-				/*
-				 * c = new Calendar("Temp"); c.add(new Task("one", new
-				 * Date("2013.01.01.10"), new Date("2013.01.01.12"), "here", 0,
-				 * "desc")); c.add(new Task("two", new Date("2013.01.01.13"),
-				 * new Date("2013.01.01.13.50"), "here", 0, "desc")); c.add(new
-				 * Task("three", new Date("2013.01.01.14"), new
-				 * Date("2013.01.01.14.10"), "here", 0, "desc")); c.add(new
-				 * Task("four", new Date("2013.01.01.20"), new
-				 * Date("2013.01.01.21"), "here", 0, "desc"));
-				 */
 				break;
 			case TTParser.FROM:
 				start = (Date) exec((CommonTree) t.getChild(i));
@@ -1215,9 +1209,11 @@ public class Interpreter {
 				break;
 			default:
 				// Handle "Task"
-				type = ((CommonTree) t.getChild(i)).getText();
-				name = ((CommonTree) t.getChild(i)).getChild(0).getText();
-				symbolTable.addSymbol(name, type, itterTask);
+				name = declarationEval((CommonTree)t.getChild(i), false);
+        
+        		// Record type
+        		Symbol s = symbolTable.getSymbol(name);
+        		type = s.getType();
 				break;
 			}
 		}

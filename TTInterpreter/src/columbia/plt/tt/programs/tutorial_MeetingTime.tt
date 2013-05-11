@@ -7,8 +7,8 @@ main() {
 	Calendar c2;
 	
 	c1.name = "Michelle's Day";
-	//c1.start = start;
-	//c1.end = end;
+	c1.start = start;
+	c1.end = end;
 	
 	Task t;
 	t.name = "Team Meeting";
@@ -60,7 +60,12 @@ main() {
  Boolean conflict(Calendar c, Task t)
  {
  	print("CONFLICT");
+ 	print(c);
+ 	print(t);
+ 	
  	every Task task in c{
+ 		print(task);
+ 		
  		if( task.end < t.start || t.end < task.start)
  		{
  			return false;
@@ -73,13 +78,13 @@ main() {
  Calendar getAvailableOneHourMeetingSlots(Calendar cal1, Calendar cal2) {
  	Calendar c;
  	c.name = "Meeting Calendar";
- 
+ 	
  	Task task;
  	task.name = "Meeting";
  	task.start = 2013.01.01.10;
  	task.end = 2013.01.02.10;
- 	conflict(cal1, t);
- 	
+ 	conflict(cal1, task);
+ 	exit;
  	every Date d from start to end by 30 minutes {
  		Task t; 
  		t.name = "Meeting";
