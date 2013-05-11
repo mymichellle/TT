@@ -419,6 +419,7 @@ public class Interpreter {
 		CommonTree expr = (CommonTree) t.getChild(1);
 
 		Object value = exec(expr);
+		
 
 		String ident= null;
 
@@ -427,15 +428,21 @@ public class Interpreter {
 		else {
 			listener.error("not a valid declarition: " + t.toString());
 		}
+		
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
 			listener.error("the symbol is not exsited: " + ident);
 		}
-		s.setValue(value);
+		else {
+			//check type of expr matched s.type()
+			s.setValue(value);	
+		}
+		
 
 	}
 
+<<<<<<< HEAD
 	public String declarationEval(CommonTree t, boolean isGlobal) {
 
 		String ident = null;
@@ -474,20 +481,59 @@ public class Interpreter {
 			} else {
 				symbolTable.addSymbol(ident, dataType, object);
 			}
-
-		/*System.out.println("Type: " + t.getChild(0).getText() + " "+ t.toString());
+=======
+	public String declarationEval(CommonTree t) {
 		
-		String dataType = (String) exec((CommonTree) t.getChild(0));
-		String ident = t.getChild(1).getText();
-		System.out.println("T: "+dataType+" i: "+ident);
-		symbolTable.addSymbol(ident, dataType, null);*/
-		return ident;
+		if ( t.getType()!=TTParser.DECLARE ) {
+            listener.error("not a declarition: "+t.toStringTree());
+			  return null;
+        }
+		else{
+		
+			String ident = null;
+			try {
+
+				System.out.println("Type" + t.getChild(0).getText());
+
+				String dataType = (String) exec((CommonTree) t.getChild(0));
+				ident = t.getChild(1).getText();
+				Object object = null;
+				if (dataType.equals("Calendar") || dataType.equals("Task")
+						|| dataType.equals("TimeFrame")
+						|| dataType.equals("Date")) {
+					dataType = TTConstants.PACKAGE_PREFIX + dataType;
+
+					Class<?> dataTypeClass = Class.forName(dataType);
+					object = dataTypeClass.newInstance();
+				}
+				else if (dataType.equals("Number")){
+					object = new Integer(0);
+				}
+				else if (dataType.equals("String")){
+					object = new String();
+				}
+				else{
+					listener.error("Unsupported data type:" + dataType);
+					return null;
+				}
+
+				symbolTable.addSymbol(ident, dataType, object);
+>>>>>>> add typecheck for TUNIT, MAINBLOCK, SLIST, DECLARE, DEFINE, ASSIGN
+
+			/*System.out.println("Type: " + t.getChild(0).getText() + " "+ t.toString());
+			
+			String dataType = (String) exec((CommonTree) t.getChild(0));
+			String ident = t.getChild(1).getText();
+			System.out.println("T: "+dataType+" i: "+ident);
+			symbolTable.addSymbol(ident, dataType, null);*/
+			return ident;
 
 
-		} catch (Exception e) {
-			e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return ident;
 		}
-		return ident;
 	}
 
 	public Symbol identity(CommonTree t) {
@@ -520,6 +566,7 @@ public class Interpreter {
 		}
 
 		String ident = null;
+		
 		if (lhs.getType() == TTParser.DECLARE)
 			ident = declarationEval(t, false);
 		else
@@ -527,9 +574,12 @@ public class Interpreter {
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
-			// throw error;
+			listener.error("the identification is not existed: " + s.toString());
 		}
-		s.setValue(value);
+		else{
+			s.setValue(value);
+		
+		}
 
 	}
 
@@ -542,7 +592,8 @@ public class Interpreter {
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
-			// throw error tht object has no been defined
+			listener.error("object has no been defined: " + symbol.toString());
+			//object has no been defined
 		}
 		
 		String dataType = symbol.getType();
@@ -558,6 +609,7 @@ public class Interpreter {
 			if (fieldname.equals("end"))
 				c.setEnd((Date) value);
 			else {
+				listener.error("unknown field for Calendar Class" + symbol.toString());
 				// throw error unknown field for this datatype
 			}
 
@@ -580,6 +632,7 @@ public class Interpreter {
 			if (fieldname.equals("minute"))
 				d.setMinute(val);
 			else {
+				listener.error("unknown field for Date Class" + symbol.toString());
 				// throw error unknown field for this datatype
 			}
 
@@ -606,6 +659,7 @@ public class Interpreter {
 				t.setLocation((String) value);
 
 			else {
+				listener.error("unknown field for Task Class" + symbol.toString());
 				// throw error unknown field for this datatype
 			}
 
@@ -636,13 +690,14 @@ public class Interpreter {
 				tf.setMinutes(val);
 
 			else {
-
+				listener.error("unknown field for TimeFrame Class" + symbol.toString());
 				// throw error unknown field for this datatype
 			}
 
 		}
 
 		else {
+			listener.error("cannot be associated with primitive types" + symbol.toString());
 			// throw error, fields cannot be associated with primitive types
 		}
 
