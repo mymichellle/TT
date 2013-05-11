@@ -383,7 +383,7 @@ public class Interpreter {
 	public void imports(CommonTree t) {
 		CommonTree importsTree = (CommonTree)t.getChild(0);
 		
-		if (importsTree.getType() == TTParser.IMPORTS) {
+		if (importsTree.getType() == TTParser.IMPORTS && importsTree.getChildCount() > 0) {
 			List<? extends Object> importsList = importsTree.getChildren();
 			for(Object arg : importsList) {
 				CommonTree argImport = (CommonTree)arg;
