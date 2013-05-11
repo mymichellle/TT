@@ -1,0 +1,13 @@
+import "<std>";
+
+//Number a = 2 + 3;
+//Number b;
+//Calendar c;
+
+main(){
+	String t = read("Enter Something:");
+//	Task task1;
+	
+//	addTask(c, task1);
+	print(t);
+}

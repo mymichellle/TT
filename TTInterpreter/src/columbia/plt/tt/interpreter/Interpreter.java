@@ -267,9 +267,6 @@ public class Interpreter {
 				return returnStmt(t);
 			case TTParser.READ :
 				return read(t);
-			case TTParser.PRINT:
-				print(t);
-				break; // (PL)
 
 			case TTParser.TIMEFRAME_YEAR:
 				return TimeFrameConst.YEAR;
@@ -1345,6 +1342,10 @@ public class Interpreter {
 		
 		if (methodName.equals("addTask")) {
 			addTask(t);
+		} else if (methodName.equals("read")) {
+			result = read(t);
+		} else if (methodName.equals("print")) {
+			print(t);
 		} else {
 			return false;
 		}
@@ -1352,7 +1353,6 @@ public class Interpreter {
 	}
 	
 	public void addTask(CommonTree t) {
-		//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
 		Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
 		Calendar c = (Calendar)s.getValue();
 		//System.out.println("Calendar: " +c);
@@ -1380,7 +1380,7 @@ public class Interpreter {
 	
 	public void print(CommonTree t) {
 		
-		Object obj  = exec((CommonTree) t.getChild(0));
+		Object obj  = exec((CommonTree) t.getChild(1));
 		System.out.println(obj);
 		
 	}
