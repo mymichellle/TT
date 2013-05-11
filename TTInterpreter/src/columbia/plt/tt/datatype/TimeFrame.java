@@ -111,6 +111,35 @@ public TimeFrame() {
   	this.minutes = end.getMinute() - start.getMinute();
   }
   
+  public int compareTo(TimeFrame tf2) {
+  	if (years < tf2.years)
+  		return -1;
+  	else if (years > tf2.years)
+  		return 1;
+  	
+  	if (months < tf2.months)
+  		return -1;
+  	else if (months > tf2.months)
+  		return 1;
+  		  		  			  		  			  		  		  			  		  			  	
+  	if (days < tf2.days)
+  		return -1;
+  	else if (days > tf2.days)
+  		return 1;
+  		  		  			  		  			  		  		  			  		  			  		  		  			  		  			  	
+  	if (hours < tf2.hours)
+  		return -1;
+  	else if (hours > tf2.hours)
+  		return 1;
+  		  		  			  		  			  		  		  			  		  			  		  		  			  		  			  		  		  			  		  			  	
+  	if (minutes < tf2.minutes)
+  		return -1;
+  	else if (minutes > tf2.minutes)
+  		return 1;
+  		  		  			  		  			  		  		  			  		  			  		  		  			  		  			  		  		  			  		  			  		  		  			  		  			  	
+  	return 0;
+  }
+  
   @Override
   public String toString() {
   	return "Years: " + Integer.toString(years) + ", Months: " + Integer.toString(months) + ", Weeks: " + Integer.toString(weeks)+  ", Days: " + Integer.toString(days) + ", " +
