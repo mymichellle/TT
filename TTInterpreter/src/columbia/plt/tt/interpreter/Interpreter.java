@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.antlr.runtime.ANTLRInputStream;
@@ -35,6 +36,7 @@ public class Interpreter {
 	CommonTree root;
 	SymbolTable symbolTable = new SymbolTable();
 	ArrayList<String> errors = new ArrayList<String>();
+	boolean useStandardLibrary = false;
 
 	public enum TimeFrameConst {
 		YEAR, YEARS, MONTH, MONTHS, DAY, DAYS, HOUR, HOURS, MINUTE, MINUTES, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER, WEEKEND, WEEKDAY
@@ -348,6 +350,8 @@ public class Interpreter {
 			System.out.println("No main");
 			listener.error("no main method to execute: " + t.toStringTree());
 		} else {
+			evalGlobals();
+			imports(t);
 			exec(mainSymbol.methodBody);
 		}
 
@@ -377,7 +381,60 @@ public class Interpreter {
 	}
 	
 	public void imports(CommonTree t) {
-		// System.out.println("Imports");
+		CommonTree importsTree = (CommonTree)t.getChild(0);
+		
+		if (importsTree.getType() == TTParser.IMPORTS) {
+			List<? extends Object> importsList = importsTree.getChildren();
+			for(Object arg : importsList) {
+				CommonTree argImport = (CommonTree)arg;
+				if (argImport.equals("<std>"))
+					useStandardLibrary = true;
+			}
+		}
+		if(!useStandardLibrary) return;
+		
+		/* addTask(Calendar c, Task t); */
+		MethodSymbol addTask = new MethodSymbol(null, null, "addTask");
+		addTask.addParameter("c", new Symbol("Calendar", null, "c"));
+		addTask.addParameter("t", new Symbol("Task", null, "t"));
+		symbolTable.addSymbol("addTask", addTask);
+		
+		/* removeTask(Calendar c, Task t); */
+		MethodSymbol removeTask = new MethodSymbol(null, null, "removeTask");
+		removeTask.addParameter("c", new Symbol("Calendar", null, "c"));
+		removeTask.addParameter("t", new Symbol("Task", null, "t"));
+		symbolTable.addSymbol("removeTask", removeTask);
+		
+		/* read(String s); */
+		MethodSymbol read = new MethodSymbol("String", null, "read");
+		read.addParameter("s", new Symbol("String", null, "s"));
+		symbolTable.addSymbol("read", read);
+		
+		/* print(String|Number|Date|Calendar|Task s); String|Number|Date|Calendar|Task == Object */
+		MethodSymbol print = new MethodSymbol(null, null, "print");
+		print.addParameter("s", new Symbol("Object", null, "s"));
+		symbolTable.addSymbol("print", print);
+		
+		/* getCurrentTime() */
+		MethodSymbol getCurrentTime = new MethodSymbol("Date", null, "getCurrentTime");
+		symbolTable.addSymbol("getCurrentTime", getCurrentTime);
+		
+		/* downloadCalendar(String username, String password, String calendarName, Date startDate, Date endDate); */
+		MethodSymbol downloadCalendar = new MethodSymbol("Calendar", null, "downloadCalendar");
+		downloadCalendar.addParameter("username", new Symbol("String", null, "username"));
+		downloadCalendar.addParameter("password", new Symbol("String", null, "password"));
+		downloadCalendar.addParameter("calendarName", new Symbol("String", null, "calendarName"));
+		downloadCalendar.addParameter("startDate", new Symbol("Date", null, "startDate"));
+		downloadCalendar.addParameter("endDate", new Symbol("Date", null, "endDate"));
+		symbolTable.addSymbol("downloadCalendar", downloadCalendar);
+		
+		/* uploadCalendar(String username, String password, String calendarName, Date startDate, Date endDate); */
+		MethodSymbol uploadCalendar = new MethodSymbol(null, null, "uploadCalendar");
+		uploadCalendar.addParameter("username", new Symbol("String", null, "username"));
+		uploadCalendar.addParameter("password", new Symbol("String", null, "password"));
+		uploadCalendar.addParameter("calendarName", new Symbol("String", null, "calendarName"));
+		uploadCalendar.addParameter("c", new Symbol("Calendar", null, "c"));
+		symbolTable.addSymbol("uploadCalendar", uploadCalendar);
 	}
 
 	public void mainBlock(CommonTree t) {
@@ -411,18 +468,22 @@ public class Interpreter {
 		}
 		return null;
 	}
+
 	
 	public void defineEval(CommonTree t, boolean isGlobal) {
+
 
 		CommonTree lhs = (CommonTree) t.getChild(0);
 		CommonTree expr = (CommonTree) t.getChild(1);
 
 		Object value = exec(expr);
 
-		String ident= null;
+		String ident = null;
+
 
 		if(lhs.getType() == TTParser.DECLARE)
 			ident = declarationEval(lhs, isGlobal);
+
 		else {
 			// throw error
 		}
@@ -435,58 +496,60 @@ public class Interpreter {
 
 	}
 
+
+
 	public String declarationEval(CommonTree t, boolean isGlobal) {
-
-		String ident = null;
-		try {
-
-			System.out.println("Type: " + t.getChild(0).getText());
-
-			String dataType = (String) exec((CommonTree) t.getChild(0));
-			ident = t.getChild(1).getText();
-			Object object = null;
-			if (dataType.equals("Calendar") || dataType.equals("Task")
-					|| dataType.equals("TimeFrame")
-					|| dataType.equals("Date")) {
-				dataType = TTConstants.PACKAGE_PREFIX + dataType;
-
-				Class<?> dataTypeClass = Class.forName(dataType);
-				object = dataTypeClass.newInstance();
-			}
-			else if (dataType.equals("Number")){
-				object = new Integer(0);
-			}
-			else if (dataType.equals("String")){
-				object = new String();
-			}
-			else{
-				listener.error("Unsupported data type");
-				return null;
-			}
-
-			
-			if (isGlobal) {
-				Symbol s = symbolTable.getSymbol(ident);
-				s.setValue(object);
-				s.setType(dataType);
-				
-			} else {
-				symbolTable.addSymbol(ident, dataType, object);
-			}
-
-		/*System.out.println("Type: " + t.getChild(0).getText() + " "+ t.toString());
 		
-		String dataType = (String) exec((CommonTree) t.getChild(0));
-		String ident = t.getChild(1).getText();
-		System.out.println("T: "+dataType+" i: "+ident);
-		symbolTable.addSymbol(ident, dataType, null);*/
-		return ident;
-
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		if (t.getType() != TTParser.DECLARE) {
+			listener.error("not a declarition: " + t.toStringTree());
+			return null;
 		}
-		return ident;
+
+		else {
+			String ident = null;
+			try {
+
+				System.out.println("Type" + t.getChild(0).getText());
+
+				String dataType = (String) exec((CommonTree) t.getChild(0));
+				ident = t.getChild(1).getText();
+				Object object = null;
+				if (dataType.equals("Calendar") || dataType.equals("Task")
+						|| dataType.equals("TimeFrame")
+						|| dataType.equals("Date")) {
+					dataType = TTConstants.PACKAGE_PREFIX + dataType;
+
+					Class<?> dataTypeClass = Class.forName(dataType);
+					object = dataTypeClass.newInstance();
+				} else if (dataType.equals("Number")) {
+					object = new Integer(0);
+				} else if (dataType.equals("String")) {
+					object = new String();
+				}else if(dataType.equals("Boolean")){
+					object = new Boolean(false);
+				}
+				else {
+					listener.error("Unsupported data type");
+					return null;
+				}
+
+				if (isGlobal) {
+					Symbol s = symbolTable.getSymbol(ident);
+					s.setValue(object);
+					s.setType(dataType);
+
+				} else {
+					symbolTable.addSymbol(ident, dataType, object);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return ident;
+		}
+
 	}
 
 	public Symbol identity(CommonTree t) {
@@ -537,33 +600,35 @@ public class Interpreter {
 		CommonTree o = (CommonTree) lhs.getChild(0);
 		CommonTree f = (CommonTree) lhs.getChild(1);
 		
-		String fieldname = f.getText();
+		String fieldname = f.getText().trim();
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
-			// throw error tht object has no been defined
+			listener.error("No symbol in table for "+o.getText()+"."+f.getText());
+			return;
 		}
-		
+
 		String dataType = symbol.getType();
 
-		if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.CALENDAR_CLASS)) {
+		if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.CALENDAR_CLASS)) {
 
 			Calendar c = (Calendar) symbol.getValue();
 			if (fieldname.equals("name"))
 				c.setName((String) value);
-			if (fieldname.equals("start"))
+			else if (fieldname.equals("start"))
 				c.setStart((Date) value);
-			if (fieldname.equals("end"))
+			else if (fieldname.equals("end"))
 				c.setEnd((Date) value);
 			else {
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Calendar");
+				return;
 			}
 
 		}
 
-		else if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.DATE_CLASS)) {
+		else if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.DATE_CLASS)) {
 
 			Date d = (Date) symbol.getValue();
 			int val = (Integer) value;
@@ -579,13 +644,14 @@ public class Interpreter {
 			if (fieldname.equals("minute"))
 				d.setMinute(val);
 			else {
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Date");
+				return;
 			}
 
 		}
 
-		else if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
+		else if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.TASK_CLASS)) {
 
 			Task t = (Task) symbol.getValue();
 			System.out.println(value);
@@ -605,13 +671,14 @@ public class Interpreter {
 				t.setLocation((String) value);
 
 			else {
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in Task");
+				return;
 			}
 
 		}
 
-		else if (dataType.equals(
-				TTConstants.PACKAGE_PREFIX + TTConstants.TIMEFRAME_CLASS)) {
+		else if (dataType.equals(TTConstants.PACKAGE_PREFIX
+				+ TTConstants.TIMEFRAME_CLASS)) {
 
 			TimeFrame tf = (TimeFrame) symbol.getValue();
 			int val = (Integer) value;
@@ -636,13 +703,15 @@ public class Interpreter {
 
 			else {
 
-				// throw error unknown field for this datatype
+				listener.error("No field "+fieldname+" in TimeFrame");
+				return;
 			}
 
 		}
 
 		else {
-			// throw error, fields cannot be associated with primitive types
+			listener.error("Fields cannot be accessed on primitive types");
+			return;
 		}
 
 	}
@@ -652,11 +721,10 @@ public class Interpreter {
 		CommonTree o = (CommonTree) t.getChild(0);
 		CommonTree f = (CommonTree) t.getChild(1);
 		
-		String fieldname = f.getText();
+		String fieldname = f.getText().trim();
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
-			// throw error tht object has no been defined
 			listener.error("No symbol in table for "+o.getText()+"."+f.getText());
 		}
 		
@@ -673,7 +741,7 @@ public class Interpreter {
 			if (fieldname.equals("end"))
 				return c.getEnd();
 			else {
-				// throw error unknown field for this datatype
+				
 				listener.error("No field "+fieldname+" in Calendar");
 				return null;
 			}
@@ -696,7 +764,7 @@ public class Interpreter {
 			if (fieldname.equals("minute"))
 				return d.getMinute();
 			else {
-				// throw error unknown field for this datatype
+				
 				listener.error("No field "+fieldname+" in Date");
 				return null;
 			}
@@ -724,7 +792,7 @@ public class Interpreter {
 				return task.getLocation();
 
 			else {
-				// throw error unknown field for this datatype
+				
 				listener.error("No field "+fieldname+" in Task");
 				return null;
 			}
@@ -755,17 +823,18 @@ public class Interpreter {
 				return tf.getMinutes();
 
 			else {
-				// throw error unknown field for this datatype
+			
 				listener.error("No field "+fieldname+" in TimeFrame");
 				return null;
 			}
 		}
+		
 		else {
-			// throw error, fields cannot be associated with primitive types
-			listener.error("No fields in primative types");
+			listener.error("No fields in primitive types");
 			return null;
 		}
 	}
+
 	
 	public Object plusEval(CommonTree t) {
 
@@ -811,6 +880,7 @@ public class Interpreter {
 		case TTParser.DIV: {
 			if (b == 0) {
 				listener.error("invalid operation:" + t.toStringTree());
+			
 			}
 			return a / b;
 
@@ -847,82 +917,61 @@ public class Interpreter {
 	}
 
 	public Boolean equalityEval(CommonTree t) {
-		
-	System.out.println("Equality Evaluation");
-	Object a = exec((CommonTree) t.getChild(0));
-	Object b = exec((CommonTree) t.getChild(1));
-	
-	if (a instanceof Date && b instanceof Date) {
+
+		System.out.println("Equality Evaluation");
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
+
 		switch (t.getType()) {
-			case TTParser.EQUALS: return ((Date)a).compareTo((Date)b) == 0;
-			case TTParser.NOTEQUALS: return ((Date)a).compareTo((Date)b) != 0;
-			default: return false;
+
+		case TTParser.EQUALS:
+			return a == b;
+		case TTParser.NOTEQUALS:
+			return a != b;
+		default:
+			return false;
 		}
 	}
-	else if (a instanceof TimeFrame && b instanceof TimeFrame) {
-		switch (t.getType()) {
-			case TTParser.EQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) == 0;
-			case TTParser.NOTEQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) != 0;
-			default: return false;
-		}
-	}
-	else {
-		switch (t.getType()) {
-			case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);
-			case TTParser.NOTEQUALS: return ((Integer)a) != ((Integer)b);
-			default: return false;
-		}
-	}
-	}
-	
+
 	public Boolean relationalEval(CommonTree t) {
-	
-	System.out.println("Relational Evaluation " +t.getChild(0).getText()+" " +t.getChild(1));
-	
-	Object a = exec((CommonTree) t.getChild(0));
-	Object b = exec((CommonTree) t.getChild(1));
-	
-	if (a instanceof Date && b instanceof Date) {
+
+		System.out.println("Relational Evaluation " +t.getChild(0).getText()+" " +t.getChild(1));
+
+		Integer a = (Integer) exec((CommonTree) t.getChild(0));
+		System.out.println("a: "+a);
+		Integer b = (Integer) exec((CommonTree) t.getChild(1));
+		System.out.println("b: "+b);
+
 		switch (t.getType()) {
-			case TTParser.GTEQ: return ((Date)a).compareTo((Date)b) >= 0;
-			case TTParser.LTEQ: return ((Date)a).compareTo((Date)b) <= 0;
-			case TTParser.GT: return ((Date)a).compareTo((Date)b) > 0;
-			case TTParser.LT: return ((Date)a).compareTo((Date)b) < 0;
-			default: return false;				
+
+		case TTParser.GTEQ:
+			return a >= b;
+		case TTParser.LTEQ:
+			return a <= b;
+		case TTParser.GT:
+			return a > b;
+		case TTParser.LT:
+			return a < b;
+
+		default:
+			return false;
 		}
-	}
-	else if (a instanceof TimeFrame && b instanceof TimeFrame) {
-		switch (t.getType()) {
-			case TTParser.GTEQ: return ((TimeFrame)a).compareTo((TimeFrame)b) >= 0;
-			case TTParser.LTEQ: return ((TimeFrame)a).compareTo((TimeFrame)b) <= 0;
-			case TTParser.GT: return ((TimeFrame)a).compareTo((TimeFrame)b) > 0;
-			case TTParser.LT: return ((TimeFrame)a).compareTo((TimeFrame)b) < 0;
-			default: return false;				
-		}
-	}
-	else {
-		switch (t.getType()) {
-			case TTParser.GTEQ: return ((Integer)a) >= ((Integer)b);
-			case TTParser.LTEQ: return ((Integer)a) <= ((Integer)b);
-			case TTParser.GT: return ((Integer)a) > ((Integer)b);
-			case TTParser.LT: return ((Integer)a) < ((Integer)b);
-			default: return false;
-		}
-	}
-															
+
 	}
 
 	public Object unaryExprEval(CommonTree t) {
 
 		System.out.println("UNARY: "+t.getChild(0).getType());
-
 		Object a = null;
+		
+		
 		if(t.getChild(0).getType() == TTParser.DOT)
 			a = fieldAccess((CommonTree)t.getChild(0));
 		else
 			a = exec((CommonTree) t.getChild(0));
 		
 		Object value = a;
+		
 		if (a == "not") {
 			System.out.println("a == not");
 			Object b = null;
@@ -932,33 +981,24 @@ public class Interpreter {
 				b = exec((CommonTree) t.getChild(1));
 			System.out.println("b: "+b);
 			value = !(Boolean) b;
-
 		}
 		return value;
 	}
 
 	public Object call(CommonTree t) {
-		System.out.println("call "+t.getChild(0));
+		String methodName = t.getChild(0).getText();
+		System.out.println("call " + methodName);
 		
-		if (t.getChild(0).getText().equals("addTask")){
-			//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
-			Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
-			Calendar c = (Calendar)s.getValue();
-			//System.out.println("Calendar: " +c);
-			s = ((Symbol)identity((CommonTree)t.getChild(2)));
-			Task task = (Task)s.getValue();
-			
-			if(c == null)
-				System.out.println("C IS NULL");
-			c.add(task);
+		if (methodName.equals("addTask")){
+			addTask(t);
 			return null;
 		}
 		
-		String methodName = t.getChild(0).getText();
+
 		MethodSymbol methodSymbol = (MethodSymbol) symbolTable
 				.getSymbol(methodName);
 		
-		if (methodName == null) {
+		if (methodSymbol == null) {
 			listener.error("no such method " + methodName, t.token);
 			return null;
 		}
@@ -971,21 +1011,28 @@ public class Interpreter {
 			listener.error("method '" + methodName + "' argument list mismatch");
 			return null;
 		}
-		symbolTable.addScope(false);
+		
+		ArrayList<Symbol> newSymbols = new ArrayList<Symbol>();
+
 		int i = 0;
 		// evaluate and define arguments
 		for (Symbol arg : argsList) {
 			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
 			Object argValue = exec(ithArg);
-			symbolTable.addSymbol(arg.getName(), arg.getType(), argValue);
+			newSymbols.add(new Symbol(arg.getType(), argValue, arg.getName()));
 			i++;
 		}
-
+		
+		symbolTable.addScope();
+		for (Symbol sym : newSymbols) {
+			symbolTable.addSymbol(sym.getName(), sym);
+		}
+		
 		Object result = exec(methodSymbol.methodBody);
 		symbolTable.removeScope();
 		return result;
 	}
-
+	
 	public Object returnStmt(CommonTree t) {
 		int childrenCount = t.getChildCount();
 		if (childrenCount == 0)
@@ -1038,28 +1085,26 @@ public class Interpreter {
 		for (int i = 0; i < t.getChildCount(); i++) {
 			switch (t.getChild(i).getType()) {
 			case TTParser.FROM:
-				//System.out.println("FROM: "+t.getChild(i).getChild(0));
+				System.out.println("FROM: "+t.getChild(i).getChild(0));
 				start = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.TO:
-				//System.out.println("TO: "+t.getChild(i).getChild(0));
+				System.out.println("TO: "+t.getChild(i).getChild(0));
 				end = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.BY:
-				//System.out.println("BY: "+t.getChild(i).getChild(0));
+				System.out.println("BY: "+t.getChild(i).getChild(0));
 				inc = (TimeFrame) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.SLIST:
-				//System.out.println("SLIST: "+t.getChild(i).getChild(0));
+				System.out.println("SLIST: "+t.getChild(i).getChild(0));
 				block = (CommonTree) t.getChild(i);
 				break;
 			default:
-				// Handle "Date" declaration
-				name = declarationEval((CommonTree)t.getChild(i), false);
-				
-				// Record type
-				Symbol s = symbolTable.getSymbol(name);
-				type = s.getType();
+				// Handle "Date"
+				type = ((CommonTree) t.getChild(i)).getText();
+				name = ((CommonTree) t.getChild(i)).getChild(0).getText();
+				symbolTable.addSymbol(name, type, itterDate);
 				break;
 			}
 		}
@@ -1074,7 +1119,7 @@ public class Interpreter {
 		// Define the itterDate
 		itterDate = start;
 		symbolTable.addSymbol(name, type, itterDate);
-		//System.out.println("loop from: "+start+" to "+end);
+		System.out.println("loop from: "+start+" to "+end);
 		while (itterDate.compareTo(end) <= 0) {
 			// Execute the block
 			exec(block);
@@ -1145,6 +1190,16 @@ public class Interpreter {
 			switch (t.getChild(i).getType()) {
 			case TTParser.IN:
 				c = (Calendar) exec((CommonTree) t.getChild(i));
+				/*
+				 * c = new Calendar("Temp"); c.add(new Task("one", new
+				 * Date("2013.01.01.10"), new Date("2013.01.01.12"), "here", 0,
+				 * "desc")); c.add(new Task("two", new Date("2013.01.01.13"),
+				 * new Date("2013.01.01.13.50"), "here", 0, "desc")); c.add(new
+				 * Task("three", new Date("2013.01.01.14"), new
+				 * Date("2013.01.01.14.10"), "here", 0, "desc")); c.add(new
+				 * Task("four", new Date("2013.01.01.20"), new
+				 * Date("2013.01.01.21"), "here", 0, "desc"));
+				 */
 				break;
 			case TTParser.FROM:
 				start = (Date) exec((CommonTree) t.getChild(i));
@@ -1160,12 +1215,9 @@ public class Interpreter {
 				break;
 			default:
 				// Handle "Task"
-
-				name = declarationEval((CommonTree)t.getChild(i), false);
-				
-				// Record type
-				Symbol s = symbolTable.getSymbol(name);
-				type = s.getType();
+				type = ((CommonTree) t.getChild(i)).getText();
+				name = ((CommonTree) t.getChild(i)).getChild(0).getText();
+				symbolTable.addSymbol(name, type, itterTask);
 				break;
 			}
 		}
@@ -1217,7 +1269,22 @@ public class Interpreter {
 		//System.out.println("Calendar: "+ s.getType()+ " "+s.getValue());
 		return (Calendar)s.getValue();
 
+
 	}
+	
+	public void addTask(CommonTree t) {
+		//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
+		Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
+		Calendar c = (Calendar)s.getValue();
+		//System.out.println("Calendar: " +c);
+		s = ((Symbol)identity((CommonTree)t.getChild(2)));
+		Task task = (Task)s.getValue();
+		
+		if(c == null)
+			System.out.println("C IS NULL");
+		c.add(task);
+	}
+	
 	public Object read(CommonTree t) {
 		Object result = exec((CommonTree) t.getChild(0));
 		System.out.print(result);
