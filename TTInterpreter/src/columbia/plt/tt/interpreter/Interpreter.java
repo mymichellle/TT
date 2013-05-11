@@ -46,7 +46,7 @@ public class Interpreter {
 
 	public InterpreterListener listener = // default response to messages
 	new InterpreterListener() {
-		public void info(String msg) {
+		public void info(String msg) {			
 			System.out.println(msg);
 		}
 
@@ -58,7 +58,12 @@ public class Interpreter {
 			error(msg);
 			e.printStackTrace(System.err);
 		}
-
+		
+		public void error(String msg, CommonTree t) {
+			System.out.print("line: "+ t.getLine());
+			error(msg);
+			
+		}
 		@Override
 		public void error(String msg, org.antlr.runtime.Token t) {
 			error("line " + t.getLine() + ": " + msg);
@@ -250,7 +255,7 @@ public class Interpreter {
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
 			case TTParser.STRING_CONSTANT:
-				return t.getText();
+				return t.getText().replaceAll("\"","");
 
 			case TTParser.TRUE:
 			case TTParser.FALSE:
@@ -334,7 +339,7 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("problem executing " + t.toStringTree(), e);
+			listener.error("line: " + t.getLine() + " - problem executing " + t.toStringTree(), e);
 		}
 		return null;
 	}
@@ -374,7 +379,6 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
-				listener.error("can not evaluate global variables", e);
 			}
 		}
 	}
@@ -403,6 +407,7 @@ public class Interpreter {
 			// Handle error
 			listener.error("not a mainblock: " + t.getType() + " "
 					+ t.toStringTree());
+			return;
 
 		}
 		CommonTree mainBody = (CommonTree) t.getChild(0);
@@ -475,6 +480,7 @@ public class Interpreter {
 				String dataType = (String) exec((CommonTree) t.getChild(0));
 				ident = t.getChild(1).getText();
 				Object object = null;
+				
 				if (dataType.equals("Calendar") || dataType.equals("Task")
 						|| dataType.equals("TimeFrame")
 						|| dataType.equals("Date")) {
@@ -482,6 +488,7 @@ public class Interpreter {
 
 					Class<?> dataTypeClass = Class.forName(dataType);
 					object = dataTypeClass.newInstance();
+					
 				} else if (dataType.equals("Number")) {
 					object = new Integer(0);
 				} else if (dataType.equals("String")) {
@@ -549,7 +556,8 @@ public class Interpreter {
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
-			// throw error;
+			listener.error("Undefied varibles: " + lhs.getText());
+			return;
 		}
 		s.setValue(value);
 
@@ -850,8 +858,10 @@ public class Interpreter {
 		case TTParser.MOD:
 			return a % b;
 
-		default:
-			return 0;
+		default: {
+			listener.error("undifined arithmetic operators" + t.toString());
+			return null;
+		}
 
 		}
 
@@ -871,8 +881,11 @@ public class Interpreter {
 			return a || b;
 		case TTParser.NOT:
 			return !a;
-		default:
-			return false;
+		default: {
+			listener.error("undifined logical operators" + t.toString());
+			return null;
+		}
+			
 		}
 
 	}
@@ -887,21 +900,30 @@ public class Interpreter {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Date)a).compareTo((Date)b) == 0;
 				case TTParser.NOTEQUALS: return ((Date)a).compareTo((Date)b) != 0;
-				default: return false;
+				default: {
+					listener.error("undifined logical operators" + t.toString());
+					return null;
+				}
 			}
 		}
 		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) == 0;
 				case TTParser.NOTEQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) != 0;
-				default: return false;
+				default: {
+					listener.error("undifined logical operators" + t.toString());
+					return null;
+				}
 				}
 			}
 		else {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);
 				case TTParser.NOTEQUALS: return ((Integer)a) != ((Integer)b);
-				default: return false;
+				default: {
+					listener.error("undifined logical operators" + t.toString());
+					return null;
+				}
 			}
 		}
 	}
@@ -919,7 +941,10 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((Date)a).compareTo((Date)b) <= 0;
 				case TTParser.GT: return ((Date)a).compareTo((Date)b) > 0;
 				case TTParser.LT: return ((Date)a).compareTo((Date)b) < 0;
-				default: return false;				
+				default: {
+					listener.error("undifined logical operators" + t.toString());
+					return null;
+				}				
 			}
 		}
 		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
@@ -928,7 +953,10 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((TimeFrame)a).compareTo((TimeFrame)b) <= 0;
 				case TTParser.GT: return ((TimeFrame)a).compareTo((TimeFrame)b) > 0;
 				case TTParser.LT: return ((TimeFrame)a).compareTo((TimeFrame)b) < 0;
-				default: return false;				
+				default: {
+					listener.error("undifined logical operators" + t.toString());
+					return null;
+				}				
 			}
 		}
 		else {
@@ -937,7 +965,10 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((Integer)a) <= ((Integer)b);
 				case TTParser.GT: return ((Integer)a) > ((Integer)b);
 				case TTParser.LT: return ((Integer)a) < ((Integer)b);
-				default: return false;
+				default: {
+					listener.error("undifined logical operators" + t.toString());
+					return null;
+				}
 			}
 		}
 		
@@ -964,8 +995,13 @@ public class Interpreter {
 				b = exec((CommonTree) t.getChild(1));
 			System.out.println("b: "+b);
 			value = !(Boolean) b;
+			return value;
 		}
-		return value;
+		else {
+			listener.error("not a unaryExpression" + t.toString());
+			return null;
+		}
+		
 	}
 
 	public Object call(CommonTree t) {
@@ -1304,6 +1340,7 @@ public class Interpreter {
 	}
 	
 	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
+		
 		if (methodName.equals("addTask")) {
 			addTask(t);
 		} else {
@@ -1340,10 +1377,9 @@ public class Interpreter {
 	}
 	
 	public void print(CommonTree t) {
-		if (((CommonTree) t.getChild(0)).getType() == TTParser.IDENT_TOKEN) {
-			Symbol s = (Symbol) exec((CommonTree) t.getChild(0));
-			System.out.println(s.getValue());
-		} else
-			System.out.println(t.getChild(0).getText());
+		
+		Object obj  = exec((CommonTree) t.getChild(0));
+		System.out.println(obj);
+		
 	}
 }

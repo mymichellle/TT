@@ -2,7 +2,11 @@ main(){
 	
 	Calendar c;
 	c.start = 2013.01.01;
+	
 
 	Boolean b = (true && false) || false;
+	print (b);
+	print (c.start);
+
 
 }

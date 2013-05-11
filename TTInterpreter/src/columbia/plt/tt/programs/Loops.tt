@@ -21,6 +21,7 @@ main()
 	t1.name = "one";
 	t1.start = 2013.01.01.02;
 	t1.end = 2013.01.01.03;
+	
 	addTask(p, t1);
 	
 	Task t2;
