@@ -9,8 +9,15 @@ main(){
 	String t = read("Enter Something:");
 	Task task1;
 	task1.name = "Name";
+	task1.start = 2012.01.01;
+	task1.end = 2012.02.02;
 	
 	addTask(c, task1);
 	print(t);
-	//print(c);
+	print(c);
+	
+	removeTask(c, task1);
+	print("After remove");
+	print(c);
+	print(2+3);
 }
