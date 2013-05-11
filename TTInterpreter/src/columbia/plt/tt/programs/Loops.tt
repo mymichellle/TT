@@ -1,14 +1,27 @@
 
 Calendar p;
+Date start = 2013.05.16;
+Date end = 2013.05.17;
+
 
 main()
 {
+	every Date d from start to end by 30 minutes {
+		print(d);
+ 		Task t; 
+ 		t.name = "Meeting";
+ 		t.start = d;
+ 		t.end = d + 1 hours;
+ 	}
+ 	
+	exit;
+	p.name = "P Calendar";
 	
-	Calendar c;// = "myCal";
-	String s;
-	Number n = 4;
-	Date date = 2013.01.12;
-
+	Task t1;
+	t1.name = "one";
+	t1.start = 2013.01.01.02;
+	t1.end = 2013.01.01.03;
+	
 	addTask(p, t1);
 	
 	Task t2;
@@ -17,43 +30,46 @@ main()
 	t2.end = 2013.01.01.05;
 	
 	print("CONFLICT");
- 	every Task task in c{
+ 	every Task task in p{
  		print(task);
  		Date d = task.end;
  		Date d2 = t2.start;
  		print(d2);
- 		//if(d < d2)
- 		//{
- 		//	return true;
- 		//}
+ 		if(task.start < t2.end || task.end < t2.start)
+ 		{
+ 			print("OKAY");
+ 		}
  		
  	}
 	
 	
-	//exit;
-	if( 2 < n)
-	{
-		print("YES n is less than 5");
-	}
-	
-	//addTask(cal, t1);
-	
-	every Date d from 2013.01.01 to 2013.01.02 by 1 days { 
-		print("first");
-		print(d);
-		Task t;
-		t.name = "temp";
-		t.start = 2013.10.19;
-		//t.start = d;
-	}
 	exit;
-	every Task t in c {
+	
+	Calendar loopCal;
+	loopCal.name = "TestLoopCal";
+	
+	every Date d from 2013.01.01 to 2013.01.03 by 1 days { 
+		print("Date Loops");
+		print(d);
+		
+		Task loopTask;
+		loopTask.name = "temp";
+		loopTask.start = d;
+		loopTask.end = d + 4 hours;
+		
+		addTask(loopCal, loopTask);
+	}
+	
+	// Every Task
+	every Task t in loopCal {
 		print(t);
 		continue;
+		// Everything below continue should never be executed
 		print("Hello");
 	}
-	exit;
-	every Task t in c from 2013.01.01.12 to 2013.02.04{
+
+	// Every Task between these dates
+	every Task t in loopCal from 2013.01.01.12 to 2013.02.04{
 		print(t);
 		break;
 	}

@@ -172,6 +172,8 @@ public class Interpreter {
 				return plusEval(t);
 
 			case TTParser.MINUS:
+				return minusEval(t);
+				
 			case TTParser.DIV:
 			case TTParser.MULT:
 			case TTParser.MOD:
@@ -696,8 +698,7 @@ public class Interpreter {
 		}
 		
 		String dataType = symbol.getType();
-		System.out.println("o: "+dataType +" "+fieldname);
-
+		
 		if (dataType.equals(
 				TTConstants.PACKAGE_PREFIX + TTConstants.CALENDAR_CLASS)) {
 
@@ -741,7 +742,6 @@ public class Interpreter {
 
 		else if (dataType.equals(
 				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
-			System.out.println("TASKS: "+TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS);
 			Task task = (Task) symbol.getValue();
 			
 			if (fieldname.equals("name"))
@@ -805,22 +805,37 @@ public class Interpreter {
 
 	
 	public Object plusEval(CommonTree t) {
-
+		
 		System.out.println("" + " Operator Evaluation");
-				
+		
 		Object a = exec((CommonTree) t.getChild(0));
 		Object b = exec((CommonTree) t.getChild(1));
-		
 		
 		if (a instanceof String && b instanceof String)
 			return a.toString() + b.toString();
 		else if (a instanceof Date && b instanceof TimeFrame) {
-			((Date)a).add((TimeFrame)b);
-			return a;
+			Date a1 = new Date((Date)a);
+			a1.add((TimeFrame)b);
+			return a1;
 		}
 		else if (a instanceof TimeFrame && b instanceof Date) {
-			((Date)b).add((TimeFrame)a);
+			Date b1 = new Date((Date)b);
+			b1.add((TimeFrame)a);
 			return b;
+		}
+		else {
+			return arithmeticEval(t);
+		}
+	}
+	
+	public Object minusEval(CommonTree t) {
+		Object a = exec((CommonTree) t.getChild(0));
+		Object b = exec((CommonTree) t.getChild(1));
+		
+		if (a instanceof Date && b instanceof TimeFrame) {
+			Date a1 = new Date((Date)a);
+			a1.substract((TimeFrame)b);
+			return a1;
 		}
 		else {
 			return arithmeticEval(t);
@@ -994,13 +1009,9 @@ public class Interpreter {
 				b = exec((CommonTree) t.getChild(1));
 			System.out.println("b: "+b);
 			value = !(Boolean) b;
-			return value;
 		}
-		else {
-			listener.error("not a unaryExpression" + t.toString());
-			return null;
-		}
-		
+
+		return value;
 	}
 
 	public Object call(CommonTree t) {
@@ -1068,22 +1079,22 @@ public class Interpreter {
 	}
 
 	public void ifStatement(CommonTree t) {
-		System.out.println("IF " + t.getChildCount() + " "+ t.toString());
+		//System.out.println("IF " + t.getChildCount() + " "+ t.toString());
 		// 0th Child is the expr to evaluate
 		
 		Object o = exec((CommonTree) t.getChild(0));
-		System.out.println("OBJECT HERE: "+o);
+		//System.out.println("OBJECT HERE: "+o);
 		
 		if ((Boolean) exec((CommonTree) t.getChild(0))) {
-			System.out.println("HERE if");
+			//System.out.println("HERE if");
 			// 1st Child is the block
 			exec((CommonTree) t.getChild(1));
 		} else if (t.getChildCount() >= 3) {
-			System.out.println("HERE elseif "+ t.getChild(2));
+			//System.out.println("HERE elseif "+ t.getChild(2));
 			if(t.getChild(2).getType() == TTParser.EMPTY)
 				return;
 			exec((CommonTree) t.getChild(2));
-			System.out.println(((CommonTree) t.getChild(2)).getText());
+			//System.out.println(((CommonTree) t.getChild(2)).getText());
 		}
 
 	}
