@@ -106,6 +106,10 @@ public class Interpreter {
 		if (parser.getNumberOfSyntaxErrors() != 0)
 		{
 			listener.error("SYNTAX ISSUES!");
+
+			for (int i = 0; i < parser.getErrors().size(); i++) {
+				listener.error(parser.getErrors().get(i));
+			}
 			return;
 		}
 
@@ -248,6 +252,7 @@ public class Interpreter {
 				return call(t);
 			case TTParser.RETURN:
 				return returnStmt(t);
+
 
 			case TTParser.TIMEFRAME_YEAR:
 				return TimeFrameConst.YEAR;
@@ -424,13 +429,11 @@ public class Interpreter {
 		if(lhs.getType() == TTParser.DECLARE)
 			ident = declarationEval(lhs, isGlobal);
 
-		else {
-			// throw error
-		}
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
-			// throw error;
+			listener.error("variable " + ident + " not defined");
+			return;
 		}
 		
 		s.setValue(value);
@@ -898,6 +901,23 @@ public class Interpreter {
 
 				}
 			}
+		else if( a instanceof String && b instanceof String){
+			
+			a = (String)a;
+			b = (String)b;
+			
+			switch (t.getType()) {
+				case TTParser.EQUALS: return a.equals(b);
+				case TTParser.NOTEQUALS: return !a.equals(b);
+						
+			default: {
+				listener.error("undifined logical operators" + t.toString(), t);
+				return null;
+			}
+
+			}
+			
+		}
 		else {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);

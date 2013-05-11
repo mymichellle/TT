@@ -1,3 +1,5 @@
+import "<std>";
+
 main(){
 	
 	Calendar c;
@@ -5,8 +7,8 @@ main(){
 	
 
 	Boolean b = (true && false) || false;
-	print (b);
-	print (c.start);
+	print(c.start);
+	
 
 
 }
