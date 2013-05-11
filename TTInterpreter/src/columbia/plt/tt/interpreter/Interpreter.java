@@ -273,12 +273,6 @@ public class Interpreter {
 				return call(t);
 			case TTParser.RETURN:
 				return returnStmt(t);
-			case TTParser.READ :
-				return read(t);
-			case TTParser.PRINT:
-				print(t);
-				break; // (PL)
-
 
 			case TTParser.TIMEFRAME_YEAR:
 				return TimeFrameConst.YEAR;
@@ -388,8 +382,6 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
-
-				listener.error("Exception: ", e);
 			}
 		}
 	}
@@ -1425,7 +1417,7 @@ public class Interpreter {
 	
 	public void print(CommonTree t) {
 		
-		Object obj  = exec((CommonTree) t.getChild(0));
+		Object obj  = exec((CommonTree) t.getChild(1));
 		System.out.println(obj);
 		
 	}

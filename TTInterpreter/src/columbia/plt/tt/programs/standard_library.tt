@@ -5,9 +5,12 @@ import "<std>";
 //Calendar c;
 
 main(){
+	Calendar c;
 	String t = read("Enter Something:");
-//	Task task1;
+	Task task1;
+	task1.name = "Name";
 	
-//	addTask(c, task1);
+	addTask(c, task1);
 	print(t);
+	//print(c);
 }
