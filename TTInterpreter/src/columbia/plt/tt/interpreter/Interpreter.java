@@ -1030,7 +1030,7 @@ public class Interpreter {
 				break;
 			default:
 				// Handle "Date" declaration
-				name = declarationEval((CommonTree)t.getChild(i));
+				name = declarationEval((CommonTree)t.getChild(i), false);
 				
 				// Record type
 				Symbol s = symbolTable.getSymbol(name);
@@ -1136,7 +1136,7 @@ public class Interpreter {
 			default:
 				// Handle "Task"
 
-				name = declarationEval((CommonTree)t.getChild(i));
+				name = declarationEval((CommonTree)t.getChild(i), false);
 				
 				// Record type
 				Symbol s = symbolTable.getSymbol(name);
