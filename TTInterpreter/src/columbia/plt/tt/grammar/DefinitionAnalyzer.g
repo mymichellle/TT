@@ -51,7 +51,7 @@ enterMethod
 	: ^(METHOD type=. IDENT .*) // match method subtree with 0-or-more args
 	{
 		String methodName = $IDENT.text;
-		System.out.println("line " + $IDENT.getLine()+":  method " + methodName);
+		//System.out.println("line " + $IDENT.getLine()+":  method " + methodName);
 		String typeString = ( $type != null ? $type.getText() : null );
 		MethodSymbol ms = new MethodSymbol(typeString, null, methodName);
 		
@@ -91,10 +91,10 @@ exitMain
 varDefinition // parameter, or local
 	: ^(DEFINE ^(DECLARE type=. IDENT) expr=.)
 	{
-		System.out.println("DEFINE");
+		
 		if ($DEFINE.getParent().getType() == TTParser.TUNIT) {
 			String name = $IDENT.getText();
-			System.out.println("line " + $IDENT.getLine() + ": DEFINE " + name);
+			
 			
 			VariableSymbol vs = new VariableSymbol(null, null, name);
 			vs.assignmentExpression = $DEFINE;
@@ -107,7 +107,7 @@ varDeclaration // parameter, or local
 	: ^(DECLARE type=. IDENT)
 	{
 		if ($DECLARE.getParent().getType() == TTParser.TUNIT) {
-			System.out.println("line " + $IDENT.getLine() + ": DECLARE " + $IDENT.text);
+			//System.out.println("line " + $IDENT.getLine() + ": DECLARE " + $IDENT.text);
 			String name = $IDENT.text;
 			String typeText = $type.getText();
 			VariableSymbol vs = new VariableSymbol(typeText, null, name);
