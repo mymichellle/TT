@@ -36,6 +36,15 @@ public TimeFrame() {
   	this.minutes = minutes;
   }
   
+  public TimeFrame(TimeFrame tf) {
+  	this.years = tf.years;
+  	this.months = tf.months;
+  	this.weeks = tf.weeks;
+  	this.days = tf.days;
+  	this.hours = tf.hours;
+  	this.minutes = tf.minutes;
+  }
+  
   public TimeFrame(String timeFrameConst) {
     this.years = 0;
     this.months = 0;

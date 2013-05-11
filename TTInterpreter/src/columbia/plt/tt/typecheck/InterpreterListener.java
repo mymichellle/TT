@@ -9,6 +9,7 @@ public interface InterpreterListener {
             public void error(String msg);
             public void error(String msg, Exception e);
             public void error(String msg, CommonTree t);
+            public void error(String msg, CommonTree t, Exception e);
             public void error(String msg, Token t);
 
 

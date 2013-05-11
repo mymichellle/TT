@@ -23,6 +23,11 @@ public class Calendar extends ArrayList<Task> {
   	this.end = end;
   }
   
+  public Calendar(Calendar c) {
+  	this.name = c.name;
+  	this.start = c.start;
+  	this.end = c.end;
+  }
   
   public String getName() { return this.name;	}	
   public void setName(String name) { this.name = name; }	

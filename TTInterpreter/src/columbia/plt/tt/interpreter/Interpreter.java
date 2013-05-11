@@ -60,10 +60,16 @@ public class Interpreter {
 		}
 		
 		public void error(String msg, CommonTree t) {
-			System.out.print("line: "+ t.getLine());
+			System.out.print("line: "+ t.getLine() + " ");
 			error(msg);
 			
 		}
+		
+		public void error(String msg, CommonTree t, Exception e){
+			error(msg, e);
+			e.printStackTrace(System.err);
+		}
+		
 		@Override
 		public void error(String msg, org.antlr.runtime.Token t) {
 			error("line " + t.getLine() + ": " + msg);
@@ -345,12 +351,12 @@ public class Interpreter {
 
 	public void tunit(CommonTree t) {
 		if (t.getType() != TTParser.TUNIT) {
-			listener.error("not a tunit: " + t.toStringTree());
+			listener.error("not a tunit: " + t.toStringTree(), t);
 		}
 		MethodSymbol mainSymbol = (MethodSymbol) symbolTable.getSymbol("main");
 		if (mainSymbol == null) {
 			System.out.println("No main");
-			listener.error("no main method to execute: " + t.toStringTree());
+			listener.error("no main method to execute: " + t.toStringTree(),t);
 		} else {
 			evalGlobals();
 			imports(t);
@@ -378,6 +384,7 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
+				listener.error("Exception: ", e);
 			}
 		}
 	}
@@ -405,7 +412,7 @@ public class Interpreter {
 		if (t.getType() != TTParser.MAIN) {
 			// Handle error
 			listener.error("not a mainblock: " + t.getType() + " "
-					+ t.toStringTree());
+					+ t.toStringTree(), t);
 			return;
 
 		}
@@ -418,7 +425,7 @@ public class Interpreter {
 		// Execute code
 		if (t.getType() != TTParser.SLIST) {
 			// Handle error
-			listener.error("not a block: " + t.toStringTree());
+			listener.error("not a block: " + t.toStringTree(), t);
 		}
 		int childrenCount = t.getChildCount();
 		for (int i = 0; i < childrenCount; i++) {
@@ -466,7 +473,7 @@ public class Interpreter {
 		System.out.println("DECLAREEVAL");
 		
 		if (t.getType() != TTParser.DECLARE) {
-			listener.error("not a declarition: " + t.toStringTree());
+			listener.error("not a declarition: " + t.toStringTree(), t);
 			return null;
 		}
 
@@ -510,7 +517,7 @@ public class Interpreter {
 				}
 
 			} catch (Exception e) {
-				listener.error("not a valid declarition: ", e);
+				listener.error("not a valid declarition: ", t, e);
 			}
 
 			return ident;
@@ -556,7 +563,7 @@ public class Interpreter {
 		Symbol s = symbolTable.getSymbol(ident);
 
 		if (s == null) {
-			listener.error("Undefied varibles: " + lhs.getText());
+			listener.error("Undefied varibles: " + lhs.getText(), t);
 			return;
 		}
 		s.setValue(value);
@@ -572,7 +579,7 @@ public class Interpreter {
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
-			listener.error("No symbol in table for "+o.getText()+"."+f.getText());
+			listener.error("No symbol in table for "+o.getText()+"."+f.getText(), lhs);
 			return;
 		}
 
@@ -589,7 +596,7 @@ public class Interpreter {
 			else if (fieldname.equals("end"))
 				c.setEnd(new Date((Date) value));
 			else {
-				listener.error("No field "+fieldname+" in Calendar");
+				listener.error("No field "+fieldname+" in Calendar", lhs);
 				return;
 			}
 
@@ -612,7 +619,7 @@ public class Interpreter {
 			else if (fieldname.equals("minute"))
 				d.setMinute(val);
 			else {
-				listener.error("No field "+fieldname+" in Date");
+				listener.error("No field "+fieldname+" in Date", lhs);
 				return;
 			}
 
@@ -639,7 +646,7 @@ public class Interpreter {
 				t.setLocation((String) value);
 
 			else {
-				listener.error("No field "+fieldname+" in Task");
+				listener.error("No field "+fieldname+" in Task", lhs);
 				return;
 			}
 
@@ -671,14 +678,14 @@ public class Interpreter {
 
 			else {
 
-				listener.error("No field "+fieldname+" in TimeFrame");
+				listener.error("No field "+fieldname+" in TimeFrame", lhs);
 				return;
 			}
 
 		}
 
 		else {
-			listener.error("Fields cannot be accessed on primitive types");
+			listener.error("Fields cannot be accessed on primitive types", lhs);
 			return;
 		}
 
@@ -693,7 +700,7 @@ public class Interpreter {
 
 		Symbol symbol = symbolTable.getSymbol(o.getText());
 		if (symbol == null) {
-			listener.error("No symbol in table for "+o.getText()+"."+f.getText());
+			listener.error("No symbol in table for "+o.getText()+"."+f.getText(), t);
 		}
 		
 		String dataType = symbol.getType();
@@ -710,7 +717,7 @@ public class Interpreter {
 				return c.getEnd();
 			else {
 				
-				listener.error("No field "+fieldname+" in Calendar");
+				listener.error("No field "+fieldname+" in Calendar", t);
 				return null;
 			}
 
@@ -733,7 +740,7 @@ public class Interpreter {
 				return d.getMinute();
 			else {
 				
-				listener.error("No field "+fieldname+" in Date");
+				listener.error("No field "+fieldname+" in Date", t);
 				return null;
 			}
 
@@ -760,7 +767,7 @@ public class Interpreter {
 
 			else {
 				
-				listener.error("No field "+fieldname+" in Task");
+				listener.error("No field "+fieldname+" in Task", t);
 				return null;
 			}
 
@@ -791,13 +798,13 @@ public class Interpreter {
 
 			else {
 			
-				listener.error("No field "+fieldname+" in TimeFrame");
+				listener.error("No field "+fieldname+" in TimeFrame", t);
 				return null;
 			}
 		}
 		
 		else {
-			listener.error("No fields in primitive types");
+			listener.error("No fields in primitive types", t);
 			return null;
 		}
 	}
@@ -861,7 +868,7 @@ public class Interpreter {
 
 		case TTParser.DIV: {
 			if (b == 0) {
-				listener.error("invalid operation:" + t.toStringTree());
+				listener.error("invalid operation:" + t.toStringTree(), t);
 			
 			}
 			return a / b;
@@ -872,7 +879,7 @@ public class Interpreter {
 			return a % b;
 
 		default: {
-			listener.error("undifined arithmetic operators" + t.toString());
+			listener.error("undifined arithmetic operators" + t.toString(), t);
 			return null;
 		}
 
@@ -895,7 +902,7 @@ public class Interpreter {
 		case TTParser.NOT:
 			return !a;
 		default: {
-			listener.error("undifined logical operators" + t.toString());
+			listener.error("undifined logical operators" + t.toString(), t);
 			return null;
 		}
 			
@@ -914,7 +921,7 @@ public class Interpreter {
 				case TTParser.EQUALS: return ((Date)a).compareTo((Date)b) == 0;
 				case TTParser.NOTEQUALS: return ((Date)a).compareTo((Date)b) != 0;
 				default: {
-					listener.error("undifined logical operators" + t.toString());
+					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
 			}
@@ -924,7 +931,7 @@ public class Interpreter {
 				case TTParser.EQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) == 0;
 				case TTParser.NOTEQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) != 0;
 				default: {
-					listener.error("undifined logical operators" + t.toString());
+					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
 				}
@@ -934,7 +941,7 @@ public class Interpreter {
 				case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);
 				case TTParser.NOTEQUALS: return ((Integer)a) != ((Integer)b);
 				default: {
-					listener.error("undifined logical operators" + t.toString());
+					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
 			}
@@ -955,7 +962,7 @@ public class Interpreter {
 				case TTParser.GT: return ((Date)a).compareTo((Date)b) > 0;
 				case TTParser.LT: return ((Date)a).compareTo((Date)b) < 0;
 				default: {
-					listener.error("undifined logical operators" + t.toString());
+					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}				
 			}
@@ -967,7 +974,7 @@ public class Interpreter {
 				case TTParser.GT: return ((TimeFrame)a).compareTo((TimeFrame)b) > 0;
 				case TTParser.LT: return ((TimeFrame)a).compareTo((TimeFrame)b) < 0;
 				default: {
-					listener.error("undifined logical operators" + t.toString());
+					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}				
 			}
@@ -979,7 +986,7 @@ public class Interpreter {
 				case TTParser.GT: return ((Integer)a) > ((Integer)b);
 				case TTParser.LT: return ((Integer)a) < ((Integer)b);
 				default: {
-					listener.error("undifined logical operators" + t.toString());
+					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
 			}
@@ -1008,9 +1015,12 @@ public class Interpreter {
 				b = exec((CommonTree) t.getChild(1));
 			System.out.println("b: "+b);
 			value = !(Boolean) b;
-		}
 
+			
+		}
 		return value;
+		
+
 	}
 
 	public Object call(CommonTree t) {
