@@ -46,7 +46,7 @@ main() {
     
     Calendar c3;
     c3 = getAvailableOneHourMeetingSlots(c1, c2);	
- 	//print(c3);
+ 	print(c3);
  	//String s;
  		exit;
     // loop through c3, and print out
@@ -66,7 +66,12 @@ main() {
  	
  	every Task task in c{
  		print(task);
- 		
+ 		Date d = task.end;
+ 		print(d);
+ 		//print(task.end);
+ 		//print(t.start);
+ 		//print(t.end);
+ 		//print(task.start);
  		if( task.end < t.start || t.end < task.start)
  		{
  			return false;
@@ -80,17 +85,11 @@ main() {
  	Calendar c;
  	c.name = "Meeting Calendar";
  	
- 	Task task;
- 	task.name = "Meeting";
- 	task.start = 2013.01.01.10;
- 	task.end = 2013.01.02.10;
- 	//conflict(cal1, task);
- 	//exit;
  	every Date d from start to end by 30 minutes {
  		Task t; 
  		t.name = "Meeting";
  		t.start = d;
- 		t.end = 2013.05.17;//d + 1 hour;
+ 		t.end = d + 1 hour;
  		
  		//Boolean con1 = conflict(cal1, t);
  		//Boolean con2 = conflict(cal2, t);
@@ -100,7 +99,7 @@ main() {
  			addTask(c, t);
  		//}
  	}
- 	
+ 	print (c);
  	return c;
  }
  
