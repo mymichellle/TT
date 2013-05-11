@@ -4,10 +4,16 @@ Number b;
 Calendar c;
 main(){
 	Number t = read("Enter Something:");
-	
+	hey(a);
 	print(t);
 }
 
-
+Number boo(Number a, Number b) {
+	return a + b;
+}
+Number hey(Number a) {
+	boo(a,1);
+	return 10;
+}
 
 Number d = 2+3*4;

@@ -348,6 +348,7 @@ public class Interpreter {
 			System.out.println("No main");
 			listener.error("no main method to execute: " + t.toStringTree());
 		} else {
+			evalGlobals();
 			exec(mainSymbol.methodBody);
 		}
 
@@ -929,27 +930,19 @@ public class Interpreter {
 	}
 
 	public Object call(CommonTree t) {
-		System.out.println("call "+t.getChild(0));
+		String methodName = t.getChild(0).getText();
+		System.out.println("call " + methodName);
 		
-		if (t.getChild(0).getText().equals("addTask")){
-			//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
-			Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
-			Calendar c = (Calendar)s.getValue();
-			//System.out.println("Calendar: " +c);
-			s = ((Symbol)identity((CommonTree)t.getChild(2)));
-			Task task = (Task)s.getValue();
-			
-			if(c == null)
-				System.out.println("C IS NULL");
-			c.add(task);
+		if (methodName.equals("addTask")){
+			addTask(t);
 			return null;
 		}
 		
-		String methodName = t.getChild(0).getText();
+
 		MethodSymbol methodSymbol = (MethodSymbol) symbolTable
 				.getSymbol(methodName);
 		
-		if (methodName == null) {
+		if (methodSymbol == null) {
 			listener.error("no such method " + methodName, t.token);
 			return null;
 		}
@@ -962,21 +955,28 @@ public class Interpreter {
 			listener.error("method '" + methodName + "' argument list mismatch");
 			return null;
 		}
-		symbolTable.addScope(false);
+		
+		ArrayList<Symbol> newSymbols = new ArrayList<Symbol>();
+
 		int i = 0;
 		// evaluate and define arguments
 		for (Symbol arg : argsList) {
 			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
 			Object argValue = exec(ithArg);
-			symbolTable.addSymbol(arg.getName(), arg.getType(), argValue);
+			newSymbols.add(new Symbol(arg.getType(), argValue, arg.getName()));
 			i++;
 		}
-
+		
+		symbolTable.addScope();
+		for (Symbol sym : newSymbols) {
+			symbolTable.addSymbol(sym.getName(), sym);
+		}
+		
 		Object result = exec(methodSymbol.methodBody);
 		symbolTable.removeScope();
 		return result;
 	}
-
+	
 	public Object returnStmt(CommonTree t) {
 		int childrenCount = t.getChildCount();
 		if (childrenCount == 0)
@@ -1213,6 +1213,20 @@ public class Interpreter {
 
 
 	}
+	
+	public void addTask(CommonTree t) {
+		//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
+		Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
+		Calendar c = (Calendar)s.getValue();
+		//System.out.println("Calendar: " +c);
+		s = ((Symbol)identity((CommonTree)t.getChild(2)));
+		Task task = (Task)s.getValue();
+		
+		if(c == null)
+			System.out.println("C IS NULL");
+		c.add(task);
+	}
+	
 	public Object read(CommonTree t) {
 		Object result = exec((CommonTree) t.getChild(0));
 		System.out.print(result);
