@@ -100,7 +100,7 @@ public class Date implements Comparable<Date> {
 	  // TODO - handle overflow ie 13 months = 1 year 1 month
 	  int overflow = 0;
 	  this.minute = this.minute + tf.getMinutes();
-	  if (this.minute > 60) {
+	  if (this.minute > 59) {
 		  overflow = this.minute/60;
 		  this.minute = this.minute - (60*overflow);
 	  }
