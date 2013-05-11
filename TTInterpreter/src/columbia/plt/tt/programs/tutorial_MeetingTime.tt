@@ -60,51 +60,39 @@ main() {
  
  Boolean conflict(Calendar c, Task t)
  {
- 	print("CONFLICT");
- 	print(c);
- 	print(t);
+ 	Boolean conflicts = false;
  	
  	every Task task in c{
- 		print(task);
- 		Date d = task.end;
- 		print(d);
- 		//print(task.end);
- 		//print(t.start);
- 		//print(t.end);
- 		//print(task.start);
- 		if( task.end < t.start || t.end < task.start)
+ 		if(not (task.end < t.start || t.end < task.start))
  		{
- 			return false;
+ 			conflicts = true;
  		}
  	}
  	
- 	return true;
+ 	return conflicts;
  }
  
  Calendar getAvailableOneHourMeetingSlots(Calendar cal1, Calendar cal2) {
  	Calendar c;
  	c.name = "Meeting Calendar";
- 	
- 	Task task;
- 	task.name = "Meeting";
- 	task.start = 2013.01.01.10;
- 	task.end = 2013.01.02.10;
- 	//conflict(cal1, task);
- 	//exit;
+ 	TimeFrame meetingLength = 1 hours;
+ 	print(meetingLength);
  	
  	every Date d from start to end by 30 minutes {
  		Task t; 
  		t.name = "Meeting";
  		t.start = d;
- 		t.end = 2013.05.17;//d + 1 hour;
+ 		t.end = d + meetingLength;
  		
- 		//Boolean con1 = conflict(cal1, t);
- 		//Boolean con2 = conflict(cal2, t);
+ 		print("POTENTIAL MEETING");
+ 		print(t);
+ 		Boolean con1 = conflict(cal1, t);
+ 		Boolean con2 = conflict(cal2, t);
  		
- 		//if(not con1 && not con2)
- 		//{
- 		//	addTask(c, t);
- 		//}
+ 		if(not con1 && not con2)
+ 		{
+ 			addTask(c, t);
+ 		}
  	}
  	print (c);
  	return c;

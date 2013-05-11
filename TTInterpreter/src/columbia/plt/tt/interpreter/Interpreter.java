@@ -706,8 +706,7 @@ public class Interpreter {
 		}
 		
 		String dataType = symbol.getType();
-		System.out.println("o: "+dataType +" "+fieldname);
-
+		
 		if (dataType.equals(
 				TTConstants.PACKAGE_PREFIX + TTConstants.CALENDAR_CLASS)) {
 
@@ -751,7 +750,6 @@ public class Interpreter {
 
 		else if (dataType.equals(
 				TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS)) {
-			System.out.println("TASKS: "+TTConstants.PACKAGE_PREFIX + TTConstants.TASK_CLASS);
 			Task task = (Task) symbol.getValue();
 			
 			if (fieldname.equals("name"))
@@ -1075,22 +1073,22 @@ public class Interpreter {
 	}
 
 	public void ifStatement(CommonTree t) {
-		System.out.println("IF " + t.getChildCount() + " "+ t.toString());
+		//System.out.println("IF " + t.getChildCount() + " "+ t.toString());
 		// 0th Child is the expr to evaluate
 		
 		Object o = exec((CommonTree) t.getChild(0));
-		System.out.println("OBJECT HERE: "+o);
+		//System.out.println("OBJECT HERE: "+o);
 		
 		if ((Boolean) exec((CommonTree) t.getChild(0))) {
-			System.out.println("HERE if");
+			//System.out.println("HERE if");
 			// 1st Child is the block
 			exec((CommonTree) t.getChild(1));
 		} else if (t.getChildCount() >= 3) {
-			System.out.println("HERE elseif "+ t.getChild(2));
+			//System.out.println("HERE elseif "+ t.getChild(2));
 			if(t.getChild(2).getType() == TTParser.EMPTY)
 				return;
 			exec((CommonTree) t.getChild(2));
-			System.out.println(((CommonTree) t.getChild(2)).getText());
+			//System.out.println(((CommonTree) t.getChild(2)).getText());
 		}
 
 	}

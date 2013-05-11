@@ -2,5 +2,13 @@ main(){
 	Number a = 4;
 	Number b = 4;
 	Number c = a + b;
+	
+	Date d = 2013.01.01.03;
+	TimeFrame tf = 1 hours + 2 days;
+	Date d2 = d + tf;
+	print(d);
+	print(tf);
+	print(d2);
+	
 }
 	

@@ -12,3 +12,5 @@ Number add(Number a, Number b) {
 	return 4*a + b * c;
 }
 
+main(){
+}

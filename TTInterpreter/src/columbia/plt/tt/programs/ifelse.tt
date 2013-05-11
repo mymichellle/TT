@@ -1,10 +1,18 @@
 main(){
-
-	if( c<d) {
-		print("if");
+	Number n = 4;
+	if( 2 < n || n < 2)
+	{
+		print("YES n is less than 5");
+	}
+	
+	Date c = 2013.05.06.10;
+	Date d = 2013.05.06.11;
+	
+	if( c < d) {
+		print("c is less than d");
 	}
 	else
 	{
-		print("else");
+		print("c is not less than d");
 	}
 }
