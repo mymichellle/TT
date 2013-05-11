@@ -847,46 +847,69 @@ public class Interpreter {
 	}
 
 	public Boolean equalityEval(CommonTree t) {
-
-		System.out.println("Equality Evaluation");
-		Object a = exec((CommonTree) t.getChild(0));
-		Object b = exec((CommonTree) t.getChild(1));
-
+		
+	System.out.println("Equality Evaluation");
+	Object a = exec((CommonTree) t.getChild(0));
+	Object b = exec((CommonTree) t.getChild(1));
+	
+	if (a instanceof Date && b instanceof Date) {
 		switch (t.getType()) {
-
-		case TTParser.EQUALS:
-			return a == b;
-		case TTParser.NOTEQUALS:
-			return a != b;
-		default:
-			return false;
+			case TTParser.EQUALS: return ((Date)a).compareTo((Date)b) == 0;
+			case TTParser.NOTEQUALS: return ((Date)a).compareTo((Date)b) != 0;
+			default: return false;
 		}
 	}
-
-	public Boolean relationalEval(CommonTree t) {
-
-		System.out.println("Relational Evaluation " +t.getChild(0).getText()+" " +t.getChild(1));
-
-		Integer a = (Integer) exec((CommonTree) t.getChild(0));
-		System.out.println("a: "+a);
-		Integer b = (Integer) exec((CommonTree) t.getChild(1));
-		System.out.println("b: "+b);
-
+	else if (a instanceof TimeFrame && b instanceof TimeFrame) {
 		switch (t.getType()) {
-
-		case TTParser.GTEQ:
-			return a >= b;
-		case TTParser.LTEQ:
-			return a <= b;
-		case TTParser.GT:
-			return a > b;
-		case TTParser.LT:
-			return a < b;
-
-		default:
-			return false;
+			case TTParser.EQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) == 0;
+			case TTParser.NOTEQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) != 0;
+			default: return false;
 		}
-
+	}
+	else {
+		switch (t.getType()) {
+			case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);
+			case TTParser.NOTEQUALS: return ((Integer)a) != ((Integer)b);
+			default: return false;
+		}
+	}
+	}
+	
+	public Boolean relationalEval(CommonTree t) {
+	
+	System.out.println("Relational Evaluation " +t.getChild(0).getText()+" " +t.getChild(1));
+	
+	Object a = exec((CommonTree) t.getChild(0));
+	Object b = exec((CommonTree) t.getChild(1));
+	
+	if (a instanceof Date && b instanceof Date) {
+		switch (t.getType()) {
+			case TTParser.GTEQ: return ((Date)a).compareTo((Date)b) >= 0;
+			case TTParser.LTEQ: return ((Date)a).compareTo((Date)b) <= 0;
+			case TTParser.GT: return ((Date)a).compareTo((Date)b) > 0;
+			case TTParser.LT: return ((Date)a).compareTo((Date)b) < 0;
+			default: return false;				
+		}
+	}
+	else if (a instanceof TimeFrame && b instanceof TimeFrame) {
+		switch (t.getType()) {
+			case TTParser.GTEQ: return ((TimeFrame)a).compareTo((TimeFrame)b) >= 0;
+			case TTParser.LTEQ: return ((TimeFrame)a).compareTo((TimeFrame)b) <= 0;
+			case TTParser.GT: return ((TimeFrame)a).compareTo((TimeFrame)b) > 0;
+			case TTParser.LT: return ((TimeFrame)a).compareTo((TimeFrame)b) < 0;
+			default: return false;				
+		}
+	}
+	else {
+		switch (t.getType()) {
+			case TTParser.GTEQ: return ((Integer)a) >= ((Integer)b);
+			case TTParser.LTEQ: return ((Integer)a) <= ((Integer)b);
+			case TTParser.GT: return ((Integer)a) > ((Integer)b);
+			case TTParser.LT: return ((Integer)a) < ((Integer)b);
+			default: return false;
+		}
+	}
+															
 	}
 
 	public Object unaryExprEval(CommonTree t) {
