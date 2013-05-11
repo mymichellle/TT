@@ -442,9 +442,13 @@ public class Interpreter {
 
 	}
 
-<<<<<<< HEAD
-	public String declarationEval(CommonTree t, boolean isGlobal) {
 
+	public String declarationEval(CommonTree t, boolean isGlobal) {
+	if ( t.getType()!=TTParser.DECLARE ) {
+        listener.error("not a declarition: "+t.toStringTree());
+		  return null;
+    }
+	else{
 		String ident = null;
 		try {
 
@@ -481,44 +485,8 @@ public class Interpreter {
 			} else {
 				symbolTable.addSymbol(ident, dataType, object);
 			}
-=======
-	public String declarationEval(CommonTree t) {
 		
-		if ( t.getType()!=TTParser.DECLARE ) {
-            listener.error("not a declarition: "+t.toStringTree());
-			  return null;
-        }
-		else{
-		
-			String ident = null;
-			try {
 
-				System.out.println("Type" + t.getChild(0).getText());
-
-				String dataType = (String) exec((CommonTree) t.getChild(0));
-				ident = t.getChild(1).getText();
-				Object object = null;
-				if (dataType.equals("Calendar") || dataType.equals("Task")
-						|| dataType.equals("TimeFrame")
-						|| dataType.equals("Date")) {
-					dataType = TTConstants.PACKAGE_PREFIX + dataType;
-
-					Class<?> dataTypeClass = Class.forName(dataType);
-					object = dataTypeClass.newInstance();
-				}
-				else if (dataType.equals("Number")){
-					object = new Integer(0);
-				}
-				else if (dataType.equals("String")){
-					object = new String();
-				}
-				else{
-					listener.error("Unsupported data type:" + dataType);
-					return null;
-				}
-
-				symbolTable.addSymbol(ident, dataType, object);
->>>>>>> add typecheck for TUNIT, MAINBLOCK, SLIST, DECLARE, DEFINE, ASSIGN
 
 			/*System.out.println("Type: " + t.getChild(0).getText() + " "+ t.toString());
 			
