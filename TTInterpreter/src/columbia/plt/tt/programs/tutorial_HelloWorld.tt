@@ -1,0 +1,25 @@
+import "<std>";
+
+main() 
+{
+	String calendarName = "my calendar";
+	Date startDate = 2012.09.01;
+	Date endDate = 2013.03.12;
+
+	Calendar c;
+	c.name = calendarName;
+	c.start = startDate;
+	c.end = endDate;
+	
+	Task helloTask;
+	helloTask.name = "Hello World!";
+	helloTask.start = 2012.03.15.08.24;
+	helloTask.end = 2012.03.15.09.35;
+	helloTask.location = "CS lounge";
+  
+	addTask(c,helloTask);
+	
+	every Task t in c {
+		print(t); 
+	}
+}
