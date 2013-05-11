@@ -248,8 +248,6 @@ public class Interpreter {
 				return call(t);
 			case TTParser.RETURN:
 				return returnStmt(t);
-			case TTParser.READ :
-				return read(t);
 
 			case TTParser.TIMEFRAME_YEAR:
 				return TimeFrameConst.YEAR;
@@ -319,7 +317,7 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("line: " + t.getLine() + " - problem executing " + t.toStringTree(), e);
+			listener.error("problem executing " + t.toStringTree(), e);
 		}
 		return null;
 	}
@@ -358,7 +356,6 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
-				//listener.error("Exception: ", e);
 			}
 		}
 	}
@@ -414,7 +411,7 @@ public class Interpreter {
 		return null;
 	}
 
-	
+
 	public void defineEval(CommonTree t, boolean isGlobal) {
 
 		CommonTree lhs = (CommonTree) t.getChild(0);
@@ -440,8 +437,6 @@ public class Interpreter {
 		
 
 	}
-
-
 
 	public String declarationEval(CommonTree t, boolean isGlobal) {
 		
@@ -534,6 +529,7 @@ public class Interpreter {
 		if (s == null) {
 			listener.error("Undefied varibles: " + lhs.getText(), t);
 			return;
+
 		}
 		s.setValue(value);
 
@@ -786,6 +782,7 @@ public class Interpreter {
 		
 		if (a instanceof String && b instanceof String)
 			return a.toString() + b.toString();
+		
 		else if (a instanceof Date && b instanceof TimeFrame) {
 			Date a1 = new Date((Date)a);
 			a1.add((TimeFrame)b);
@@ -868,7 +865,6 @@ public class Interpreter {
 			listener.error("undifined logical operators" + t.toString(), t);
 			return null;
 		}
-			
 		}
 
 	}
@@ -882,30 +878,36 @@ public class Interpreter {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Date)a).compareTo((Date)b) == 0;
 				case TTParser.NOTEQUALS: return ((Date)a).compareTo((Date)b) != 0;
+
 				default: {
 					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
+
 			}
 		}
 		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) == 0;
 				case TTParser.NOTEQUALS: return ((TimeFrame)a).compareTo((TimeFrame)b) != 0;
+
 				default: {
 					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
+
 				}
 			}
 		else {
 			switch (t.getType()) {
 				case TTParser.EQUALS: return ((Integer)a) == ((Integer)b);
 				case TTParser.NOTEQUALS: return ((Integer)a) != ((Integer)b);
+
 				default: {
 					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
+
 			}
 		}
 	}
@@ -921,10 +923,12 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((Date)a).compareTo((Date)b) <= 0;
 				case TTParser.GT: return ((Date)a).compareTo((Date)b) > 0;
 				case TTParser.LT: return ((Date)a).compareTo((Date)b) < 0;
+
 				default: {
 					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}				
+
 			}
 		}
 		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
@@ -933,10 +937,12 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((TimeFrame)a).compareTo((TimeFrame)b) <= 0;
 				case TTParser.GT: return ((TimeFrame)a).compareTo((TimeFrame)b) > 0;
 				case TTParser.LT: return ((TimeFrame)a).compareTo((TimeFrame)b) < 0;
+
 				default: {
 					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}				
+
 			}
 		}
 		else {
@@ -945,10 +951,12 @@ public class Interpreter {
 				case TTParser.LTEQ: return ((Integer)a) <= ((Integer)b);
 				case TTParser.GT: return ((Integer)a) > ((Integer)b);
 				case TTParser.LT: return ((Integer)a) < ((Integer)b);
+
 				default: {
 					listener.error("undifined logical operators" + t.toString(), t);
 					return null;
 				}
+
 			}
 		}
 		
@@ -984,8 +992,8 @@ public class Interpreter {
 		String methodName = t.getChild(0).getText();
 		
 		Object result = null;
-		if (callStandardLibrary(t, methodName, result)){
-			return result;
+		if (isStdLibraryFunction(methodName)){
+			return callStandardLibrary(t, methodName);
 		}
 		
 
@@ -1293,21 +1301,30 @@ public class Interpreter {
 		symbolTable.addSymbol("uploadCalendar", uploadCalendar);
 	}
 	
-	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
+
+	public boolean isStdLibraryFunction(String methodName) {
+		if (methodName.equals("addTask") || 
+			methodName.equals("read") ||
+			methodName.equals("print")) {
+				return true;
+		}
+		return false;
+	}
+	
+	public Object callStandardLibrary(CommonTree t, String methodName) {
 		
 		if (methodName.equals("addTask")) {
 			addTask(t);
 		} else if (methodName.equals("read")) {
-			result = read(t);
+			return read(t);
 		} else if (methodName.equals("print")) {
 			print(t);
-		} else {
-			return false;
 		}
-		return true;
+		return null;
 	}
 	
 	public void addTask(CommonTree t) {
+		//System.out.println("addTask "+t.getChild(1).getText() + " "+t.getChild(2).getText());
 		Symbol s = (Symbol)identity((CommonTree)t.getChild(1));
 		Calendar c = (Calendar)s.getValue();
 		
@@ -1318,7 +1335,7 @@ public class Interpreter {
 	}
 	
 	public Object read(CommonTree t) {
-		Object result = exec((CommonTree) t.getChild(0));
+		Object result = exec((CommonTree) t.getChild(1));
 		System.out.print(result);
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

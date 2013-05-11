@@ -18,6 +18,7 @@ tokens {
 	DATE_CONSTANT_TOKEN;
 	TIMEFRAME_CONSTANT;
 	MAIN = 'main';
+	PRINT = 'print';
 	STRINGTYPE = 'String';
 	NUMBERTYPE = 'Number';
 	DATETYPE = 'Date';
@@ -42,7 +43,6 @@ tokens {
 	TRUE = 'true';
 	FALSE = 'false';
 	RETURN = 'return';
-	READ = 'read';
 	TIMEFRAME_YEAR = 'year';
 	TIMEFRAME_YEARS = 'years';
 	TIMEFRAME_MONTH = 'month';
@@ -80,6 +80,7 @@ tokens {
 	DEFINE;
 	UNARY;
 	ASSIGN;
+
 	
 }
 @header{
@@ -208,7 +209,6 @@ statement_type
 	| exitStatement
 	| functionInvocationStatement
 	| returnStatement
-	| readStatement
 	;
 
 block
@@ -279,18 +279,9 @@ argumentList
 expressionList
 	: expr (','expr)* -> expr*
 	;
-
-/* TODO: We should remove 'read' and 'print' they belong
- * to the [standard] library. */
-readStatement
-	: readInvocation ';'! 
-	;
-readInvocation
-	: READ '(' STRING_CONSTANT ')' -> ^(READ STRING_CONSTANT)
-	;
 	
 timeFrameConstant
-	: NUMBER timeFrameSuffix ('+' NUMBER timeFrameSuffix)*
+	: NUMBER timeFrameSuffix ('+' NUMBER timeFrameSuffix)* 
 	;
 
 // Arithmetic Expressions .. Jason
@@ -298,7 +289,6 @@ timeFrameConstant
 expr
 	: logicalExpr
 	| functionInvocation
-	| readInvocation
 	;
 
 logicalExpr
