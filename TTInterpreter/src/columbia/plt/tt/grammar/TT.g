@@ -43,7 +43,6 @@ tokens {
 	FALSE = 'false';
 	RETURN = 'return';
 	READ = 'read';
-	PRINT = 'print';
 	TIMEFRAME_YEAR = 'year';
 	TIMEFRAME_YEARS = 'years';
 	TIMEFRAME_MONTH = 'month';
@@ -209,7 +208,6 @@ statement_type
 	| exitStatement
 	| functionInvocationStatement
 	| returnStatement
-	| print
 	| readStatement
 	;
 
@@ -290,12 +288,7 @@ readStatement
 readInvocation
 	: READ '(' STRING_CONSTANT ')' -> ^(READ STRING_CONSTANT)
 	;
-
-print // PRINT '(' STRING_CONSTANT  ')' ';' -> ^(PRINT STRING_CONSTANT)
-      // PRINT '(' IDENT ')' ';' -> ^(PRINT ^(IDENT_TOKEN IDENT))
-      : PRINT '(' expr ')' ';' -> ^(PRINT expr)
-      ;
-
+	
 timeFrameConstant
 	: NUMBER timeFrameSuffix ('+' NUMBER timeFrameSuffix)*
 	;
