@@ -28,6 +28,14 @@ public class Task implements Comparable<Task> {
   	this.description = description;
   }
   
+    public Task(Task t) {
+      this.name = t.name;
+      this.start = t.start;
+      this.end = t.end;
+      this.location = t.location;
+      this.priority = t.priority;
+      this.description = t.description;
+    }
   
   public String getName() { return this.name;	}	
   public void setName(String name) { this.name = name; }
