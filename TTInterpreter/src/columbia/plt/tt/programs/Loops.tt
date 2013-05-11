@@ -7,11 +7,10 @@ Date end = 2013.05.17;
 main()
 {
 	every Date d from start to end by 30 minutes {
-		print(d);
- 		Task t; 
+		Task t; 
  		t.name = "Meeting";
  		t.start = d;
- 		t.end = d + 1 hours;
+ 		t.end = d;// + 1 hours;
  	}
  	
 	exit;

@@ -3,7 +3,6 @@ Date start = 2013.05.16;
 Date end = 2013.05.17;
 
 main() {
-	print(start);
 	Calendar c1;
 	Calendar c2;
 	
@@ -46,14 +45,11 @@ main() {
     
     Calendar c3;
     c3 = getAvailableOneHourMeetingSlots(c1, c2);	
- 	print(c3);
- 	//String s;
- 		exit;
+ 	
+	
     // loop through c3, and print out
     every Task meeting in c3
     {
-    
-    	//s = "Meeting option: ";// + meeting.start + " " + meeting.end;
     	print(meeting);
     }
  }
@@ -76,7 +72,6 @@ main() {
  	Calendar c;
  	c.name = "Meeting Calendar";
  	TimeFrame meetingLength = 1 hours;
- 	print(meetingLength);
  	
  	every Date d from start to end by 30 minutes {
  		Task t; 
@@ -84,8 +79,6 @@ main() {
  		t.start = d;
  		t.end = d + meetingLength;
  		
- 		print("POTENTIAL MEETING");
- 		print(t);
  		Boolean con1 = conflict(cal1, t);
  		Boolean con2 = conflict(cal2, t);
  		
@@ -94,7 +87,6 @@ main() {
  			addTask(c, t);
  		}
  	}
- 	print (c);
  	return c;
  }
  
