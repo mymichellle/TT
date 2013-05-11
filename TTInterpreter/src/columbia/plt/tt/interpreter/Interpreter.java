@@ -994,18 +994,20 @@ public class Interpreter {
 	}
 
 	public void ifStatement(CommonTree t) {
-		System.out.println("IF " + t.getChildCount() + " "+ t.getChild(0).getText());
+		System.out.println("IF " + t.getChildCount() + " "+ t.toString());
 		// 0th Child is the expr to evaluate
 		
 		Object o = exec((CommonTree) t.getChild(0));
 		System.out.println("OBJECT HERE: "+o);
 		
 		if ((Boolean) exec((CommonTree) t.getChild(0))) {
-			System.out.println("HERE");
+			System.out.println("HERE if");
 			// 1st Child is the block
 			exec((CommonTree) t.getChild(1));
 		} else if (t.getChildCount() >= 3) {
-			System.out.println("HERE");
+			System.out.println("HERE elseif "+ t.getChild(2));
+			if(t.getChild(2).getType() == TTParser.EMPTY)
+				return;
 			exec((CommonTree) t.getChild(2));
 			System.out.println(((CommonTree) t.getChild(2)).getText());
 		}
