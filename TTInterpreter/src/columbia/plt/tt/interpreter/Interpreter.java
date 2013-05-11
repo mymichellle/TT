@@ -1306,11 +1306,9 @@ public class Interpreter {
 	}
 	
 	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
-		switch (methodName) {
-		case "addTask":
+		if (methodName.equals("addTask")) {
 			addTask(t);
-			break;
-		default:
+		} else {
 			return false;
 		}
 		return true;
