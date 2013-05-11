@@ -8,7 +8,7 @@ main()
 	String s;
 	Number n = 4;
 	Date date = 2013.01.12;
-	
+
 	addTask(p, t1);
 	
 	Task t2;

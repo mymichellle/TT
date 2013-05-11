@@ -255,7 +255,7 @@ public class Interpreter {
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
 			case TTParser.STRING_CONSTANT:
-				return t.getText();
+				return t.getText().replaceAll("\"","");
 
 			case TTParser.TRUE:
 			case TTParser.FALSE:
@@ -339,7 +339,7 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("problem executing " + t.toStringTree(), e);
+			listener.error("line: " + t.getLine() + " - problem executing " + t.toStringTree(), e);
 		}
 		return null;
 	}
@@ -379,7 +379,6 @@ public class Interpreter {
 					}
 				}
 			} catch (Exception e) {
-				listener.error("can not evaluate global variables", e);
 			}
 		}
 	}
@@ -481,6 +480,7 @@ public class Interpreter {
 				String dataType = (String) exec((CommonTree) t.getChild(0));
 				ident = t.getChild(1).getText();
 				Object object = null;
+				
 				if (dataType.equals("Calendar") || dataType.equals("Task")
 						|| dataType.equals("TimeFrame")
 						|| dataType.equals("Date")) {
@@ -488,6 +488,7 @@ public class Interpreter {
 
 					Class<?> dataTypeClass = Class.forName(dataType);
 					object = dataTypeClass.newInstance();
+					
 				} else if (dataType.equals("Number")) {
 					object = new Integer(0);
 				} else if (dataType.equals("String")) {
@@ -1341,6 +1342,7 @@ public class Interpreter {
 	}
 	
 	public boolean callStandardLibrary(CommonTree t, String methodName, Object result) {
+		
 		if (methodName.equals("addTask")) {
 			addTask(t);
 		} else {
@@ -1377,10 +1379,9 @@ public class Interpreter {
 	}
 	
 	public void print(CommonTree t) {
-		if (((CommonTree) t.getChild(0)).getType() == TTParser.IDENT_TOKEN) {
-			Symbol s = (Symbol) exec((CommonTree) t.getChild(0));
-			System.out.println(s.getValue());
-		} else
-			System.out.println(t.getChild(0).getText());
+		
+		Object obj  = exec((CommonTree) t.getChild(0));
+		System.out.println(obj);
+		
 	}
 }
