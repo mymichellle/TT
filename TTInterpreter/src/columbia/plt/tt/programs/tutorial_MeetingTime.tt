@@ -85,11 +85,20 @@ main() {
  	Calendar c;
  	c.name = "Meeting Calendar";
  	
+<<<<<<< HEAD
+ 	Task task;
+ 	task.name = "Meeting";
+ 	task.start = 2013.01.01.10;
+ 	task.end = 2013.01.02.10;
+ 	//conflict(cal1, task);
+ 	//exit;
+=======
+>>>>>>> b10530491af1117f6d459e1a3fdf4e8f1a802e4d
  	every Date d from start to end by 30 minutes {
  		Task t; 
  		t.name = "Meeting";
  		t.start = d;
- 		t.end = d + 1 hour;
+ 		t.end = 2013.05.17;//d + 1 hour;
  		
  		//Boolean con1 = conflict(cal1, t);
  		//Boolean con2 = conflict(cal2, t);
