@@ -416,7 +416,7 @@ public class Interpreter {
 		String ident = null;
 		try {
 
-			System.out.println("Type" + t.getChild(0).getText());
+			System.out.println("Type: " + t.getChild(0).getText());
 
 			String dataType = (String) exec((CommonTree) t.getChild(0));
 			ident = t.getChild(1).getText();
@@ -974,26 +974,28 @@ public class Interpreter {
 		for (int i = 0; i < t.getChildCount(); i++) {
 			switch (t.getChild(i).getType()) {
 			case TTParser.FROM:
-				System.out.println("FROM: "+t.getChild(i).getChild(0));
+				//System.out.println("FROM: "+t.getChild(i).getChild(0));
 				start = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.TO:
-				System.out.println("TO: "+t.getChild(i).getChild(0));
+				//System.out.println("TO: "+t.getChild(i).getChild(0));
 				end = (Date) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.BY:
-				System.out.println("BY: "+t.getChild(i).getChild(0));
+				//System.out.println("BY: "+t.getChild(i).getChild(0));
 				inc = (TimeFrame) exec((CommonTree) t.getChild(i));
 				break;
 			case TTParser.SLIST:
-				System.out.println("SLIST: "+t.getChild(i).getChild(0));
+				//System.out.println("SLIST: "+t.getChild(i).getChild(0));
 				block = (CommonTree) t.getChild(i);
 				break;
 			default:
-				// Handle "Date"
-				type = ((CommonTree) t.getChild(i)).getText();
-				name = ((CommonTree) t.getChild(i)).getChild(0).getText();
-				symbolTable.addSymbol(name, type, itterDate);
+				// Handle "Date" declaration
+				name = declarationEval((CommonTree)t.getChild(i));
+				
+				// Record type
+				Symbol s = symbolTable.getSymbol(name);
+				type = s.getType();
 				break;
 			}
 		}
@@ -1008,7 +1010,7 @@ public class Interpreter {
 		// Define the itterDate
 		itterDate = start;
 		symbolTable.addSymbol(name, type, itterDate);
-		System.out.println("loop from: "+start+" to "+end);
+		//System.out.println("loop from: "+start+" to "+end);
 		while (itterDate.compareTo(end) <= 0) {
 			// Execute the block
 			exec(block);
@@ -1079,16 +1081,6 @@ public class Interpreter {
 			switch (t.getChild(i).getType()) {
 			case TTParser.IN:
 				c = (Calendar) exec((CommonTree) t.getChild(i));
-				/*
-				 * c = new Calendar("Temp"); c.add(new Task("one", new
-				 * Date("2013.01.01.10"), new Date("2013.01.01.12"), "here", 0,
-				 * "desc")); c.add(new Task("two", new Date("2013.01.01.13"),
-				 * new Date("2013.01.01.13.50"), "here", 0, "desc")); c.add(new
-				 * Task("three", new Date("2013.01.01.14"), new
-				 * Date("2013.01.01.14.10"), "here", 0, "desc")); c.add(new
-				 * Task("four", new Date("2013.01.01.20"), new
-				 * Date("2013.01.01.21"), "here", 0, "desc"));
-				 */
 				break;
 			case TTParser.FROM:
 				start = (Date) exec((CommonTree) t.getChild(i));
@@ -1104,9 +1096,12 @@ public class Interpreter {
 				break;
 			default:
 				// Handle "Task"
-				type = ((CommonTree) t.getChild(i)).getText();
-				name = ((CommonTree) t.getChild(i)).getChild(0).getText();
-				symbolTable.addSymbol(name, type, itterTask);
+
+				name = declarationEval((CommonTree)t.getChild(i));
+				
+				// Record type
+				Symbol s = symbolTable.getSymbol(name);
+				type = s.getType();
 				break;
 			}
 		}

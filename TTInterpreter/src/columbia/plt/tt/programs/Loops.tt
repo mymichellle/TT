@@ -1,22 +1,64 @@
-
+Calendar cal;
 main()
 {
-	Calendar c;// = "myCal";
+
+	every Date d from 2013.01.01 to 2013.01.02 by 1 days { 
+		print(d);
+		print("first");
+		
+	}
+	Calendar c;
 	c.name = "myCal";
+	cal.name = "yourCal";
+	
 	Task t1;
+	String s;
+	Number n = 4;
+	Date date = 2013.01.12;
+	
 	t1.name = "myname";
 	t1.start = 2013.01.01.02;
 	t1.end = 2013.01.01.03;
 	addTask(c, t1);
 	
-	//String st;
-	//st = "hello";
+	Task t2;
+	t2.name = "two";
+	t2.start = 2013.01.01.04;
+	t2.end = 2013.01.01.05;
+	
+	print("CONFLICT");
+ 	every Task task in c{
+ 		print(task);
+ 		Date d = task.end;
+ 		Date d2 = t2.start;
+ 		print(d2);
+ 		//if(d < d2)
+ 		//{
+ 		//	return true;
+ 		//}
+ 		
+ 	}
+	
+	
+	//exit;
+	if( 2 < n)
+	{
+		print("YES n is less than 5");
+	}
+	
+	//addTask(cal, t1);
+	
+	
 	
 	every Date d from 2013.01.01 to 2013.01.02 by 1 days { 
 		print("first");
-		print("second line");
+		print(d);
+		Task t;
+		t.name = "temp";
+		t.start = 2013.10.19;
+		//t.start = d;
 	}
-	
+	exit;
 	every Task t in c {
 		print(t);
 		continue;
