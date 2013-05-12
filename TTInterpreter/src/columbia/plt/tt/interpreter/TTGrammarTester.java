@@ -59,7 +59,7 @@ public class TTGrammarTester {
 	public static void main(String[] args) throws RecognitionException {
 		try {
 
-			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/tutorial_studyTime.tt");
+			FileInputStream fileStream = new FileInputStream("src/columbia/plt/tt/programs/date.tt");
 
 
 			Interpreter interpreter = new Interpreter();

@@ -574,18 +574,20 @@ public class Interpreter {
 				+ TTConstants.DATE_CLASS)) {
 
 			Date d = (Date) symbol.getValue();
-			int val = (Integer) value;
+			Date val = (Date) value;
+			
+			
 
 			if (fieldname.equals("year"))
-				d.setYear(val);
+				d.setYear(val.getYear());
 			else if (fieldname.equals("month"))
-				d.setMonth(val);
+				d.setMonth(val.getMonth());
 			else if (fieldname.equals("day"))
-				d.setDay(val);
+				d.setDay(val.getDay());
 			else if (fieldname.equals("hour"))
-				d.setHour(val);
+				d.setHour(val.getHour());
 			else if (fieldname.equals("minute"))
-				d.setMinute(val);
+				d.setMinute(val.getMinute());
 			else {
 				listener.error("No field "+fieldname+" in Date", lhs);
 				return;
@@ -624,25 +626,25 @@ public class Interpreter {
 				+ TTConstants.TIMEFRAME_CLASS)) {
 
 			TimeFrame tf = (TimeFrame) symbol.getValue();
-			int val = (Integer) value;
+			tf = (TimeFrame) value;
 
 			if (fieldname.equals("years"))
-				tf.setYears(val);
+				tf.setYears(tf.getYears());
 
 			if (fieldname.equals("months"))
-				tf.setMonths(val);
+				tf.setMonths(tf.getMonths());
 
 			if (fieldname.equals("weeks"))
-				tf.setWeeks(val);
+				tf.setWeeks(tf.getWeeks());
 
 			if (fieldname.equals("days"))
-				tf.setDays(val);
+				tf.setDays(tf.getDays());
 
 			if (fieldname.equals("hours"))
-				tf.setHours(val);
+				tf.setHours(tf.getHours());
 
 			if (fieldname.equals("minutes"))
-				tf.setMinutes(val);
+				tf.setMinutes(tf.getMinutes());
 
 			else {
 

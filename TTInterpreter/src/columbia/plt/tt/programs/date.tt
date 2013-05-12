@@ -1,0 +1,7 @@
+main(){
+
+	Timeframe tf;
+	tf.hours=2;
+	
+}	
+	
