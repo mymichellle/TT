@@ -118,6 +118,13 @@ public class Date implements Comparable<Date> {
   	return year + "." + monthString + "." + dayString + "." + hourString + "." + minuteString;
   }
   
+  private int getDaysInMonth()
+  {
+	  // GregorianCalendar indexes months starting at 0 for Jan
+	  java.util.Calendar javaCalendar = new java.util.GregorianCalendar(year, month-1, day);
+	  return javaCalendar.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+  }
+  
   public void add(TimeFrame tf) {
 	  // TODO - handle overflow ie 13 months = 1 year 1 month
 	  int overflow = 0;
@@ -141,7 +148,7 @@ public class Date implements Comparable<Date> {
 	  
 	  // TODO - check the month and find out how many days there should be in a month
 	  this.day = this.day + tf.getDays() + overflow;
-	  int monthDays = 30;
+	  int monthDays = this.getDaysInMonth();
 	  if (this.day > monthDays) {
 		  overflow = this.day/monthDays;
 		  this.day = this.day - (monthDays*overflow);
@@ -185,7 +192,7 @@ public class Date implements Comparable<Date> {
   	}
   		  	  	  	  	  	  	  	  	  
   	this.day = this.day - tf.getDays() - overflow;
-  	int monthDays = 30;
+  	int monthDays = this.getDaysInMonth();
   	if (this.day < 0) {
   		this.day = Math.abs(this.day);
   		overflow = this.day/monthDays;
