@@ -1,0 +1,49 @@
+import "<std>";
+
+main()
+{	 
+	Calendar c;
+	
+	Task final;
+	final.name = "PLT Final";
+	final.start = 2013.05.06.14.40;
+	final.end = 2013.05.06.15.55;
+	addTask(c, final);
+	
+	Task graduation;
+	graduation.name = "Graduation Ceremony!";
+	graduation.start = 2013.05.22.10;
+	graduation.end = 2013.05.22.12;
+	addTask(c,graduation);
+	
+	Task memorial;
+	memorial.name = "Memorial Day Weekend";
+	memorial.start = 2013.05.25;
+	memorial.end = 2013.05.27;
+	addTask(c, memorial);
+	
+	Task fourth;
+	fourth.name = "4th of July";
+	fourth.start = 2013.07.04;
+	fourth.end = 2013.07.05;
+	addTask(c, fourth);
+	
+	Date today = 2013.05.11;
+	
+	print("Days until these events: ");
+	every Task t in c
+	{
+	  	if (t.start  >  today)
+	  	{
+			print(t.name);//  + " - Day Left: " + until t.start);
+			TimeFrame tf = until(today, t.start); 
+			print(tf);
+		}
+	}
+}
+
+TimeFrame until(Date d1, Date d2)
+{
+	TimeFrame tf = d2 - d1;
+	return tf;
+}

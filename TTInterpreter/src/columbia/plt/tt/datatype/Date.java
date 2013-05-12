@@ -167,6 +167,12 @@ public class Date implements Comparable<Date> {
 	  this.year = this.year + tf.getYears() + overflow;
   }
   
+  public TimeFrame subtract(Date d2) {
+	  
+	  return new TimeFrame(this.year - d2.getYear(), this.month - d2.getMonth(), 0, 
+			  this.day - d2.getDay(), this.hour - d2.getHour(), this.minute-d2.getMinute());
+  }
+  
   public void substract(TimeFrame tf) {  
   	int overflow = 0;
   	this.minute = this.minute - tf.getMinutes();

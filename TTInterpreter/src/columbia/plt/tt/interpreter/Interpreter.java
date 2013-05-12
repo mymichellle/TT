@@ -810,6 +810,10 @@ public class Interpreter {
 			a1.substract((TimeFrame)b);
 			return a1;
 		}
+		else if (a instanceof Date && b instanceof Date) {
+			TimeFrame tf = ((Date)a).subtract((Date)b);
+			return tf;
+		}
 		else {
 			return arithmeticEval(t);
 		}
