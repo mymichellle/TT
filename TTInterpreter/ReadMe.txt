@@ -35,7 +35,9 @@ TTInterpreter
 	Read Me.txt
 	
 	
-cd TTMaster/TTInterpreter. TTInterpreter is the project root directory. You should find a build.xml file, the read me file and a TT.sh file
+cd TTMaster/TTInterpreter. 
+
+TTInterpreter is the project root directory. You should find a build.xml file, the read me file and a TT.sh file
 Once you are in TTInterpreter execute the following:
 
 ant compile-interpreter 
@@ -56,4 +58,4 @@ You can find sample programs in  TTInterpreter/src/columbia/plt/tt/programs
 
 If you receive permission denied error on TT.sh , please enable the execute permission on the TT.sh file. Command for the same will be
 
-.chmod +x  TT.sh
+chmod +x  TT.sh
