@@ -1034,7 +1034,7 @@ public class Interpreter {
 		ArrayList<Symbol> argsList = methodSymbol.getArgumentList();
 		if (argsList == null && argCount > 0 || argsList != null
 				&& argsList.size() != argCount) {
-			listener.error("method '" + methodName + "' argument list mismatch");
+			listener.error("method '" + methodName + "' argument list mismatch", t);
 			return null;
 		}
 		
@@ -1045,7 +1045,10 @@ public class Interpreter {
 		for (Symbol arg : argsList) {
 			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
 			Object argValue = exec(ithArg);
-			newSymbols.add(new Symbol(getDataType(arg.getType()), argValue, arg.getName()));
+			String dataType = getDataType(arg.getType());
+			if (!checkType(dataType, argValue, arg.getName(), ithArg))
+				return null;
+			newSymbols.add(new Symbol(dataType, argValue, arg.getName()));
 			i++;
 		}
 		
@@ -1069,6 +1072,17 @@ public class Interpreter {
 	
 	private String removeStartEndQuotes(String t) {
 		return t.substring(1, t.length() - 1);
+	}
+	
+	private boolean checkType(String dataType, Object value, String argName, CommonTree t) {
+		if (dataType.endsWith("Number")) {
+			try {
+				Integer a = (Integer)value;
+			} catch (Exception e) {
+				listener.error("cannot cast value '" + value +"' to type '" + dataType +"' for argument '" + argName + "'", t);
+			}
+		}
+		return true;
 	}
 	
 	public Object returnStmt(CommonTree t) {
@@ -1340,7 +1354,11 @@ public class Interpreter {
 	
 
 	public boolean isStdLibraryFunction(String methodName) {
-		if (symbolTable.getSymbol(methodName) != null) {
+		if (methodName.equals("addTask") || 
+				methodName.equals("removeTask")|| 
+				methodName.equals("read") || 
+				methodName.equals("print")|| 
+				methodName.equals("is")) {
 			return true;
 		}
 		return false;
