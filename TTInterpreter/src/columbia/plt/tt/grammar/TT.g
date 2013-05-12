@@ -84,8 +84,7 @@ tokens {
 }
 @header{
 	package columbia.plt.tt;
-	import columbia.plt.tt.datatype.*;
-	import columbia.plt.tt.interpreter.*;
+
 }
 @lexer :: header {
 	package columbia.plt.tt;
