@@ -1248,6 +1248,9 @@ public class Interpreter {
 			taskList = c;
 		}
 
+		if(taskList == null || taskList.size() == 0)
+			return;
+		
 		for (Task task : taskList) {
 			// If there is an on expression evaluate it for each loop
 			if (on == null || (Boolean) exec(on)) {

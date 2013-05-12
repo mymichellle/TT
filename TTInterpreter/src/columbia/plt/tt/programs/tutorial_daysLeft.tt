@@ -35,7 +35,7 @@ main()
 	{
 	  	if (t.start  >  today)
 	  	{
-			print(t.name);//  + " - Day Left: " + until t.start);
+			print(t.name);
 			TimeFrame tf = until(today, t.start); 
 			print(tf);
 		}
