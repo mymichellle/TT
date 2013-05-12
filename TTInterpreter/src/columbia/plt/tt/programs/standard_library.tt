@@ -5,6 +5,10 @@ import "<std>";
 //Calendar c;
 
 main(){
+	add(1, 1);
+	Date d = getCurrentTime();
+	add(1,1);
+	print(1);
 	Calendar c;
 	String t = read("Enter Something:");
 	Task task1;
@@ -19,5 +23,14 @@ main(){
 	removeTask(c, task1);
 	print("After remove");
 	print(c);
-	print(2+3);
+	print(p());
+}
+
+Number add(Number a, Number b) {
+	return a + b;
+}
+
+Number p()
+{
+	return 1;
 }

@@ -336,7 +336,8 @@ public class Interpreter {
 		} else {
 			evalGlobals();
 			imports(t);
-			exec(mainSymbol.methodBody);
+			if (mainSymbol.methodBody != null)
+				exec(mainSymbol.methodBody);
 		}
 
 		// Clear global scope
@@ -1024,12 +1025,6 @@ public class Interpreter {
 
 	public Object call(CommonTree t) {
 		String methodName = t.getChild(0).getText();
-		
-		Object result = null;
-		if (isStdLibraryFunction(methodName)){
-			return callStandardLibrary(t, methodName);
-		}
-		
 
 		MethodSymbol methodSymbol = (MethodSymbol) symbolTable
 				.getSymbol(methodName);
@@ -1048,6 +1043,11 @@ public class Interpreter {
 			return null;
 		}
 		
+		Object result = null;
+		if (isStdLibraryFunction(methodName)){
+			return callStandardLibrary(t, methodName);
+		}
+		
 		ArrayList<Symbol> newSymbols = new ArrayList<Symbol>();
 
 		if (argsList != null) {
@@ -1057,8 +1057,8 @@ public class Interpreter {
 				CommonTree ithArg = (CommonTree) t.getChild(i + 1);
 				Object argValue = exec(ithArg);
 				String dataType = getDataType(arg.getType());
-				if (!checkType(dataType, argValue, arg.getName(), ithArg))
-					return null;
+				/* Check for type consistency */
+				checkType(dataType, argValue, arg.getName(), ithArg);
 				newSymbols.add(new Symbol(dataType, argValue, arg.getName()));
 				i++;
 			}
@@ -1086,13 +1086,31 @@ public class Interpreter {
 		return t.substring(1, t.length() - 1);
 	}
 	
-	private boolean checkType(String dataType, Object value, String argName, CommonTree t) {
-		if (dataType.endsWith("Number")) {
-			try {
-				Integer a = (Integer)value;
-			} catch (Exception e) {
-				listener.error("cannot cast value '" + value +"' to type '" + dataType +"' for argument '" + argName + "'", t);
+	@SuppressWarnings("unused")
+	private boolean checkType(String dataType, Object value, String argName,
+			CommonTree t) {
+		try {
+			if (dataType.endsWith("Number")) {
+				Integer a = (Integer) value;
+			} else if (dataType.endsWith("String")) {
+				String a = (String)value;
+			} else if (dataType.endsWith("Date")) {
+				Date a = (Date)value;
+				dataType = "Date";
+			} else if (dataType.endsWith("TimeFrame")) {
+				TimeFrame a = (TimeFrame)value;
+				dataType = "TimeFrame";
+			} else if (dataType.endsWith("Task")) {
+				Task a = (Task)value;
+				dataType = "Task";
+			} else if (dataType.endsWith("Calendar")) {
+				Calendar a = (Calendar)value;
+				dataType = "Calendar";
 			}
+		} catch (Exception e) {
+			listener.error("cannot cast value '" + value + "' to type '"
+					+ dataType + "' for argument '" + argName + "'", t);
+			return false;
 		}
 		return true;
 	}
@@ -1400,33 +1418,73 @@ public class Interpreter {
 	
 	public void addTask(CommonTree t) {
 		Object s = exec((CommonTree)t.getChild(1));
-		Calendar c = (Calendar)s;
+		Object s1 = exec((CommonTree)t.getChild(2));
+		Calendar c = null;
+		Task task = null;
+
+		try {
+			c = (Calendar)s;
+		} catch (Exception e) {
+			listener.error("cannot cast value '" + s + "' to type 'Calendar' for argument 'calendar' in 'addTask'", t);
+		}
 		
-		s = exec((CommonTree)t.getChild(2));
-		Task task = (Task)s;
+		try {
+			task = (Task)s1;
+		} catch (Exception e) {
+			listener.error("cannot cast value '" + s1 + "' to type 'Task' for argument 'task' in 'addTask'", t);
+		}
 		
-		c.add(task);
+		try {
+			c.add(task);
+		} catch (Exception e) {
+			listener.error("cannot add task at 'addTask'", t);
+		}
+			
 	}
 	
 	public void removeTask(CommonTree t) {
 		Object s = exec((CommonTree)t.getChild(1));
-		Calendar c = (Calendar)s;
+		Object s1 = exec((CommonTree)t.getChild(2));
+		Calendar c = null;
+		Task task = null;
 
-		s = exec((CommonTree)t.getChild(2));
-		Task task = (Task)s;
+		try {
+			c = (Calendar)s;
+		} catch (Exception e) {
+			listener.error("cannot cast value '" + s + "' to type 'Calendar' for argument 'calendar' in 'removeTask'", t);
+		}
 		
-		if(c == null)
-			System.out.println("C IS NULL");
-		c.remove(task);
+		try {
+			task = (Task)s1;
+		} catch (Exception e) {
+			listener.error("cannot cast value '" + s1 + "' to type 'Task' for argument 'task' in 'removeTask'", t);
+		}
+		
+		try {
+			c.remove(task);
+		} catch (Exception e) {
+			listener.error("cannot remove task at 'removeTask'", t);
+		}
 	}
 	
 	public Boolean is(CommonTree t) {
 		Object s = exec((CommonTree)t.getChild(1));
-		Date d = (Date)s;
+		Object s1 = exec((CommonTree)t.getChild(2));
+		Date d = null;
+		TimeFrameConst tfc = null;
 		
-		s = exec((CommonTree)t.getChild(2));
-		TimeFrameConst tfc = (TimeFrameConst)s;
+		try {
+			d = (Date)s;
+		} catch (Exception e) {
+			listener.error("cannot cast value '" + s + "' to type 'Date' for argument 'date' in 'is'", t);
+		}
 		
+		try {
+			tfc = (TimeFrameConst)s1;
+		} catch (Exception e) {
+			listener.error("cannot cast value '" + s1 + "' to type 'TimeFrameConstant' for argument 't' in 'is'", t);
+		}
+
 		return d.is(tfc);
 	}
 	
