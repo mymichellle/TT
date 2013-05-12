@@ -1303,6 +1303,12 @@ public class Interpreter {
 		MethodSymbol getCurrentTime = new MethodSymbol(getDataType("Date"), null, "getCurrentTime");
 		symbolTable.addSymbol("getCurrentTime", getCurrentTime);
 		
+		/* is(Date d, TimeConstant t) */
+		MethodSymbol is = new MethodSymbol(getDataType("Boolean"), null, "is");
+		is.addParameter("d", new Symbol(getDataType("Date"), null, "d"));
+		is.addParameter("t", new Symbol(getDataType("TimeEntity"), null, "t"));
+		symbolTable.addSymbol("is", is);
+		
 		/* downloadCalendar(String username, String password, String calendarName, Date startDate, Date endDate); */
 		MethodSymbol downloadCalendar = new MethodSymbol(getDataType("Calendar"), null, "downloadCalendar");
 		downloadCalendar.addParameter(getDataType("username"), new Symbol("String", null, "username"));
@@ -1326,7 +1332,8 @@ public class Interpreter {
 		if (methodName.equals("addTask") ||
 			methodName.equals("removeTask") ||
 			methodName.equals("read") ||
-			methodName.equals("print")) {
+			methodName.equals("print") ||
+			methodName.equals("is")) {
 				return true;
 		}
 		return false;
@@ -1342,6 +1349,8 @@ public class Interpreter {
 			return read(t);
 		} else if (methodName.equals("print")) {
 			print(t);
+		} else if (methodName.equals("is")) {
+			return is(t);
 		}
 		return null;
 	}
@@ -1366,6 +1375,16 @@ public class Interpreter {
 		if(c == null)
 			System.out.println("C IS NULL");
 		c.remove(task);
+	}
+	
+	public Boolean is(CommonTree t) {
+		Object s = exec((CommonTree)t.getChild(1));
+		Date d = (Date)s;
+		
+		s = exec((CommonTree)t.getChild(2));
+		TimeFrameConst tfc = (TimeFrameConst)s;
+		
+		return d.is(tfc);
 	}
 	
 	public Object read(CommonTree t) {

@@ -1,5 +1,8 @@
 package columbia.plt.tt.datatype;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class Date implements Comparable<Date> {
   
   private int year;
@@ -100,7 +103,19 @@ public class Date implements Comparable<Date> {
   
   @Override
   public String toString() {
-  	return year + "." + month + "." + day + "." + hour + "." + minute;
+	  String monthString = ""+month;
+	  if(month < 10)
+		  monthString = "0"+month;
+	  String dayString = ""+day;
+	  if(day < 10)
+		  dayString = "0"+day;
+	  String hourString = ""+hour;
+	  if(hour < 10)
+		  hourString = "0"+hour;
+	  String minuteString = ""+minute;
+	  if(minute < 10)
+		  minuteString = "0"+minute;
+  	return year + "." + monthString + "." + dayString + "." + hourString + "." + minuteString;
   }
   
   public void add(TimeFrame tf) {
@@ -191,5 +206,59 @@ public class Date implements Comparable<Date> {
   	}
   		  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  
   	this.year = this.year - tf.getYears() - overflow;
+  }
+  
+  public Boolean is(columbia.plt.tt.interpreter.Interpreter.TimeFrameConst t)
+  {
+	  // Use Java's SimplDateFormat and Date class to find the day of the week
+	  SimpleDateFormat ttFormat = new SimpleDateFormat("yyyy.MM.dd.hh.mm");
+	  SimpleDateFormat dayInWeek = new SimpleDateFormat("EEEE");
+	  String dayName = "";
+	  
+	  try 
+	  {
+		  java.util.Date javaDate = ttFormat.parse(this.toString());
+		  dayName = dayInWeek.format(javaDate); 
+	  } 
+	  catch (ParseException e) 
+	  {
+		  e.printStackTrace();
+	  }
+	  
+	  switch(t){
+	  case MONDAY:
+		  if(dayName.equals("Monday"))
+			  return true;
+		  break;
+	  case TUESDAY:
+		  if(dayName.equals("Tuesday"))
+			  return true;
+		  break;
+	  case WEDNESDAY:
+		  if(dayName.equals("Wednesday"))
+			  return true;
+		  break;
+	  case THURSDAY:
+		  if(dayName.equals("Thursday"))
+			  return true;
+		  break;
+	  case FRIDAY:
+		  if(dayName.equals("Friday"))
+			  return true;
+		  break;
+	  case SATURDAY:
+		  if(dayName.equals("Saturday"))
+			  return true;
+		  break;
+	  case SUNDAY:
+		  if(dayName.equals("Sunday"))
+			  return true;
+		  break;
+			
+	  default:
+		  return false;
+	  }
+	  
+	  return false;
   }
 }

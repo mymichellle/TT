@@ -24,7 +24,7 @@ tokens {
 	TASKTYPE = 'Task';
 	TIMEFRAMETYPE = 'TimeFrame';
 	CALENDARTYPE = 'Calendar';
-	TIMETYPE = 'Time';
+	TIMETYPE = 'TimeEntity';
 	BOOLEAN = 'Boolean';
 	IF = 'if';
 	ELSE = 'else';
