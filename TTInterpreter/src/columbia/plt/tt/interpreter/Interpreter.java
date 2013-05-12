@@ -796,6 +796,10 @@ public class Interpreter {
 			b1.add((TimeFrame)a);
 			return b;
 		}
+		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
+			TimeFrame tf = ((TimeFrame)a).add((TimeFrame)b);
+			return tf;
+		}
 		else {
 			return arithmeticEval(t);
 		}
@@ -812,6 +816,10 @@ public class Interpreter {
 		}
 		else if (a instanceof Date && b instanceof Date) {
 			TimeFrame tf = ((Date)a).subtract((Date)b);
+			return tf;
+		}
+		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
+			TimeFrame tf = ((TimeFrame)a).subtract((TimeFrame)b);
 			return tf;
 		}
 		else {
@@ -1266,11 +1274,11 @@ public class Interpreter {
 			return;
 		
 		for (Task task : taskList) {
+			// Update the symbol table
+			itterTask = task;
+			symbolTable.addSymbol(name, type, itterTask);
 			// If there is an on expression evaluate it for each loop
 			if (on == null || (Boolean) exec(on)) {
-				// Update the symbol table
-				itterTask = task;
-				symbolTable.addSymbol(name, type, itterTask);
 
 				// execute the block of code
 				exec(block);
