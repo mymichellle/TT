@@ -1202,6 +1202,9 @@ public class Interpreter {
 			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
 			return (Date)s.getValue();
 		}
+		else if(t.getChild(0).getType() == TTParser.DOT) {
+			return (Date)fieldAccess((CommonTree)t.getChild(0));
+		}
 		return (Date) exec((CommonTree) t.getChild(0));
 	}
 

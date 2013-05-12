@@ -240,6 +240,7 @@ everyInStatement
 dateOrIdent
 	: IDENT -> ^(IDENT_TOKEN IDENT)
 	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)	
+	| memberAccessExpr
 	; 
 	
 timeframeOrIdent
