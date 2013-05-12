@@ -1,0 +1,52 @@
+// Create a calendar and add weekly tasks to the calendar
+import "<std>";
+
+main()
+{
+	Calendar myClasses;
+	TimeFrame tf = 1 days;
+	TimeFrame classStart = 14 hours + 40 minutes;
+	TimeFrame classDuration = 1 hours + 15 minutes;
+	 
+	every Date d from 2013.01.22 to 2013.05.06 by tf
+	{
+		Boolean mon = is(d,Monday);
+		Boolean wed = is(d,Wednesday);
+		Boolean tue = is(d, Tuesday);
+		Boolean fri = is(d, Friday);
+		
+	  	if( mon || wed )
+	  	{
+	        	// Create the task with a name
+	        	Task t;
+				t.name = "PLT";
+	        	
+	        	// Assign the start and end date
+	        	t.start = d + classStart;
+	        	t.end = d + classStart + classDuration;
+	        	t.location = "535 MUDD";
+	 
+	        	// Add the task to the calendar
+	        	addTask(myClasses, t);
+	  	}
+	 
+	  	if ( tue || fri)
+	  	{
+	        	// Create the task with a name
+	        	Task t;
+				t.name = "AI";
+	        	
+	        	// Assign the start and end date
+	        	t.start = d + classStart;
+	        	t.end = d + classStart + classDuration;
+	 			t.location = "833 MUDD";
+	 			
+	        	// Add the task to the calendar
+	        	addTask(myClasses, t);
+	  	}
+	}
+
+	every Task task in myClasses {
+		print(task);
+	}
+}
