@@ -254,7 +254,63 @@ public class Date implements Comparable<Date> {
 		  if(dayName.equals("Sunday"))
 			  return true;
 		  break;
-			
+	  case JANUARY:
+		  if(this.month == 1)
+			  return true;
+		  break;
+	  case FEBRUARY:
+		  if(this.month == 2)
+			  return true;
+		  break;
+	  case MARCH:
+		  if(this.month == 3)
+			  return true;
+		  break;
+	  case APRIL:
+		  if(this.month == 4)
+			  return true;
+		  break;
+	  case MAY:
+		  if(this.month == 5)
+			  return true;
+		  break;
+	  case JUNE:
+		  if(this.month == 6)
+			  return true;
+		  break;
+	  case JULY:
+		  if(this.month == 7)
+			  return true;
+		  break;
+	  case AUGUST:
+		  if(this.month == 8)
+			  return true;
+		  break;
+	  case SEPTEMBER:
+		  if(this.month == 9)
+			  return true;
+		  break;
+	  case OCTOBER:
+		  if(this.month == 10)
+			  return true;
+		  break;
+	  case NOVEMBER:
+		  if(this.month == 11)
+			  return true;
+		  break;
+	  case DECEMBER:
+		  if(this.month == 12)
+			  return true;
+		  break;
+	  case WEEKEND:
+		  if(dayName.equals("Sunday") || dayName.equals("Saturday"))
+			  return true;
+		  break;
+	  case WEEKDAY:
+		  if(!(dayName.equals("Sunday") || dayName.equals("Saturday")))
+			  return true;
+		  break;
+		  
 	  default:
 		  return false;
 	  }
