@@ -21,7 +21,7 @@ main() {
 	Task t;
 	TimeFrame tf;
 	Calendar c;
-	Time time;
+	TimeEntity time;
 	
 	// Test basic definitionStatement for all type
 	String s = "hello there!";
@@ -30,7 +30,7 @@ main() {
 	Task t = "Do Work";
 	TimeFrame tf = 1 day + 4 days;
 	Calendar c = "My Calendar";
-	Time mon = Monday;
+	TimeEntity mon = Monday;
 
 	// Test assignmentStmt
 	var = 3;

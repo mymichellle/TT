@@ -2,7 +2,7 @@ main(){
 	Number n = 4;
 	if( 2 < n || n < 2)
 	{
-		print("YES n is less than 5");
+		print("YES n is in range");
 	}
 	
 	Date c = 2013.05.06.10;

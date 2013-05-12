@@ -6,14 +6,6 @@ Date end = 2013.05.17;
 
 main()
 {
-	every Date d from start to end by 30 minutes {
-		Task t; 
- 		t.name = "Meeting";
- 		t.start = d;
- 		t.end = d;// + 1 hours;
- 	}
- 	
-	exit;
 	p.name = "P Calendar";
 	
 	Task t1;
@@ -28,27 +20,11 @@ main()
 	t2.start = 2013.01.01.04;
 	t2.end = 2013.01.01.05;
 	
-	print("CONFLICT");
- 	every Task task in p{
- 		print(task);
- 		Date d = task.end;
- 		Date d2 = t2.start;
- 		print(d2);
- 		if(task.start < t2.end || task.end < t2.start)
- 		{
- 			print("OKAY");
- 		}
- 		
- 	}
-	
-	
-	exit;
-	
 	Calendar loopCal;
 	loopCal.name = "TestLoopCal";
 	
+	// Loop through 2013.01.01 to 2013.01.01 by 1 day adding a temp Task
 	every Date d from 2013.01.01 to 2013.01.03 by 1 days { 
-		print("Date Loops");
 		print(d);
 		
 		Task loopTask;
@@ -64,20 +40,37 @@ main()
 		print(t);
 		continue;
 		// Everything below continue should never be executed
-		print("Hello");
+		print("Hello, you shouldn't see me");
 	}
 
+	print("Show Tasks between 2013.01.01.12 and 2013.01.02.01");
 	// Every Task between these dates
 	every Task t in loopCal from 2013.01.01.12 to 2013.02.04{
 		print(t);
-		break;
 	}
 	
-//	every Task t in c on (a == 5) {
-//		print(t);
-//	}
+	// Add two tasks to loopCal
+	Task eatTask;
+	eatTask.name = "eat";
+	eatTask.start = 2013.01.05.12;
+	eatTask.end = 2013.01.05.13;
+	addTask(loopCal, eatTask);
+
+	Task eatTask2;
+	eatTask2.name = "eat";
+	eatTask2.start = 2013.01.07.20;
+	eatTask2.end = 2013.01.07.22;
+	addTask(loopCal, eatTask2);	
 	
-//	every Task t in c from 2013.01.01 to 2013.02.05 on ( 7 == 7) {
-//		print(t);
-//	} 
+	print("Show eat tasks");
+	// only print the tasks named "eat"
+	every Task t in loopCal on (t.name == "eat") {
+		print(t);
+	}
+	
+	// Only show "temp" tasks from 2013.01.03 to 2013.01.08
+	print("Show temp tasks from the 3rd to the 7th");
+	every Task t in loopCal from 2013.01.03 to 2013.01.08 on ( t.name == "temp") {
+		print(t);
+	} 
 }
