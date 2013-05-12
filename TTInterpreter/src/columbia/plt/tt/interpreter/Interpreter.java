@@ -64,19 +64,18 @@ public class Interpreter {
 		}
 		
 		public void error(String msg, CommonTree t) {
-			System.out.print("line: "+ t.getLine() + " ");
+			msg = "line: "+ t.getLine() + " - " + msg;
 			error(msg);
-			
 		}
 		
 		public void error(String msg, CommonTree t, Exception e){
+			msg = "line: "+ t.getLine() + " - " + msg;
 			error(msg, e);
-			e.printStackTrace(System.err);
 		}
 		
 		@Override
 		public void error(String msg, org.antlr.runtime.Token t) {
-			error("line " + t.getLine() + ": " + msg);
+			error("line: " + t.getLine() + " - " + msg);
 
 		}
 	};
@@ -242,7 +241,7 @@ public class Interpreter {
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
 			case TTParser.STRING_CONSTANT:
-				return t.getText().replaceAll("\"","");
+				return removeStartEndQuotes(t.getText());
 
 			case TTParser.TRUE:
 			case TTParser.FALSE:
@@ -322,7 +321,7 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("problem executing " + t.toStringTree(), e);
+			listener.error("problem executing " + t.toStringTree(), t, e);
 		}
 		return null;
 	}
@@ -373,7 +372,8 @@ public class Interpreter {
 			List<? extends Object> importsList = importsTree.getChildren();
 			for (Object arg : importsList) {
 				CommonTree argImport = (CommonTree) arg;
-				if (argImport.equals("<std>"))
+				String importText = removeStartEndQuotes(argImport.getText());
+				if (importText.equals("<std>"))
 					useStandardLibrary = true;
 			}
 		}
@@ -796,6 +796,10 @@ public class Interpreter {
 			b1.add((TimeFrame)a);
 			return b;
 		}
+		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
+			TimeFrame tf = ((TimeFrame)a).add((TimeFrame)b);
+			return tf;
+		}
 		else {
 			return arithmeticEval(t);
 		}
@@ -809,6 +813,14 @@ public class Interpreter {
 			Date a1 = new Date((Date)a);
 			a1.substract((TimeFrame)b);
 			return a1;
+		}
+		else if (a instanceof Date && b instanceof Date) {
+			TimeFrame tf = ((Date)a).subtract((Date)b);
+			return tf;
+		}
+		else if (a instanceof TimeFrame && b instanceof TimeFrame) {
+			TimeFrame tf = ((TimeFrame)a).subtract((TimeFrame)b);
+			return tf;
 		}
 		else {
 			return arithmeticEval(t);
@@ -1021,7 +1033,7 @@ public class Interpreter {
 				.getSymbol(methodName);
 		
 		if (methodSymbol == null) {
-			listener.error("no such method " + methodName, t.token);
+			listener.error("no such method " + methodName, t);
 			return null;
 		}
 
@@ -1030,19 +1042,24 @@ public class Interpreter {
 		ArrayList<Symbol> argsList = methodSymbol.getArgumentList();
 		if (argsList == null && argCount > 0 || argsList != null
 				&& argsList.size() != argCount) {
-			listener.error("method '" + methodName + "' argument list mismatch");
+			listener.error("method '" + methodName + "' argument list mismatch", t);
 			return null;
 		}
 		
 		ArrayList<Symbol> newSymbols = new ArrayList<Symbol>();
 
-		int i = 0;
-		// evaluate and define arguments
-		for (Symbol arg : argsList) {
-			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
-			Object argValue = exec(ithArg);
-			newSymbols.add(new Symbol(getDataType(arg.getType()), argValue, arg.getName()));
-			i++;
+		if (argsList != null) {
+			int i = 0;
+			// evaluate and define arguments
+			for (Symbol arg : argsList) {
+				CommonTree ithArg = (CommonTree) t.getChild(i + 1);
+				Object argValue = exec(ithArg);
+				String dataType = getDataType(arg.getType());
+				if (!checkType(dataType, argValue, arg.getName(), ithArg))
+					return null;
+				newSymbols.add(new Symbol(dataType, argValue, arg.getName()));
+				i++;
+			}
 		}
 		
 		symbolTable.addScope();
@@ -1061,6 +1078,21 @@ public class Interpreter {
 				|| dataType.equals("Date")) 
 			return TTConstants.PACKAGE_PREFIX + dataType;
 		return dataType;
+	}
+	
+	private String removeStartEndQuotes(String t) {
+		return t.substring(1, t.length() - 1);
+	}
+	
+	private boolean checkType(String dataType, Object value, String argName, CommonTree t) {
+		if (dataType.endsWith("Number")) {
+			try {
+				Integer a = (Integer)value;
+			} catch (Exception e) {
+				listener.error("cannot cast value '" + value +"' to type '" + dataType +"' for argument '" + argName + "'", t);
+			}
+		}
+		return true;
 	}
 	
 	public Object returnStmt(CommonTree t) {
@@ -1170,6 +1202,9 @@ public class Interpreter {
 			Symbol s = (Symbol)exec((CommonTree)t.getChild(0));
 			return (Date)s.getValue();
 		}
+		else if(t.getChild(0).getType() == TTParser.DOT) {
+			return (Date)fieldAccess((CommonTree)t.getChild(0));
+		}
 		return (Date) exec((CommonTree) t.getChild(0));
 	}
 
@@ -1240,12 +1275,15 @@ public class Interpreter {
 			taskList = c;
 		}
 
+		if(taskList == null || taskList.size() == 0)
+			return;
+		
 		for (Task task : taskList) {
+			// Update the symbol table
+			itterTask = task;
+			symbolTable.addSymbol(name, type, itterTask);
 			// If there is an on expression evaluate it for each loop
 			if (on == null || (Boolean) exec(on)) {
-				// Update the symbol table
-				itterTask = task;
-				symbolTable.addSymbol(name, type, itterTask);
 
 				// execute the block of code
 				exec(block);
@@ -1329,12 +1367,13 @@ public class Interpreter {
 	
 
 	public boolean isStdLibraryFunction(String methodName) {
-		if (methodName.equals("addTask") ||
-			methodName.equals("removeTask") ||
-			methodName.equals("read") ||
-			methodName.equals("print") ||
-			methodName.equals("is")) {
-				return true;
+		if (methodName.equals("addTask") || 
+				methodName.equals("removeTask")|| 
+				methodName.equals("read") || 
+				methodName.equals("print")|| 
+				methodName.equals("is") ||
+				methodName.equals("getCurrentTime")) {
+			return true;
 		}
 		return false;
 	}
@@ -1351,6 +1390,8 @@ public class Interpreter {
 			print(t);
 		} else if (methodName.equals("is")) {
 			return is(t);
+		} else if (methodName.equals("getCurrentTime")) {
+			return getCurrentTime();
 		}
 		return null;
 	}
@@ -1385,6 +1426,13 @@ public class Interpreter {
 		TimeFrameConst tfc = (TimeFrameConst)s;
 		
 		return d.is(tfc);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public Date getCurrentTime(){
+		java.util.Date d = new java.util.Date();
+		Date ourDate = new Date(d.getYear() + 1900, d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes());
+		return ourDate;
 	}
 	
 	public Object read(CommonTree t) {

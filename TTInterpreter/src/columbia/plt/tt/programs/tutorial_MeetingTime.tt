@@ -46,7 +46,7 @@ main() {
     
     Calendar c3;
     c3 = getAvailableOneHourMeetingSlots(c1, c2);	
- 	
+	
 	
     // loop through c3, and print out
     every Task meeting in c3

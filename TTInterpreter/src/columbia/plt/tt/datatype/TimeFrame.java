@@ -97,7 +97,6 @@ public TimeFrame() {
   	initialize(new Date(start), end);
   }
   
-  
   public int getYears() { return this.years; }
   public void setYears(int years) { this.years = years; }
   public int getMonths() { return this.months; }
@@ -149,6 +148,19 @@ public TimeFrame() {
   	return 0;
   }
   
+  public TimeFrame add(TimeFrame tf)
+  {
+	  return new TimeFrame(this.years + tf.getYears(), this.months + tf.getMonths(), 
+			  this.weeks + tf.getWeeks(), this.days + tf.getDays(), this.hours + tf.getHours(),
+			  this.minutes + tf.getMinutes());
+  }
+  
+  public TimeFrame subtract(TimeFrame tf)
+  {
+	  return new TimeFrame(this.years - tf.getYears(), this.months - tf.getMonths(), 
+			  this.weeks - tf.getWeeks(), this.days - tf.getDays(), this.hours - tf.getHours(),
+			  this.minutes - tf.getMinutes());
+  }
   @Override
   public String toString() {
   	return "Years: " + Integer.toString(years) + ", Months: " + Integer.toString(months) + ", Weeks: " + Integer.toString(weeks)+  ", Days: " + Integer.toString(days) + ", " +

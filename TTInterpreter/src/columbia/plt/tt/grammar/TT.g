@@ -239,6 +239,7 @@ everyInStatement
 dateOrIdent
 	: IDENT -> ^(IDENT_TOKEN IDENT)
 	| DATE_CONSTANT -> ^(DATE_CONSTANT_TOKEN DATE_CONSTANT)	
+	| memberAccessExpr
 	; 
 	
 timeframeOrIdent
@@ -267,7 +268,7 @@ functionInvocationStatement
 	;
 
 functionInvocation
-	: IDENT argumentList -> ^(CALL IDENT argumentList)
+	: IDENT argumentList -> ^(CALL IDENT argumentList?)
 	;
 	
 argumentList
@@ -275,7 +276,7 @@ argumentList
 	;
 	
 expressionList
-	: expr (','expr)* -> expr*
+	: expr (','expr)* -> expr+
 	;
 	
 timeFrameConstant

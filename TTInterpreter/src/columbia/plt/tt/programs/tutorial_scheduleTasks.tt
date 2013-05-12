@@ -1,0 +1,100 @@
+import "<std>";
+
+main(){
+
+	Calendar calendar;
+	TimeFrame study = 2 hours;
+	TimeFrame revise = 1 hour;
+	TimeFrame meeting = 1 hour;
+	 
+	Task studyTask;
+	studyTask.name = "Study";
+	 
+	Date start = 2013.04.01.10.00;
+	Date end = 2013.04.01.15.00;
+	 
+	every Date date from start to end by 1 hour {
+	 
+		studyTask.start = date;
+		studyTask.end = date + study;
+		 
+		if( studyTask.end > end){
+		   	print("Hey you are exceeding the calendar end time!");
+		   	exit;
+		}
+		
+		if (not( conflict(calendar, studyTask))){
+		   	addTask(calendar,studyTask);
+		   	break;
+		}  	
+	   	
+	}
+	 
+	 
+	Task reviseTask;
+	reviseTask.name = "Revise";
+	Number taskAdded = 0;
+	 
+	every Date date  from calendar.start to calendar.end by revise {
+	 
+		reviseTask.start = date;
+		reviseTask.end = date + revise;
+		 
+		if(not (conflict(calendar, reviseTask)) && (reviseTask.start!=studyTask.end)){
+		addTask(calendar, reviseTask);
+		taskAdded = 1;
+		break;
+		}
+	 
+	}
+	 
+	if(taskAdded == 0){
+	   	print("Cannot add reviseTask anywhere in the Calendar");
+	}
+	 
+	 
+	Task  meetingTask;
+	meetingTask.name =  "Meeting";
+	taskAdded= 0;
+	every Date date from start to end by meeting {
+	 
+	 
+	meetingTask.start = date;
+	meetingTask.end = date + study;
+	 
+	if( meetingTask.end > end){
+	   	print("Hey you are exceeding the calendar end time!");
+	   	exit;
+	}
+	 
+	if (not (conflict(calendar, meetingTask))){
+	   	addTask(calendar,meetingTask);
+	   	taskAdded= 1;
+	   	break;
+	}  	
+	   	
+	}
+	 
+	if(taskAdded == 0){
+	   	print("Cannot add meetingTask anywhere in the Calendar");
+	}
+	 
+	 
+	every Task printTask in calendar {
+		print(printTask);
+	}
+}
+
+Boolean conflict(Calendar c, Task t)
+{
+ 	Boolean conflicts = false;
+ 	
+ 	every Task task in c{
+ 		if(not (task.end < t.start || t.end < task.start))
+ 		{
+ 			conflicts = true;
+ 		}
+ 	}
+ 	
+ 	return conflicts;
+}

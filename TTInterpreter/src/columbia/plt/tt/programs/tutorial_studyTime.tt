@@ -1,0 +1,30 @@
+import "<std>";
+
+main()
+{
+	Calendar c1;
+	c1.name = "Study Schedule";
+	
+	every Date d from 2013.04.28 to 2013.05.06.14 by 1 day
+	{
+		Task t2;
+		t2.name = "AI";
+		t2.start = d + 10 hours;
+		t2.end = d + 12 hours;
+		addTask(c1, t2);
+		
+		Task t1;
+		t1.name = "Compilers";
+		t1.start = d + 12 hours;
+		t1.end = d + 14 hours;
+		addTask(c1, t1);
+	}
+	 
+	TimeFrame  totalTimeSpent;
+	every Task t in c1 on (t.name == "Compilers"){
+		TimeFrame lengthOfStudy = t.end - t.start;
+	  	totalTimeSpent = totalTimeSpent + lengthOfStudy;
+	}
+	print("Time spent studying Compilers: ");
+	print(totalTimeSpent);
+}
