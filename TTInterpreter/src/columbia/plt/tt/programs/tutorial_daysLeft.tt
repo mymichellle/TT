@@ -28,14 +28,14 @@ main()
 	fourth.end = 2013.07.05;
 	addTask(c, fourth);
 	
-	Date today = 2013.05.11;
+	Date today = getCurrentTime();
 	
 	print("Days until these events: ");
 	every Task t in c
 	{
 	  	if (t.start  >  today)
 	  	{
-			print(t.name);//  + " - Day Left: " + until t.start);
+			print(t.name);
 			TimeFrame tf = until(today, t.start); 
 			print(tf);
 		}
