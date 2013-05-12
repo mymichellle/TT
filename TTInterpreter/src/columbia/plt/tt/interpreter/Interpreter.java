@@ -1355,7 +1355,8 @@ public class Interpreter {
 				methodName.equals("removeTask")|| 
 				methodName.equals("read") || 
 				methodName.equals("print")|| 
-				methodName.equals("is")) {
+				methodName.equals("is") ||
+				methodName.equals("getCurrentTime")) {
 			return true;
 		}
 		return false;
@@ -1373,6 +1374,8 @@ public class Interpreter {
 			print(t);
 		} else if (methodName.equals("is")) {
 			return is(t);
+		} else if (methodName.equals("getCurrentTime")) {
+			return getCurrentTime();
 		}
 		return null;
 	}
@@ -1407,6 +1410,13 @@ public class Interpreter {
 		TimeFrameConst tfc = (TimeFrameConst)s;
 		
 		return d.is(tfc);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public Date getCurrentTime(){
+		java.util.Date d = new java.util.Date();
+		Date ourDate = new Date(d.getYear() + 1900, d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes());
+		return ourDate;
 	}
 	
 	public Object read(CommonTree t) {
