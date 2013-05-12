@@ -28,7 +28,7 @@ main()
 	fourth.end = 2013.07.05;
 	addTask(c, fourth);
 	
-	Date today = 2013.05.11;
+	Date today = getCurrentTime();
 	
 	print("Days until these events: ");
 	every Task t in c
