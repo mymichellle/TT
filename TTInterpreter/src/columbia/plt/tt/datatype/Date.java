@@ -126,7 +126,6 @@ public class Date implements Comparable<Date> {
   }
   
   public void add(TimeFrame tf) {
-	  // TODO - handle overflow ie 13 months = 1 year 1 month
 	  int overflow = 0;
 	  this.minute = this.minute + tf.getMinutes();
 	  if (this.minute > 59) {
@@ -146,7 +145,6 @@ public class Date implements Comparable<Date> {
 		  overflow = 0;
 	  }
 	  
-	  // TODO - check the month and find out how many days there should be in a month
 	  this.day = this.day + tf.getDays() + overflow;
 	  int monthDays = this.getDaysInMonth();
 	  if (this.day > monthDays) {
