@@ -336,7 +336,8 @@ public class Interpreter {
 		} else {
 			evalGlobals();
 			imports(t);
-			exec(mainSymbol.methodBody);
+			if (mainSymbol.methodBody != null)
+				exec(mainSymbol.methodBody);
 		}
 
 		// Clear global scope
