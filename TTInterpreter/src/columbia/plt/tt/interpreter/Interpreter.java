@@ -64,9 +64,8 @@ public class Interpreter {
 		}
 		
 		public void error(String msg, CommonTree t) {
-			System.out.print("line: "+ t.getLine() + " ");
+			msg = "line: "+ t.getLine() + " - " + msg;
 			error(msg);
-			
 		}
 		
 		public void error(String msg, CommonTree t, Exception e){
@@ -76,7 +75,7 @@ public class Interpreter {
 		
 		@Override
 		public void error(String msg, org.antlr.runtime.Token t) {
-			error("line " + t.getLine() + ": " + msg);
+			error("line: " + t.getLine() + " - " + msg);
 
 		}
 	};
@@ -242,7 +241,7 @@ public class Interpreter {
 			case TTParser.NUMBER:
 				return Integer.parseInt(t.getText()); // (JL)
 			case TTParser.STRING_CONSTANT:
-				return t.getText().replaceAll("\"","");
+				return removeStartEndQuotes(t.getText());
 
 			case TTParser.TRUE:
 			case TTParser.FALSE:
@@ -373,7 +372,8 @@ public class Interpreter {
 			List<? extends Object> importsList = importsTree.getChildren();
 			for (Object arg : importsList) {
 				CommonTree argImport = (CommonTree) arg;
-				if (argImport.equals("<std>"))
+				String importText = removeStartEndQuotes(argImport.getText());
+				if (importText.equals("<std>"))
 					useStandardLibrary = true;
 			}
 		}
@@ -1021,7 +1021,7 @@ public class Interpreter {
 				.getSymbol(methodName);
 		
 		if (methodSymbol == null) {
-			listener.error("no such method " + methodName, t.token);
+			listener.error("no such method " + methodName, t);
 			return null;
 		}
 
@@ -1061,6 +1061,10 @@ public class Interpreter {
 				|| dataType.equals("Date")) 
 			return TTConstants.PACKAGE_PREFIX + dataType;
 		return dataType;
+	}
+	
+	private String removeStartEndQuotes(String t) {
+		return t.substring(1, t.length() - 1);
 	}
 	
 	public Object returnStmt(CommonTree t) {
@@ -1329,12 +1333,8 @@ public class Interpreter {
 	
 
 	public boolean isStdLibraryFunction(String methodName) {
-		if (methodName.equals("addTask") ||
-			methodName.equals("removeTask") ||
-			methodName.equals("read") ||
-			methodName.equals("print") ||
-			methodName.equals("is")) {
-				return true;
+		if (symbolTable.getSymbol(methodName) != null) {
+			return true;
 		}
 		return false;
 	}
