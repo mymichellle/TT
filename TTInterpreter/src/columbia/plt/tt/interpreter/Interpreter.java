@@ -69,8 +69,8 @@ public class Interpreter {
 		}
 		
 		public void error(String msg, CommonTree t, Exception e){
+			msg = "line: "+ t.getLine() + " - " + msg;
 			error(msg, e);
-			e.printStackTrace(System.err);
 		}
 		
 		@Override
@@ -321,7 +321,7 @@ public class Interpreter {
 						+ "<" + t.getType() + "> not handled");
 			}
 		} catch (Exception e) {
-			listener.error("problem executing " + t.toStringTree(), e);
+			listener.error("problem executing " + t.toStringTree(), t, e);
 		}
 		return null;
 	}
@@ -1040,16 +1040,18 @@ public class Interpreter {
 		
 		ArrayList<Symbol> newSymbols = new ArrayList<Symbol>();
 
-		int i = 0;
-		// evaluate and define arguments
-		for (Symbol arg : argsList) {
-			CommonTree ithArg = (CommonTree) t.getChild(i + 1);
-			Object argValue = exec(ithArg);
-			String dataType = getDataType(arg.getType());
-			if (!checkType(dataType, argValue, arg.getName(), ithArg))
-				return null;
-			newSymbols.add(new Symbol(dataType, argValue, arg.getName()));
-			i++;
+		if (argsList != null) {
+			int i = 0;
+			// evaluate and define arguments
+			for (Symbol arg : argsList) {
+				CommonTree ithArg = (CommonTree) t.getChild(i + 1);
+				Object argValue = exec(ithArg);
+				String dataType = getDataType(arg.getType());
+				if (!checkType(dataType, argValue, arg.getName(), ithArg))
+					return null;
+				newSymbols.add(new Symbol(dataType, argValue, arg.getName()));
+				i++;
+			}
 		}
 		
 		symbolTable.addScope();
