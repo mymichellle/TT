@@ -8,7 +8,7 @@ options {
 
 @header{
 	package columbia.plt.tt;
-	import columbia.plt.tt.datatype.*;
+
 	import columbia.plt.tt.interpreter.*;
 }
 
